@@ -38,7 +38,6 @@ PROFILE = {
     "linkedin": "https://www.linkedin.com/in/dcreason/",
     "github": "https://github.com/project-creason",
     "resume": "/assets/David_Creason_Resume.pdf",
-    "email": "davidcreason@gmail.com",
 }
 
 # status: "active" or "past". Order here is display order within each group.
@@ -161,7 +160,7 @@ def page(path, title, desc, section, body, extra_foot=""):
   <footer class="site-footer">
     <div class="wrap">
       <span>&copy; <span id="yr"></span> {e(PROFILE['name'])}</span>
-      <span><a href="{PROFILE['linkedin']}" rel="noopener">LinkedIn</a> &middot; <a href="{PROFILE['github']}" rel="noopener">GitHub</a> &middot; <a href="mailto:{PROFILE['email']}">Email</a> &middot; <a href="/resume/">Resume</a></span>
+      <span><a href="{PROFILE['linkedin']}" rel="noopener">LinkedIn</a> &middot; <a href="{PROFILE['github']}" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
     </div>
   </footer>
   <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>{extra_foot}
@@ -349,7 +348,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
       <div class="wrap">
         <h2>Let&rsquo;s work together</h2>
         <p>Open to conversations about analytics, systems, and automation work.</p>
-        <div class="actions center"><a class="btn" href="mailto:{PROFILE['email']}">Email me</a><a class="btn ghost" href="/resume/">View resume</a></div>
+        <div class="actions center"><a class="btn" href="/contact/#form">Send me a message</a><a class="btn ghost" href="/resume/">View resume</a></div>
       </div>
     </section>
   </main>""", extra_foot='\n  <script src="/assets/chat.js"></script>')
@@ -464,13 +463,27 @@ page("/contact/", "Contact", "Get in touch with David Creason: technical solutio
         <p>I&rsquo;m David Creason, a results-driven professional with a background in technical solutions, data analysis, and operational leadership. Throughout my career, I&rsquo;ve worked across various industries, helping businesses optimize workflows, implement strategic solutions, and improve customer experiences.</p>
         <p>Whether you&rsquo;re looking to collaborate, discuss a potential opportunity, or just connect, I&rsquo;d love to hear from you. Feel free to reach out with any questions about my experience, skills, or how I can contribute to your team.</p>
         <div class="actions">
-          <a class="btn" href="mailto:{PROFILE['email']}">&#9993; Let&rsquo;s start the conversation</a>
           <a class="btn ghost" href="/resume/">View my resume</a>
           <a class="btn ghost" href="{PROFILE['linkedin']}" rel="noopener" target="_blank">LinkedIn</a>
         </div>
+
+        <form id="form" class="contact-form" novalidate>
+          <h2>Let&rsquo;s start the conversation</h2>
+          <div class="field-row">
+            <label>Your name<input name="name" autocomplete="name" maxlength="100" required></label>
+            <label>Your email<input name="email" type="email" autocomplete="email" maxlength="200" required></label>
+          </div>
+          <label><span>Subject <span class="opt">(optional)</span></span><input name="subject" maxlength="150"></label>
+          <label>Message<textarea name="message" rows="6" maxlength="5000" required></textarea></label>
+          <div class="hp" aria-hidden="true"><label>Company<input name="company" tabindex="-1" autocomplete="off"></label></div>
+          <div class="form-foot">
+            <button class="btn" type="submit">Send message</button>
+            <p class="form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
       </div>
     </div>
-  </main>""")
+  </main>""", extra_foot='\n  <script src="/assets/contact.js"></script>')
 
 # Old URLs (Google Sites + first rebuild) keep working
 redirect("/home/", "/")
@@ -489,7 +502,8 @@ os.replace(os.path.join(ROOT, "404/index.html"), os.path.join(ROOT, "404.html"))
 os.rmdir(os.path.join(ROOT, "404"))
 print("Built", len(PROJECTS), "projects.")
 
-# ---- Final safety check: no phone number anywhere in the published pages ----
+# ---- Final safety check: no phone number or email address in any published page ----
+EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 for _dir, _, _files in os.walk(ROOT):
     if "/.git" in _dir:
         continue
@@ -497,4 +511,5 @@ for _dir, _, _files in os.walk(ROOT):
         if _f.endswith(".html"):
             _txt = open(os.path.join(_dir, _f)).read()
             assert not PHONE.search(_txt), f"Phone number found in {_f}; refusing to publish."
-print("Checked: no phone numbers in any page.")
+            assert not EMAIL_RE.search(_txt), f"Email address found in {_f}; refusing to publish."
+print("Checked: no phone numbers or email addresses in any page.")

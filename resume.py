@@ -22,7 +22,8 @@ def _contact_html(parts):
     out = []
     for p in parts:
         if "@" in p:
-            out.append(f'<a href="mailto:{e(p)}">{e(p)}</a>')
+            # Email stays in the downloadable PDF only; the page links to the contact form.
+            out.append('<a href="/contact/#form">Send a message</a>')
         elif "linkedin" in p.lower() or p.startswith("http") or "github.com" in p.lower():
             href = p if p.startswith("http") else "https://" + p
             out.append(f'<a href="{e(href)}" rel="noopener" target="_blank">{e(p)}</a>')
@@ -86,5 +87,6 @@ _html = f"""  <main id="main" class="resume">
 
 # Last line of defense: never publish a phone number on the page.
 assert not PHONE.search(_html), "A phone number made it into the resume page; refusing to build."
+assert "@" not in _html, "An email address made it into the resume page; refusing to build."
 
 page("/resume/", "Resume", (RESUME["summary"] or RESUME["headline"])[:155], "Resume", _html)
