@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>David Creason</title>
+  <meta name="description" content="David Creason: applications systems analyst focused on data, technical solutions and continuous learning.">
+  <link rel="canonical" href="https://www.davidcreason.com/">
+  <meta property="og:title" content="David Creason">
+  <meta property="og:description" content="David Creason: applications systems analyst focused on data, technical solutions and continuous learning.">
+  <meta property="og:url" content="https://www.davidcreason.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/headshot.jpg">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/" aria-current="page">Home</a><a href="/data-viz/">Data Viz</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <section class="hero">
+    <div class="wrap">
+      <h1>David Creason</h1>
+      <p class="role">Applications Systems Analyst</p>
+      <p class="vision">My vision is to become a top-tier knowledge expert in my field, recognized for my deep understanding and ability to share valuable insights with others. I aspire to reach the pinnacle of my profession, becoming a go-to authority and trusted resource in the industry, while also enriching my professional and personal life through continuous learning, mentorship, and personal connections.</p>
+      <div class="social">
+        <a href="https://www.linkedin.com/in/dcreason/" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg> LinkedIn</a>
+        <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">Resume</a>
+      </div>
+    </div>
+  </section>
+  <main id="main">
+    <div class="wrap grid-2">
+      <div>
+        <p class="eyebrow">Welcome</p>
+        <h2 style="font-size:2rem;margin:0 0 16px">My Professional Hub</h2>
+        <p>Hi, I&rsquo;m David Creason, and I&rsquo;m glad you&rsquo;re here. Whether you want to explore my work experience, technical skills, or career achievements, I invite you to try the AI assistant&mdash;it&rsquo;s built to answer questions about my background, expertise, and how I can bring value to your team.</p>
+        <p>Ask about my experience, leadership, technical expertise, or the impact I&rsquo;ve made in previous roles. Let&rsquo;s start the conversation!</p>
+        <p>Prefer to reach out directly? My contact information is on my <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">resume</a>, or visit the <a href="/contact/">contact page</a>.</p>
+        <p style="margin-top:28px"><a class="btn ghost" href="/data-viz/">See my data visualizations &rarr;</a></p>
+      </div>
+      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience">
+        <div id="chips-wrapper">
+          <button class="chip" data-q="What is David's core skill set?">Core Skills</button>
+          <button class="chip" data-q="What roles is David targeting?">Target Roles</button>
+          <button class="chip" data-q="Tell me about David's work at Ventas.">Ventas Experience</button>
+          <button class="chip" data-q="What is David's education background?">Education &amp; Certs</button>
+        </div>
+        <div id="chat-box" aria-live="polite">
+          <div class="msg bot">Hi! I&rsquo;m an AI assistant trained on David Creason&rsquo;s professional experience. Ask me anything or select a topic above!</div>
+        </div>
+        <div id="input-area">
+          <input type="text" id="user-input" placeholder="Ask a question..." aria-label="Your question">
+          <button id="send-btn">Send</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="mailto:davidcreason@gmail.com">Email</a> &middot; <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script src="/assets/chat.js"></script>
+</body>
+</html>
