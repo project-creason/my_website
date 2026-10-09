@@ -270,3 +270,5 @@ button.btn { cursor: pointer; font-family: var(--head); }
 .resume-head .specialties { margin: 10px 0 0; font: 600 .78rem var(--head); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 .plain { padding-left: 20px; margin: 0; }
 .hero .tagline { max-width: 62ch; }
+:root { color-scheme: light dark; }
+.project .shot { background: linear-gradient(135deg, color-mix(in srgb, var(--line) 80%, var(--paper)), var(--paper)); }
