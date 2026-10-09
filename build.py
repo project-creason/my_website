@@ -283,7 +283,6 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
           <a href="{PROFILE['resume']}" rel="noopener" target="_blank">Resume</a>
         </div>
       </div>
-      <img class="portrait" src="/assets/headshot.jpg" alt="Photo of David Creason" width="225" height="400">
     </div>
   </section>
   <main id="main">
