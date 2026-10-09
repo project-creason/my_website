@@ -19,7 +19,7 @@ PROFILE = {
     "tagline": "I turn messy processes and data into tools people actually use: analytics, workflow automation, and rule-driven web apps.",
     "linkedin": "https://www.linkedin.com/in/dcreason/",
     "github": "https://github.com/project-creason",
-    "resume": "https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing",
+    "resume": "/assets/David_Creason_Resume.pdf",
     "email": "davidcreason@gmail.com",
 }
 
