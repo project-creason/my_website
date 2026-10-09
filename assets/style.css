@@ -230,3 +230,40 @@ main#main:has(> .band) { padding: 0; }
 .chat-demo { max-width: 480px; margin-top: 16px; }
 .project .shot { background: linear-gradient(135deg, #e9e4da, #f6f3ee); min-height: 120px; }
 @media (max-width: 760px) { .site-header { position: static; } }
+
+/* ---------- Resume page ---------- */
+.resume-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.resume-head .page-title { margin-bottom: 6px; }
+.resume-head .headline { font: 600 1.05rem var(--head); color: var(--accent); margin: 0 0 8px; }
+.resume-head .contact-line { margin: 0; color: var(--ink-soft); font-size: .98rem; }
+.resume-head .actions { margin-top: 8px; }
+button.btn { cursor: pointer; font-family: var(--head); }
+.r-section { padding: 32px 0; border-bottom: 1px solid var(--line); }
+.r-section:last-child { border-bottom: 0; }
+.r-section h2 { font-size: .85rem; text-transform: uppercase; letter-spacing: .14em; color: var(--accent); margin: 0 0 18px; }
+.r-section .lede { margin: 0; max-width: 80ch; }
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px 32px; }
+.skill-grid h3 { font-size: 1rem; margin: 0 0 10px; }
+.skill-grid .tags { margin: 0; }
+.job { margin-bottom: 28px; }
+.job:last-child { margin-bottom: 0; }
+.job header { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 20px; flex-wrap: wrap; margin-bottom: 8px; }
+.job h3 { font-size: 1.15rem; margin: 0; }
+.job .org { margin: 2px 0 0; color: var(--ink-soft); font-size: .98rem; }
+.job .dates { margin: 0; font: 600 .82rem var(--head); color: var(--ink-soft); white-space: nowrap; }
+.job ul { margin: 0; padding-left: 20px; }
+.job li { margin-bottom: 6px; font-size: 1rem; }
+.edu { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.edu li { display: flex; justify-content: space-between; gap: 4px 20px; flex-wrap: wrap; }
+.edu span { color: var(--ink-soft); }
+
+@media print {
+  .site-header, .site-footer, .no-print, .skip { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main#main { padding: 0; }
+  .wrap { max-width: none; padding: 0; }
+  .r-section { padding: 14px 0; }
+  .job { break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  .tags li { border-color: #bbb; }
+}

@@ -91,7 +91,7 @@ e = html.escape
 LI_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>'
 GH_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>'
 
-NAV = [("Home", "/"), ("Projects", "/projects/"), ("Contact", "/contact/")]
+NAV = [("Home", "/"), ("Projects", "/projects/"), ("Resume", "/resume/"), ("Contact", "/contact/")]
 
 
 def write(path, text):
@@ -139,7 +139,7 @@ def page(path, title, desc, section, body, extra_foot=""):
   <footer class="site-footer">
     <div class="wrap">
       <span>&copy; <span id="yr"></span> {e(PROFILE['name'])}</span>
-      <span><a href="{PROFILE['linkedin']}" rel="noopener">LinkedIn</a> &middot; <a href="{PROFILE['github']}" rel="noopener">GitHub</a> &middot; <a href="mailto:{PROFILE['email']}">Email</a> &middot; <a href="{PROFILE['resume']}" rel="noopener">Resume</a></span>
+      <span><a href="{PROFILE['linkedin']}" rel="noopener">LinkedIn</a> &middot; <a href="{PROFILE['github']}" rel="noopener">GitHub</a> &middot; <a href="mailto:{PROFILE['email']}">Email</a> &middot; <a href="/resume/">Resume</a></span>
     </div>
   </footer>
   <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>{extra_foot}
@@ -280,7 +280,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
         <div class="social">
           <a href="{PROFILE['linkedin']}" rel="noopener" target="_blank">{LI_SVG} LinkedIn</a>
           <a href="{PROFILE['github']}" rel="noopener" target="_blank">{GH_SVG} GitHub</a>
-          <a href="{PROFILE['resume']}" rel="noopener" target="_blank">Resume</a>
+          <a href="/resume/">Resume</a>
         </div>
       </div>
     </div>
@@ -327,7 +327,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
       <div class="wrap">
         <h2>Let&rsquo;s work together</h2>
         <p>Open to conversations about analytics, systems, and automation work.</p>
-        <div class="actions center"><a class="btn" href="mailto:{PROFILE['email']}">Email me</a><a class="btn ghost" href="{PROFILE['resume']}" rel="noopener" target="_blank">Download resume</a></div>
+        <div class="actions center"><a class="btn" href="mailto:{PROFILE['email']}">Email me</a><a class="btn ghost" href="/resume/">View resume</a></div>
       </div>
     </section>
   </main>""", extra_foot='\n  <script src="/assets/chat.js"></script>')
@@ -430,6 +430,8 @@ detail_page(by["crestwood-home-hearth"],
 {tableau("viz-chh", "CrestwoodHomeHearth/CHHStory", "Crestwood Home &amp; Hearth Customers")}""",
   extra_foot=tableau_script("viz-chh"))
 
+exec(open(os.path.join(ROOT, "resume.py")).read())
+
 # Contact
 page("/contact/", "Contact", "Get in touch with David Creason: technical solutions, data analysis, and operational leadership.", "Contact", f"""  <main id="main">
     <div class="wrap contact-card">
@@ -441,7 +443,7 @@ page("/contact/", "Contact", "Get in touch with David Creason: technical solutio
         <p>Whether you&rsquo;re looking to collaborate, discuss a potential opportunity, or just connect, I&rsquo;d love to hear from you. Feel free to reach out with any questions about my experience, skills, or how I can contribute to your team.</p>
         <div class="actions">
           <a class="btn" href="mailto:{PROFILE['email']}">&#9993; Let&rsquo;s start the conversation</a>
-          <a class="btn ghost" href="{PROFILE['resume']}" rel="noopener" target="_blank">Download my resume</a>
+          <a class="btn ghost" href="/resume/">View my resume</a>
           <a class="btn ghost" href="{PROFILE['linkedin']}" rel="noopener" target="_blank">LinkedIn</a>
         </div>
       </div>

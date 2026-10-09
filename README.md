@@ -12,6 +12,9 @@ python3 build.py
 git add -A && git commit -m "Update projects" && git push
 ```
 
+The Resume page is generated from `resume.py`. When your resume changes, update that file and replace
+`assets/David_Creason_Resume.pdf`.
+
 Project images go in `assets/projects/` (800x500 works well). Each project gets a detail page at `/projects/<slug>/`;
 write its body in the `detail_page(...)` calls near the bottom of `build.py`.
 
