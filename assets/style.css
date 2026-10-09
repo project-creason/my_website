@@ -267,3 +267,6 @@ button.btn { cursor: pointer; font-family: var(--head); }
   a { color: #000; text-decoration: none; }
   .tags li { border-color: #bbb; }
 }
+.resume-head .specialties { margin: 10px 0 0; font: 600 .78rem var(--head); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.plain { padding-left: 20px; margin: 0; }
+.hero .tagline { max-width: 62ch; }

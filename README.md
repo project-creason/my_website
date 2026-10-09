@@ -12,8 +12,24 @@ python3 build.py
 git add -A && git commit -m "Update projects" && git push
 ```
 
-The Resume page is generated from `resume.py`. When your resume changes, update that file and replace
-`assets/David_Creason_Resume.pdf`.
+### The resume PDF is the source of truth
+
+`assets/David_Creason_Resume.pdf` drives the site. On every build, `resume_source.py` reads it and fills in your name,
+headline, the homepage summary line, your current role, education, and the entire `/resume/` page.
+
+**Phone numbers are never published.** The build removes any phone number from the page text, whites it out of the PDF
+itself, and refuses to finish if one appears in any page.
+
+To update your resume:
+
+```bash
+cp ~/path/to/new_resume.pdf assets/David_Creason_Resume.pdf
+python3 build.py          # needs: pip install pymupdf
+git add -A && git commit -m "Update resume" && git push
+```
+
+Always run the build before committing a new PDF. Uploading a PDF straight through GitHub's website skips the build,
+so its phone number would not be removed.
 
 Project images go in `assets/projects/` (800x500 works well). Each project gets a detail page at `/projects/<slug>/`;
 write its body in the `detail_page(...)` calls near the bottom of `build.py`.

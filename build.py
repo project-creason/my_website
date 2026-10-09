@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """Builds davidcreason.com into plain static HTML.
 
-Edit the PROJECTS / PROFILE data below (or the page bodies), then run:
+The resume PDF (assets/David_Creason_Resume.pdf) is the source of truth: your name,
+headline, summary, current role, education, and the whole /resume/ page are read
+from it on every build, and any phone number is removed from both the pages and
+the PDF. To update, replace the PDF and run the build.
+
+Projects and links are edited in the PROJECTS / PROFILE data below. Then run:
 
     python3 build.py
 
@@ -9,14 +14,27 @@ and commit the generated .html files. GitHub Pages serves them as-is.
 """
 import html
 import os
+import re
+
+from resume_source import PHONE, load_resume, redact_phone_numbers
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://www.davidcreason.com"
+RESUME_PDF = os.path.join(ROOT, "assets", "David_Creason_Resume.pdf")
+
+# ---- Source of truth: the resume PDF --------------------------------------
+_removed = redact_phone_numbers(RESUME_PDF)
+if _removed:
+    print(f"Removed {_removed} phone number(s) from the resume PDF.")
+RESUME = load_resume(RESUME_PDF)
+_current = RESUME["experience"][0] if RESUME["experience"] else None
+_first_sentence = re.split(r"(?<=[.!?])\s", RESUME["summary"], maxsplit=1)[0]
 
 PROFILE = {
-    "name": "David Creason",
-    "role": "Applications Systems Analyst",
-    "tagline": "I turn messy processes and data into tools people actually use: analytics, workflow automation, and rule-driven web apps.",
+    "name": RESUME["name"],
+    "role": RESUME["headline"],
+    "tagline": _first_sentence,
+    "current": f"{_current['title']} at {_current['org']}" if _current else "",
     "linkedin": "https://www.linkedin.com/in/dcreason/",
     "github": "https://github.com/project-creason",
     "resume": "/assets/David_Creason_Resume.pdf",
@@ -78,13 +96,17 @@ PROJECTS = [
     },
 ]
 
-EDUCATION = [
-    "MBA, Amberton University (in progress)",
-    "M.S., Bellarmine University",
-    "B.S., University of Phoenix",
-    "ITIL 4 Foundation",
-    "Google Data Analytics Certificate",
-]
+EDUCATION = [f"{deg}, {school}" if school else deg for deg, school in RESUME["education"]]
+
+# Facts from the resume used in project copy
+_chh = next((j for j in RESUME["experience"] if "Crestwood Home" in j["org"]), None)
+if _chh:
+    for _p in PROJECTS:
+        if _p["slug"] == "crestwood-home-hearth":
+            _yrs = re.findall(r"\d{4}", _chh["dates"])
+            _span = f" from {_yrs[0]} to {_yrs[-1]}" if len(_yrs) >= 2 else ""
+            _p["summary"] = (f"Mapped the zip codes and counties served by Crestwood Home & Hearth, the field service "
+                             f"business I founded and ran{_span}.")
 
 # --------------------------------------------------------------------------- helpers
 e = html.escape
@@ -316,7 +338,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
           <p>Curious about my experience, leadership, or technical skills? This assistant is trained on my professional background and can answer in seconds, any time of day.</p>
           <p>Prefer a person? <a href="/contact/">Reach out directly</a>.</p>
           <div class="facts">
-            <div><h3>Today</h3><p>{e(PROFILE['role'])} at Ventas, Inc.</p></div>
+            <div><h3>Today</h3><p>{e(PROFILE['current'])}</p></div>
             <div><h3>Education &amp; certifications</h3><ul>{edu}</ul></div>
           </div>
         </div>
@@ -466,3 +488,13 @@ page("/404/", "Page not found", "Page not found.", "", """  <main id="main">
 os.replace(os.path.join(ROOT, "404/index.html"), os.path.join(ROOT, "404.html"))
 os.rmdir(os.path.join(ROOT, "404"))
 print("Built", len(PROJECTS), "projects.")
+
+# ---- Final safety check: no phone number anywhere in the published pages ----
+for _dir, _, _files in os.walk(ROOT):
+    if "/.git" in _dir:
+        continue
+    for _f in _files:
+        if _f.endswith(".html"):
+            _txt = open(os.path.join(_dir, _f)).read()
+            assert not PHONE.search(_txt), f"Phone number found in {_f}; refusing to publish."
+print("Checked: no phone numbers in any page.")
