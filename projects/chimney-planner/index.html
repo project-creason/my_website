@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DuraTech Chimney Planner · David Creason</title>
+  <meta name="description" content="Enter your home&#x27;s measurements and get a complete DuraVent DuraTech chimney parts list that follows the manufacturer&#x27;s installation rules and NFPA 211.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/chimney-planner/">
+  <meta property="og:title" content="DuraTech Chimney Planner · David Creason">
+  <meta property="og:description" content="Enter your home&#x27;s measurements and get a complete DuraVent DuraTech chimney parts list that follows the manufacturer&#x27;s installation rules and NFPA 211.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/chimney-planner/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/headshot.jpg">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge active">Live · in development</span><span>2026</span></p>
+      <h1 class="page-title">DuraTech Chimney Planner</h1>
+      <p class="lede">Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: describe the installation and it returns every part you need, with quantities and part numbers.</p>
+      <ul class="tags"><li>JavaScript</li><li>Rules engine</li><li>CSV → JSON catalog</li><li>GitHub Pages</li></ul>
+      <div class="actions"><a class="btn" href="https://project-creason.github.io/chimney_planner/" rel="noopener" target="_blank">Launch the planner</a><a class="btn ghost" href="https://github.com/project-creason/chimney_planner" rel="noopener" target="_blank">Source on GitHub</a></div>
+      <img class="hero-shot" src="/assets/projects/chimney-planner.jpg" alt="The planner's form and generated parts list">
+      <div class="cols">
+        <section>
+          <h2>What it does</h2>
+          <ul>
+            <li>Walks you through the appliance, ceiling, attic, and roof measurements, or loads a worked example to start from.</li>
+            <li>Applies the strictest rule among the DuraVent guideline, NFPA 211, and your appliance manual&rsquo;s own limits.</li>
+            <li>Builds the parts list by location (ceiling, chimney pipe, attic, roof, top) and flags anything to double-check.</li>
+            <li>Exports the list to CSV for ordering.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>How it&rsquo;s built</h2>
+          <ul>
+            <li>The DuraVent catalog is kept as editable CSV files, compiled to JSON for the site.</li>
+            <li>All the logic runs in the browser in plain JavaScript, with no server or database.</li>
+            <li>Hosted free on GitHub Pages.</li>
+            <li>Instead of a stove database that would always be out of date, users enter their appliance&rsquo;s own requirements.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li>Offsets on through-the-wall installations</li>
+            <li>Free-standing stove placement and stovepipe</li>
+            <li>The rest of DuraVent&rsquo;s residential product lines</li>
+            <li>AI that reads an appliance manual and fills in its requirements</li>
+          </ul>
+        </section>
+      </div>
+      <p class="note">A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.</p>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="mailto:davidcreason@gmail.com">Email</a> &middot; <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,17 +1,29 @@
 # davidcreason.com
 
-Personal site for David Creason. Plain static HTML/CSS/JS, hosted free on GitHub Pages. No build step.
+Personal site for David Creason. Plain static HTML/CSS/JS, hosted free on GitHub Pages.
+
+## Adding or updating a project
+
+All content lives in `build.py`: the `PROJECTS` list (title, status `active`/`past`, summary, tags, image, links),
+`PROFILE`, and `EDUCATION`. Edit it, then run:
+
+```bash
+python3 build.py
+git add -A && git commit -m "Update projects" && git push
+```
+
+Project images go in `assets/projects/` (800x500 works well). Each project gets a detail page at `/projects/<slug>/`;
+write its body in the `detail_page(...)` calls near the bottom of `build.py`.
 
 ```
-index.html                         Home (vision, intro, AI resume chat)
-data-viz/index.html                Portfolio index
-data-viz/crestwood-home-hearth/    Tableau Public embed
-data-viz/louisville-crime/         Key findings + Tableau Public embed
-contact/index.html                 Contact, resume, LinkedIn
-home/index.html                    Redirects the old Google Sites /home URL to /
-404.html                           Not-found page
-assets/                            style.css, chat.js, headshot.jpg, favicon.svg
-CNAME                              Custom domain for GitHub Pages
+index.html                     Home: hero, active + past projects, AI assistant, contact CTA
+projects/                      Project index and one page per project
+contact/index.html             Contact, resume, LinkedIn
+home/, data-viz/...            Redirects from old URLs
+404.html                       Not-found page
+assets/                        style.css, chat.js, headshot, favicon, project images
+build.py                       Generates all of the above
+CNAME                          Custom domain for GitHub Pages
 ```
 
 URLs match the old Google Sites paths, so existing links keep working.

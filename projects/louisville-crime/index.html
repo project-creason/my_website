@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Louisville Crime, 2024 · David Creason</title>
+  <meta name="description" content="Analysis of a year of reported crime in Louisville, KY: weather, moon phase, geography, holidays, and timing. Hot days drive crime up; full moons don&#x27;t.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/louisville-crime/">
+  <meta property="og:title" content="Louisville Crime, 2024 · David Creason">
+  <meta property="og:description" content="Analysis of a year of reported crime in Louisville, KY: weather, moon phase, geography, holidays, and timing. Hot days drive crime up; full moons don&#x27;t.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/louisville-crime/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/headshot.jpg">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge past">Completed</span><span>2025</span></p>
+      <h1 class="page-title">Louisville Crime, 2024</h1>
+      <p class="lede">This workbook contains information about reported crimes in 2024 in Louisville, KY.</p>
+      <ul class="tags"><li>Tableau</li><li>Public data</li><li>Correlation analysis</li></ul>
+      
+      <h2 style="margin-top:40px">Key findings</h2>
+      <ul class="findings">
+        <li><strong>Lunar influence</strong><span>No statistically significant relationship between full moons and higher crime rates.</span></li>
+        <li><strong>Temperature</strong><span>A positive correlation: as daily temperatures rise, so does the number of crimes.</span></li>
+        <li><strong>Geography</strong><span>The west side of the city sees a higher incidence of criminal activity than other areas.</span></li>
+        <li><strong>Holidays</strong><span>Thanksgiving Day recorded the fewest crimes, suggesting holidays may influence crime patterns.</span></li>
+        <li><strong>Seasonality</strong><span>Q3 had the highest average monthly crime counts.</span></li>
+        <li><strong>Day of week</strong><span>Mondays registered more crimes than any other day.</span></li>
+        <li><strong>Peak day</strong><span>July 22 had the single highest crime count of the year.</span></li>
+      </ul>
+      <div class="viz-frame">
+        <div class="tableauPlaceholder" id="viz-lou" style="position: relative">
+          <noscript><a href="https://public.tableau.com/views/Louisville_KY_Crime_Stats/LouisvilleCrime"><img alt="Louisville, KY Crime Info" src="https://public.tableau.com/static/images/Lo/Louisville_KY_Crime_Stats/LouisvilleCrime/1.png" style="border:none"></a></noscript>
+          <object class="tableauViz" style="display:none;">
+            <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F">
+            <param name="embed_code_version" value="3">
+            <param name="site_root" value="">
+            <param name="name" value="Louisville_KY_Crime_Stats/LouisvilleCrime">
+            <param name="tabs" value="no">
+            <param name="toolbar" value="yes">
+            <param name="static_image" value="https://public.tableau.com/static/images/Lo/Louisville_KY_Crime_Stats/LouisvilleCrime/1.png">
+            <param name="animate_transition" value="yes">
+            <param name="display_static_image" value="yes">
+            <param name="display_spinner" value="yes">
+            <param name="display_overlay" value="yes">
+            <param name="display_count" value="yes">
+            <param name="language" value="en-US">
+          </object>
+        </div>
+      </div>
+      <p class="small"><a href="https://public.tableau.com/views/Louisville_KY_Crime_Stats/LouisvilleCrime" rel="noopener" target="_blank">Open full screen on Tableau Public &rarr;</a></p>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="mailto:davidcreason@gmail.com">Email</a> &middot; <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script>
+    (function () {
+      var div = document.getElementById("viz-lou");
+      var viz = div.getElementsByTagName("object")[0];
+      function size() {
+        var w = div.offsetWidth;
+        viz.style.width = "100%";
+        viz.style.height = (w > 800 ? Math.round(w * 0.75) : w > 500 ? Math.round(w * 0.9) : 900) + "px";
+      }
+      size(); window.addEventListener("resize", size);
+      var s = document.createElement("script");
+      s.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
+      viz.parentNode.insertBefore(s, viz);
+    })();
+  </script>
+</body>
+</html>

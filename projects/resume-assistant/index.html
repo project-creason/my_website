@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Resume Assistant · David Creason</title>
+  <meta name="description" content="A chat assistant grounded in my work history that answers recruiters&#x27; questions about my experience, skills, and education, with streamed responses from a serverless API.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/resume-assistant/">
+  <meta property="og:title" content="AI Resume Assistant · David Creason">
+  <meta property="og:description" content="A chat assistant grounded in my work history that answers recruiters&#x27; questions about my experience, skills, and education, with streamed responses from a serverless API.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/resume-assistant/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/headshot.jpg">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge active">Live</span><span>2025</span></p>
+      <h1 class="page-title">AI Resume Assistant</h1>
+      <p class="lede">Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience and get an immediate answer.</p>
+      <ul class="tags"><li>LLM</li><li>Vercel serverless</li><li>Streaming</li><li>Vanilla JS</li></ul>
+      <div class="actions"><a class="btn" href="/#ask">Try it</a></div>
+      <div class="cols">
+        <section>
+          <h2>How it works</h2>
+          <ul>
+            <li>A serverless function on Vercel holds my professional background and calls a large language model.</li>
+            <li>Answers stream back word by word, so there&rsquo;s no waiting on a full response.</li>
+            <li>The chat window is about 100 lines of dependency-free JavaScript that drops into any page.</li>
+            <li>Quick-question chips cover what people ask most.</li>
+          </ul>
+        </section>
+      </div>
+      <h2 style="margin-top:40px">Try it</h2>
+      <div class="chat-demo">
+      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience">
+        <div id="chips-wrapper">
+          <button class="chip" data-q="What is David's core skill set?">Core Skills</button>
+          <button class="chip" data-q="What roles is David targeting?">Target Roles</button>
+          <button class="chip" data-q="Tell me about David's work at Ventas.">Ventas Experience</button>
+          <button class="chip" data-q="What is David's education background?">Education &amp; Certs</button>
+        </div>
+        <div id="chat-box" aria-live="polite">
+          <div class="msg bot">Hi! I&rsquo;m an AI assistant trained on David Creason&rsquo;s professional experience. Ask me anything or select a topic above!</div>
+        </div>
+        <div id="input-area">
+          <input type="text" id="user-input" placeholder="Ask a question..." aria-label="Your question">
+          <button id="send-btn">Send</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="mailto:davidcreason@gmail.com">Email</a> &middot; <a href="https://drive.google.com/file/d/1_Q1GjcjZpXLYZxkNxy5cPpm6NNpjwzVP/view?usp=sharing" rel="noopener">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script src="/assets/chat.js"></script>
+</body>
+</html>
