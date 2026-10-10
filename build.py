@@ -93,6 +93,18 @@ PROJECTS = [
         "image_alt": "Crestwood Home and Hearth customer map preview",
         "links": [("View story", "/projects/crestwood-home-hearth/", True)],
     },
+    {
+        "slug": "meal-delivery-cms",
+        "title": "Customer Management System for a Meal-Delivery Business",
+        "status": "past",
+        "badge": "Graduate capstone",
+        "year": "2011",
+        "summary": "Team capstone for my M.S. at Bellarmine: analyzed a local meal-delivery company's operations and delivered a working system for customers, orders, meal plans, allergies, and delivery scheduling, with process models and a user's guide.",
+        "tags": ["Systems analysis & design", "BPMN process modeling", "Database application", "Technical documentation"],
+        "image": "/assets/projects/capstone-cms.jpg",
+        "image_alt": "A swim-lane business process model for creating a menu",
+        "links": [("Read more", "/projects/meal-delivery-cms/", True)],
+    },
 ]
 
 EDUCATION = [f"{deg}, {school}" if school else deg for deg, school in RESUME["education"]]
@@ -491,6 +503,41 @@ detail_page(by["crestwood-home-hearth"],
   f"""      <div style="margin-top:32px"></div>
 {tableau("viz-chh", "CrestwoodHomeHearth/CHHStory", "Crestwood Home &amp; Hearth Customers")}""",
   extra_foot=tableau_script("viz-chh"))
+
+# Meal-delivery CMS (Bellarmine capstone)
+detail_page(by["meal-delivery-cms"],
+  "For the two-course IT Systems Project capstone in my M.S. in Applied Information Technology, our team analyzed the operations of a local meal-delivery company and built a customer management system around how it actually worked.",
+  """      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/capstone-cms.jpg" alt="Swim-lane process model for creating and publishing a menu">
+        <figcaption>One of the project's process models (menu creation), redrawn from the original 2011 diagram.</figcaption>
+      </figure>
+      <div class="cols">
+        <section>
+          <h2>What the business needed</h2>
+          <ul>
+            <li>Recurring meal-plan orders with start and end dates, quantities, and discounts.</li>
+            <li>Customer allergies and food aversions tracked and checked against orders, since a miss is a safety issue.</li>
+            <li>Vacation holds and multiple delivery locations, so each day's cooking and delivery list is right.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>What we delivered</h2>
+          <ul>
+            <li>Business process models (BPMN swim lanes) of how the business ran, from creating menus to daily production and delivery.</li>
+            <li>A database application to manage customers, orders, meal plans and pricing, discounts, delivery locations, and vacation holds.</li>
+            <li>Allergies flagged separately from preferences, and carried through to the affected meal plans.</li>
+            <li>Operational reports: daily orders, deliveries by meal plan and location, allergies and aversions, vacations, customer list, and billing.</li>
+            <li>A step-by-step user's guide written for non-technical staff, including identity checks before account details are discussed.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Why it still matters</h2>
+          <ul>
+            <li>It's the same work I do today at enterprise scale: understand the business process first, model it, then build the system and the controls around it.</li>
+            <li>Data quality, safety-critical rules, and documentation people actually use were part of the design from day one.</li>
+          </ul>
+        </section>
+      </div>""")
 
 exec(open(os.path.join(ROOT, "resume.py")).read())
 

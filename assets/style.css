@@ -317,3 +317,5 @@ button.btn { cursor: pointer; font-family: var(--head); }
 #chat-container.flash { animation: chat-flash 1.6s ease-in-out; }
 @keyframes chat-flash-calm { 0%, 85% { outline: 3px solid var(--accent); outline-offset: 3px; } 100% { outline: 3px solid transparent; } }
 @media (prefers-reduced-motion: reduce) { #chat-container.flash { animation: chat-flash-calm 1.6s linear; } }
+.shot-fig { margin: 0; }
+.shot-fig figcaption { font-size: .88rem; color: var(--ink-soft); margin-top: 4px; }
