@@ -105,6 +105,18 @@ PROJECTS = [
         "image_alt": "A swim-lane business process model for creating a menu",
         "links": [("Read more", "/projects/meal-delivery-cms/", True)],
     },
+    {
+        "slug": "itil-service-management",
+        "title": "ITIL Service Management Assessments",
+        "status": "past",
+        "badge": "Graduate coursework",
+        "year": "2011",
+        "summary": "For my M.S. ITIL course, I assessed two fictional companies, a global resort operator and a mobile music service, and wrote recommendations to IT leadership on service portfolios, SLAs, supplier contracts, continuity, and change management.",
+        "tags": ["ITIL service lifecycle", "Service level management", "IT service continuity", "Supplier management"],
+        "image": "/assets/projects/itil-assessments.jpg",
+        "image_alt": "Recovery tiers assigned to each IT service by business impact",
+        "links": [("Read more", "/projects/itil-service-management/", True)],
+    },
 ]
 
 EDUCATION = [f"{deg}, {school}" if school else deg for deg, school in RESUME["education"]]
@@ -538,6 +550,86 @@ detail_page(by["meal-delivery-cms"],
           </ul>
         </section>
       </div>""")
+
+# ITIL coursework (Bellarmine AIT 531)
+_tiers = [
+    ("Immediate recovery", ["Reservations", "Website", "Lodging", "Customer relationship management", "Club management"],
+     "Revenue stops the moment these go down. Reservations and the website serve guests across time zones around the clock, and club members are the most loyal customers."),
+    ("Fast recovery", ["Financial management", "Material management"],
+     "Used by nearly every division, but guests can still check in and stay while they're down. Purchasing still matters: guests notice when the restaurant runs out of something."),
+    ("Gradual recovery", ["Human resources"],
+     "Not critical to daily operations, with paper records as a fallback. Restoring from backup is acceptable, and faster options would cost more than the downtime."),
+    ("Manual workaround", ["Ski management", "Golf management"],
+     "Each resort can take bookings by phone and in a daily planner until the system returns, the way it worked before computers."),
+]
+_tier_rows = "".join(
+    f"<tr><th scope=\"row\">{e(t)}</th><td>{e(', '.join(svcs))}</td><td>{e(why)}</td></tr>" for t, svcs, why in _tiers
+)
+detail_page(by["itil-service-management"],
+  "In my M.S. course on IT Planning &amp; Service Management Using ITIL, each assignment put me inside a fictional company with real-world IT problems and asked for recommendations to leadership. The companies were invented for the course; the analysis and recommendations below are mine.",
+  f"""      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/itil-assessments.jpg" alt="Recovery tiers assigned to each IT service by business impact">
+        <figcaption>From my continuity plan for the resort operator: every service assigned a recovery tier by business impact.</figcaption>
+      </figure>
+
+      <h2 style="margin-top:40px">Resort operator: an ITIL roadmap for the VP of IT</h2>
+      <p>A global resort company with no defined list of IT services, weak service levels, and aging systems nobody had retired.</p>
+      <div class="cols">
+        <section>
+          <h3>Service portfolio</h3>
+          <ul>
+            <li>Defined the portfolio: a pipeline, a catalog of 12 live services (from the service desk to reservations, lodging, ski, golf, and club management), and a retired list.</li>
+            <li>Showed how never retiring services had left legacy systems in place.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Service levels &amp; suppliers</h3>
+          <ul>
+            <li>Replaced unmeasurable SLAs with the full set: service level requirements, measurable SLAs, internal OLAs, and a service improvement plan.</li>
+            <li>Specified OLAs with every department, Finance, and HR.</li>
+            <li>Identified six outside suppliers that needed underpinning contracts, including 24/7 support for the business-critical website.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Continuity</h3>
+          <ul>
+            <li>Assigned every service a recovery tier based on what an outage would cost the business (below).</li>
+          </ul>
+        </section>
+      </div>
+      <div class="table-wrap">
+        <table class="tiers">
+          <thead><tr><th scope="col">Tier</th><th scope="col">Services</th><th scope="col">Why</th></tr></thead>
+          <tbody>{_tier_rows}</tbody>
+        </table>
+      </div>
+
+      <h2 style="margin-top:44px">Mobile music service: fix the foundation before expanding</h2>
+      <p>A fast-growing company weighing two new lines of business, a mobile game and a dating app, after a 48-hour outage.</p>
+      <div class="cols">
+        <section>
+          <h3>Recommendation</h3>
+          <ul>
+            <li>Advised leadership to hold off on both launches until core IT service management was in place.</li>
+            <li>In an earlier memo to leadership, explained what ITSM is and why it would align IT with the business: utility and warranty, clear ownership, and accountability.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Top three risks</h3>
+          <ul>
+            <li><strong>Availability:</strong> no formal service levels, and an implied 99.999% target already missed.</li>
+            <li><strong>People and legacy tech:</strong> a COBOL finance and procurement system, a shrinking talent pool, and falling morale.</li>
+            <li><strong>Change management:</strong> each office configured differently, no release management, and no known-error database.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Why it still matters</h3>
+          <ul>
+            <li>It's the same judgment I use today: tie IT decisions to business impact, standardize before you scale, and put controls around change.</li>
+          </ul>
+        </section>
+      </div>
+      <p class="note">LDI and Mobile Music are fictional companies created for the course. The case materials belong to their authors and aren't reproduced here.</p>""")
 
 exec(open(os.path.join(ROOT, "resume.py")).read())
 

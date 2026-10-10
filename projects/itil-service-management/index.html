@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>ITIL Service Management Assessments · David Creason</title>
+  <meta name="description" content="For my M.S. ITIL course, I assessed two fictional companies, a global resort operator and a mobile music service, and wrote recommendations to IT leadership on service portfolios, SLAs, supplier contracts, continuity, and change management.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/itil-service-management/">
+  <meta property="og:title" content="ITIL Service Management Assessments · David Creason">
+  <meta property="og:description" content="For my M.S. ITIL course, I assessed two fictional companies, a global resort operator and a mobile music service, and wrote recommendations to IT leadership on service portfolios, SLAs, supplier contracts, continuity, and change management.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/itil-service-management/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="David Creason: Enterprise Applications &amp; Systems Integration Lead | Business Systems Architect">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/resume/">Resume</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge past">Graduate coursework</span><span>2011</span></p>
+      <h1 class="page-title">ITIL Service Management Assessments</h1>
+      <p class="lede">In my M.S. course on IT Planning &amp; Service Management Using ITIL, each assignment put me inside a fictional company with real-world IT problems and asked for recommendations to leadership. The companies were invented for the course; the analysis and recommendations below are mine.</p>
+      <ul class="tags"><li>ITIL service lifecycle</li><li>Service level management</li><li>IT service continuity</li><li>Supplier management</li></ul>
+      
+      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/itil-assessments.jpg" alt="Recovery tiers assigned to each IT service by business impact">
+        <figcaption>From my continuity plan for the resort operator: every service assigned a recovery tier by business impact.</figcaption>
+      </figure>
+
+      <h2 style="margin-top:40px">Resort operator: an ITIL roadmap for the VP of IT</h2>
+      <p>A global resort company with no defined list of IT services, weak service levels, and aging systems nobody had retired.</p>
+      <div class="cols">
+        <section>
+          <h3>Service portfolio</h3>
+          <ul>
+            <li>Defined the portfolio: a pipeline, a catalog of 12 live services (from the service desk to reservations, lodging, ski, golf, and club management), and a retired list.</li>
+            <li>Showed how never retiring services had left legacy systems in place.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Service levels &amp; suppliers</h3>
+          <ul>
+            <li>Replaced unmeasurable SLAs with the full set: service level requirements, measurable SLAs, internal OLAs, and a service improvement plan.</li>
+            <li>Specified OLAs with every department, Finance, and HR.</li>
+            <li>Identified six outside suppliers that needed underpinning contracts, including 24/7 support for the business-critical website.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Continuity</h3>
+          <ul>
+            <li>Assigned every service a recovery tier based on what an outage would cost the business (below).</li>
+          </ul>
+        </section>
+      </div>
+      <div class="table-wrap">
+        <table class="tiers">
+          <thead><tr><th scope="col">Tier</th><th scope="col">Services</th><th scope="col">Why</th></tr></thead>
+          <tbody><tr><th scope="row">Immediate recovery</th><td>Reservations, Website, Lodging, Customer relationship management, Club management</td><td>Revenue stops the moment these go down. Reservations and the website serve guests across time zones around the clock, and club members are the most loyal customers.</td></tr><tr><th scope="row">Fast recovery</th><td>Financial management, Material management</td><td>Used by nearly every division, but guests can still check in and stay while they&#x27;re down. Purchasing still matters: guests notice when the restaurant runs out of something.</td></tr><tr><th scope="row">Gradual recovery</th><td>Human resources</td><td>Not critical to daily operations, with paper records as a fallback. Restoring from backup is acceptable, and faster options would cost more than the downtime.</td></tr><tr><th scope="row">Manual workaround</th><td>Ski management, Golf management</td><td>Each resort can take bookings by phone and in a daily planner until the system returns, the way it worked before computers.</td></tr></tbody>
+        </table>
+      </div>
+
+      <h2 style="margin-top:44px">Mobile music service: fix the foundation before expanding</h2>
+      <p>A fast-growing company weighing two new lines of business, a mobile game and a dating app, after a 48-hour outage.</p>
+      <div class="cols">
+        <section>
+          <h3>Recommendation</h3>
+          <ul>
+            <li>Advised leadership to hold off on both launches until core IT service management was in place.</li>
+            <li>In an earlier memo to leadership, explained what ITSM is and why it would align IT with the business: utility and warranty, clear ownership, and accountability.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Top three risks</h3>
+          <ul>
+            <li><strong>Availability:</strong> no formal service levels, and an implied 99.999% target already missed.</li>
+            <li><strong>People and legacy tech:</strong> a COBOL finance and procurement system, a shrinking talent pool, and falling morale.</li>
+            <li><strong>Change management:</strong> each office configured differently, no release management, and no known-error database.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Why it still matters</h3>
+          <ul>
+            <li>It's the same judgment I use today: tie IT decisions to business impact, standardize before you scale, and put controls around change.</li>
+          </ul>
+        </section>
+      </div>
+      <p class="note">LDI and Mobile Music are fictional companies created for the course. The case materials belong to their authors and aren't reproduced here.</p>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

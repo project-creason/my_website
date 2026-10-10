@@ -319,3 +319,10 @@ button.btn { cursor: pointer; font-family: var(--head); }
 @media (prefers-reduced-motion: reduce) { #chat-container.flash { animation: chat-flash-calm 1.6s linear; } }
 .shot-fig { margin: 0; }
 .shot-fig figcaption { font-size: .88rem; color: var(--ink-soft); margin-top: 4px; }
+.cols h3 { font-size: 1.05rem; margin: 0 0 10px; }
+.table-wrap { overflow-x: auto; margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius); }
+.tiers { width: 100%; border-collapse: collapse; font-size: .97rem; background: var(--card); }
+.tiers th, .tiers td { text-align: left; vertical-align: top; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.tiers thead th { font: 700 .75rem var(--head); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); }
+.tiers tbody th { font: 600 .92rem var(--head); white-space: nowrap; color: var(--accent); }
+.tiers tr:last-child th, .tiers tr:last-child td { border-bottom: 0; }
