@@ -17,6 +17,12 @@ git add -A && git commit -m "Update projects" && git push
 `assets/David_Creason_Resume.pdf` drives the site. On every build, `resume_source.py` reads it and fills in your name,
 headline, the homepage summary line, your current role, education, and the entire `/resume/` page.
 
+The homepage's key-numbers band and certifications row also come from the resume. Each number is found by a pattern in
+`STAT_RULES` in `build.py`; if a new resume drops a phrase, that number disappears instead of going stale.
+
+**The site is hidden from search engines.** Every page has a `noindex` tag; it's meant to be shared by link.
+Don't add a robots.txt that blocks crawling, since search engines need to read the page to see `noindex`.
+
 **Phone numbers are never published.** The build removes any phone number from the page text, whites it out of the PDF
 itself, and refuses to finish if one appears in any page.
 

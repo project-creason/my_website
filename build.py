@@ -97,6 +97,33 @@ PROJECTS = [
 
 EDUCATION = [f"{deg}, {school}" if school else deg for deg, school in RESUME["education"]]
 
+# ---- Key numbers band: pulled from the resume text so it stays in sync ----
+# Each stat is a regex run against the resume. If a future resume drops the phrase,
+# that stat simply disappears (and the build says so) instead of showing a stale number.
+_resume_text = " ".join(
+    [RESUME["summary"]]
+    + [b for j in RESUME["experience"] for b in j["bullets"]]
+    + [b for o in RESUME["other"] for en in o["entries"] for b in en["bullets"]]
+)
+STAT_RULES = [
+    (r"over (\d+)\+? years", "{0}+", "years leading teams, platforms & M&A integrations"),
+    (r"([\d,]+)\+ active property entities", "{0}+", "property entities governed in Yardi ERP"),
+    (r"cycle times by over (\d+)%", "{0}%+", "less property setup time in M&A onboarding"),
+    (r"(\d+)% audit compliance", "{0}%", "audit compliance after new SOX release controls"),
+    (r"revenue past \$(\d+M)", "${0}+", "division revenue in year one post-merger"),
+    (r"~(\d+)% growth", "~{0}%", "revenue growth at the business I founded"),
+]
+STATS = []
+for _rx, _fmt, _label in STAT_RULES:
+    _m = re.search(_rx, _resume_text, re.I)
+    if _m:
+        STATS.append((_fmt.format(*_m.groups()), _label))
+    else:
+        print(f"Note: stat not found in resume, skipped: {_label}")
+
+_DEGREE = re.compile(r"\b(master|bachelor|associate|doctor|mba|m\.?s\.?|b\.?s\.?|ph\.?d)\b", re.I)
+CERTS = [(deg, school) for deg, school in RESUME["education"] if not _DEGREE.search(deg)]
+
 # Facts from the resume used in project copy
 _chh = next((j for j in RESUME["experience"] if "Crestwood Home" in j["org"]), None)
 if _chh:
@@ -134,6 +161,7 @@ def page(path, title, desc, section, body, extra_foot=""):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
   <title>{e(full_title)}</title>
   <meta name="description" content="{e(desc)}">
   <link rel="canonical" href="{canonical}">
@@ -173,6 +201,7 @@ def page(path, title, desc, section, body, extra_foot=""):
 def redirect(path, to):
     write(path.strip("/") + "/index.html", f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Redirecting…</title>
+<meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="{SITE}{to}">
 <meta http-equiv="refresh" content="0; url={to}">
 </head><body><a href="{to}">This page moved. Continue &rarr;</a></body></html>
@@ -307,6 +336,13 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
     </div>
   </section>
   <main id="main">
+    <section class="band stats-band" aria-label="Career highlights">
+      <div class="wrap">
+        <ul class="stats">
+{"".join(f'          <li><strong>{e(v)}</strong><span>{e(l)}</span></li>\n' for v, l in STATS)}        </ul>
+        {f'<p class="certs"><span class="certs-label">Certified</span>' + "".join(f'<span class="cert">{e(d)}<small>{e(sc)}</small></span>' for d, sc in CERTS) + '</p>' if CERTS else ''}
+      </div>
+    </section>
     <section class="band" id="ask">
       <div class="wrap grid-2">
         <div>
