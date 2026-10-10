@@ -169,7 +169,11 @@ def page(path, title, desc, section, body, extra_foot=""):
   <meta property="og:description" content="{e(desc)}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="{SITE}/assets/headshot.jpg">
+  <meta property="og:image" content="{SITE}/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{e(PROFILE['name'])}: {e(PROFILE['role'])}">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

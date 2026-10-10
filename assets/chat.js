@@ -85,3 +85,31 @@
     chip.addEventListener("click", () => sendMessage(chip.dataset.q))
   );
 })();
+
+// Draw attention to the assistant when someone arrives via "Try it" / "Ask my AI assistant".
+(function () {
+  const target = document.getElementById("ask");
+  const chat = document.getElementById("chat-container");
+  if (!target || !chat) return;
+
+  function flash() {
+    chat.classList.remove("flash");
+    void chat.offsetWidth; // restart the animation if it's already run
+    chat.classList.add("flash");
+  }
+  chat.addEventListener("animationend", () => chat.classList.remove("flash"));
+
+  // Arrived from another page (e.g. /projects/ -> /#ask)
+  if (location.hash === "#ask") setTimeout(flash, 450);
+
+  // Same-page links: smooth scroll, then flash once it's in view
+  document.querySelectorAll('a[href="#ask"], a[href="/#ask"]').forEach((a) =>
+    a.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      history.replaceState(null, "", "#ask");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      setTimeout(flash, reduce ? 0 : 550);
+    })
+  );
+})();

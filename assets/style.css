@@ -306,3 +306,14 @@ button.btn { cursor: pointer; font-family: var(--head); }
 .stats { grid-template-columns: repeat(2, 1fr); align-items: start; }
 @media (min-width: 640px) { .stats { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1000px) { .stats { grid-template-columns: repeat(6, 1fr); } }
+
+/* ---------- Flash the assistant on "Try it" ---------- */
+#ask { scroll-margin-top: 80px; }
+@keyframes chat-flash {
+  0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.08), 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); border-color: var(--line); }
+  20%, 60% { box-shadow: 0 6px 20px rgba(0,0,0,.08), 0 0 0 6px color-mix(in srgb, var(--accent) 45%, transparent); border-color: var(--accent); }
+  40%, 80% { box-shadow: 0 6px 20px rgba(0,0,0,.08), 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); border-color: var(--accent); }
+}
+#chat-container.flash { animation: chat-flash 1.6s ease-in-out; }
+@keyframes chat-flash-calm { 0%, 85% { outline: 3px solid var(--accent); outline-offset: 3px; } 100% { outline: 3px solid transparent; } }
+@media (prefers-reduced-motion: reduce) { #chat-container.flash { animation: chat-flash-calm 1.6s linear; } }
