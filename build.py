@@ -70,6 +70,21 @@ PROJECTS = [
         "links": [("Try it", "/#ask", True)],
     },
     {
+        "slug": "jobber-import-etl",
+        "title": "Vendor Price Sheet → Jobber Import ETL",
+        "status": "active",
+        "badge": "In development",
+        "year": "2026",
+        "summary": "A config-driven Python pipeline that turns any manufacturer's price sheet into a clean, validated Jobber product import, with every rejected row explained.",
+        "tags": ["Python", "pandas", "ETL", "Data quality", "Jobber"],
+        "image": "/assets/projects/jobber-etl.jpg",
+        "image_alt": "The four pipeline stages: extract, transform, validate, load",
+        "links": [
+            ("Read more", "/projects/jobber-import-etl/", True),
+            ("Source on GitHub", "https://github.com/project-creason/jobber_import_etl", False),
+        ],
+    },
+    {
         "slug": "louisville-crime",
         "title": "Louisville Crime, 2024",
         "status": "past",
@@ -672,6 +687,79 @@ redirect("/data-viz/louisville-crime/", "/projects/louisville-crime/")
 redirect("/data-viz/crestwood-home-hearth/", "/projects/crestwood-home-hearth/")
 
 # 404
+# Jobber import ETL (Crestwood Home & Hearth product catalog)
+_fixes = [
+    ("Prices stored as text", "List: \"6,022.00\"", "Cost: 6022"),
+    ("SKU needs a vendor prefix", "017-01-H-SM-RBC", "AFD 017-01-H-SM-RBC"),
+    ("Two apostrophes used as an inch mark", "9.69’’ (246MM) CEILING MOUNT POLE", "9.69\" (246MM) CEILING MOUNT POLE"),
+    ("Hidden control character from a Windows export", "8\"␝ x 5.5\"␝", "8\" x 5.5\""),
+    ("Escaped symbols", "COVER,AFD \\#435 BRDX LARGE", "COVER,AFD #435 BRDX LARGE"),
+    ("$0 placeholder row", "STAND - TUNGSTEN PORTABLE - BOX 2 OF 2, 0", "Rejected: zero price"),
+]
+_fix_rows = "".join(
+    f"<tr><th scope=\"row\">{e(what)}</th><td><code>{e(before)}</code></td><td><code>{e(after)}</code></td></tr>"
+    for what, before, after in _fixes
+)
+detail_page(by["jobber-import-etl"],
+  "Crestwood Home &amp; Hearth sold and installed products from many manufacturers, and Jobber, its field-service software, needed every one of them in its product list. Each manufacturer publishes its price sheet in its own layout, so each Jobber import file was built one vendor at a time. This pipeline replaces that with one repeatable run.",
+  f"""      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/jobber-etl.jpg" alt="The four pipeline stages: extract, transform, validate, load">
+        <figcaption>One command turns a folder of vendor price sheets into Jobber-ready imports.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>The problem</h2>
+          <ul>
+            <li>No two price sheets match. One manufacturer's sheet has part number, list, net, UPC, weight, and box dimensions; another has a model number and a single price.</li>
+            <li>Jobber accepts exactly five columns: name, description, price, taxable, and category.</li>
+            <li>The sheets carry small data problems that break an import or show up on a customer's quote: broken characters, inch marks, prices stored as text, placeholder rows, and duplicates.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The approach</h2>
+          <ul>
+            <li><strong>Extract:</strong> reads Excel or CSV, finds the header row under any title banner, detects the text encoding, and picks the right sheet.</li>
+            <li><strong>Transform:</strong> maps each vendor's columns to Jobber's five, adds the vendor prefix to the SKU, parses prices, and cleans the text.</li>
+            <li><strong>Validate:</strong> rows with no SKU, no price, or a $0 price, and duplicate SKUs, go to a rejects file with the reason.</li>
+            <li><strong>Load:</strong> writes the Jobber CSV, the rejects file, and a run report.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">What the cleanup actually fixes</h2>
+      <p>Every example below is a real row from a manufacturer's catalog.</p>
+      <div class="table-wrap">
+        <table class="tiers">
+          <thead><tr><th scope="col">Problem</th><th scope="col">In the price sheet</th><th scope="col">In the Jobber import</th></tr></thead>
+          <tbody>{_fix_rows}</tbody>
+        </table>
+      </div>
+
+      <div class="cols" style="margin-top:44px">
+        <section>
+          <h2>Design choices</h2>
+          <ul>
+            <li><strong>Configuration, not code.</strong> Each vendor is a short entry in a JSON file: which file names it matches, its SKU prefix, and which columns hold the SKU, description, and price. Adding a manufacturer takes a minute.</li>
+            <li><strong>Nothing disappears silently.</strong> Every dropped row lands in a rejects file with the reason, so a person can fix the source instead of guessing.</li>
+            <li><strong>Safe to re-run.</strong> Finished Jobber files are skipped, and SKUs that already carry a prefix don't get a second one.</li>
+            <li><strong>Pricing is a setting.</strong> Use the list price as is, or start from dealer cost with a markup.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Results so far</h2>
+          <ul>
+            <li>Tested on real rows from three manufacturers, chosen because they contain the problems above.</li>
+            <li>15 rows imported cleanly; 3 rejected, each with the correct reason: a missing price, a $0 item, and a duplicate part number.</li>
+          </ul>
+          <h2 style="margin-top:28px">Next</h2>
+          <ul>
+            <li>Run it on every full price sheet in the catalog.</li>
+            <li>Watch a shared Drive folder and convert new price sheets automatically when they arrive.</li>
+          </ul>
+        </section>
+      </div>""")
+
 page("/404/", "Page not found", "Page not found.", "", """  <main id="main">
     <div class="wrap">
       <h1 class="page-title">Page not found</h1>

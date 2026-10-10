@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Vendor Price Sheet → Jobber Import ETL · David Creason</title>
+  <meta name="description" content="A config-driven Python pipeline that turns any manufacturer&#x27;s price sheet into a clean, validated Jobber product import, with every rejected row explained.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/jobber-import-etl/">
+  <meta property="og:title" content="Vendor Price Sheet → Jobber Import ETL · David Creason">
+  <meta property="og:description" content="A config-driven Python pipeline that turns any manufacturer&#x27;s price sheet into a clean, validated Jobber product import, with every rejected row explained.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/jobber-import-etl/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="David Creason: Enterprise Applications &amp; Systems Integration Lead | Business Systems Architect">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/resume/">Resume</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge active">In development</span><span>2026</span></p>
+      <h1 class="page-title">Vendor Price Sheet → Jobber Import ETL</h1>
+      <p class="lede">Crestwood Home &amp; Hearth sold and installed products from many manufacturers, and Jobber, its field-service software, needed every one of them in its product list. Each manufacturer publishes its price sheet in its own layout, so each Jobber import file was built one vendor at a time. This pipeline replaces that with one repeatable run.</p>
+      <ul class="tags"><li>Python</li><li>pandas</li><li>ETL</li><li>Data quality</li><li>Jobber</li></ul>
+      <div class="actions"><a class="btn ghost" href="https://github.com/project-creason/jobber_import_etl" rel="noopener" target="_blank">Source on GitHub</a></div>
+      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/jobber-etl.jpg" alt="The four pipeline stages: extract, transform, validate, load">
+        <figcaption>One command turns a folder of vendor price sheets into Jobber-ready imports.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>The problem</h2>
+          <ul>
+            <li>No two price sheets match. One manufacturer's sheet has part number, list, net, UPC, weight, and box dimensions; another has a model number and a single price.</li>
+            <li>Jobber accepts exactly five columns: name, description, price, taxable, and category.</li>
+            <li>The sheets carry small data problems that break an import or show up on a customer's quote: broken characters, inch marks, prices stored as text, placeholder rows, and duplicates.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The approach</h2>
+          <ul>
+            <li><strong>Extract:</strong> reads Excel or CSV, finds the header row under any title banner, detects the text encoding, and picks the right sheet.</li>
+            <li><strong>Transform:</strong> maps each vendor's columns to Jobber's five, adds the vendor prefix to the SKU, parses prices, and cleans the text.</li>
+            <li><strong>Validate:</strong> rows with no SKU, no price, or a $0 price, and duplicate SKUs, go to a rejects file with the reason.</li>
+            <li><strong>Load:</strong> writes the Jobber CSV, the rejects file, and a run report.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">What the cleanup actually fixes</h2>
+      <p>Every example below is a real row from a manufacturer's catalog.</p>
+      <div class="table-wrap">
+        <table class="tiers">
+          <thead><tr><th scope="col">Problem</th><th scope="col">In the price sheet</th><th scope="col">In the Jobber import</th></tr></thead>
+          <tbody><tr><th scope="row">Prices stored as text</th><td><code>List: &quot;6,022.00&quot;</code></td><td><code>Cost: 6022</code></td></tr><tr><th scope="row">SKU needs a vendor prefix</th><td><code>017-01-H-SM-RBC</code></td><td><code>AFD 017-01-H-SM-RBC</code></td></tr><tr><th scope="row">Two apostrophes used as an inch mark</th><td><code>9.69’’ (246MM) CEILING MOUNT POLE</code></td><td><code>9.69&quot; (246MM) CEILING MOUNT POLE</code></td></tr><tr><th scope="row">Hidden control character from a Windows export</th><td><code>8&quot;␝ x 5.5&quot;␝</code></td><td><code>8&quot; x 5.5&quot;</code></td></tr><tr><th scope="row">Escaped symbols</th><td><code>COVER,AFD \#435 BRDX LARGE</code></td><td><code>COVER,AFD #435 BRDX LARGE</code></td></tr><tr><th scope="row">$0 placeholder row</th><td><code>STAND - TUNGSTEN PORTABLE - BOX 2 OF 2, 0</code></td><td><code>Rejected: zero price</code></td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="cols" style="margin-top:44px">
+        <section>
+          <h2>Design choices</h2>
+          <ul>
+            <li><strong>Configuration, not code.</strong> Each vendor is a short entry in a JSON file: which file names it matches, its SKU prefix, and which columns hold the SKU, description, and price. Adding a manufacturer takes a minute.</li>
+            <li><strong>Nothing disappears silently.</strong> Every dropped row lands in a rejects file with the reason, so a person can fix the source instead of guessing.</li>
+            <li><strong>Safe to re-run.</strong> Finished Jobber files are skipped, and SKUs that already carry a prefix don't get a second one.</li>
+            <li><strong>Pricing is a setting.</strong> Use the list price as is, or start from dealer cost with a markup.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Results so far</h2>
+          <ul>
+            <li>Tested on real rows from three manufacturers, chosen because they contain the problems above.</li>
+            <li>15 rows imported cleanly; 3 rejected, each with the correct reason: a missing price, a $0 item, and a duplicate part number.</li>
+          </ul>
+          <h2 style="margin-top:28px">Next</h2>
+          <ul>
+            <li>Run it on every full price sheet in the catalog.</li>
+            <li>Watch a shared Drive folder and convert new price sheets automatically when they arrive.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
