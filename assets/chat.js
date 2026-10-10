@@ -9,6 +9,17 @@
   const send = document.getElementById("send-btn");
   if (!box || !input || !send) return;
 
+  // Minimal, safe markdown: escape everything, then allow **bold**, *italic*,
+  // [text](https://link) and "- " / "* " bullets. Nothing else becomes HTML.
+  function renderMarkdown(text) {
+    const esc = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    return esc
+      .replace(/^\s*[-*] /gm, "• ")
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  }
+
   function addMsg(cls, text) {
     const div = document.createElement("div");
     div.className = "msg " + cls;
@@ -48,7 +59,7 @@
         if (done) break;
         if (!full) { bot.className = "msg bot"; bot.textContent = ""; }
         full += decoder.decode(value, { stream: true });
-        bot.textContent = full;
+        bot.innerHTML = renderMarkdown(full);
         box.scrollTop = box.scrollHeight;
       }
       history.push({ role: "assistant", content: full });
