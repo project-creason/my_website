@@ -74,7 +74,7 @@ PROJECTS = [
         "title": "Vendor Price Sheet → Jobber Import ETL",
         "status": "active",
         "badge": "Live · in development",
-        "year": "2026",
+        "year": "2019–2026",
         "summary": "A config-driven Python pipeline that turns any manufacturer's price sheet into a clean, validated Jobber product import, with every rejected row explained.",
         "tags": ["Python", "pandas", "ETL", "Data quality", "Jobber"],
         "image": "/assets/projects/jobber-etl.jpg",
