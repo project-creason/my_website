@@ -90,3 +90,32 @@ assert not PHONE.search(_html), "A phone number made it into the resume page; re
 assert "@" not in _html, "An email address made it into the resume page; refusing to build."
 
 page("/resume/", "Resume", (RESUME["summary"] or RESUME["headline"])[:155], "Resume", _html)
+
+# ---- Plain-text copy for the AI resume assistant (resume-bot reads this) ----
+def _txt_jobs(items):
+    out = []
+    for j in items:
+        place = f" ({j['place']})" if j.get("place") else ""
+        out.append(f"- {j['title']} | {j['org']}{place} | {j['dates']}")
+        out += [f"  * {b}" for b in j["bullets"]]
+    return out
+
+_t = [f"NAME: {RESUME['name']}", f"HEADLINE: {RESUME['headline']}"]
+if RESUME["location"]:
+    _t.append(f"LOCATION: {RESUME['location']}")
+if RESUME["summary"]:
+    _t += ["", "PROFESSIONAL SUMMARY:", RESUME["summary"]]
+if RESUME["skills"]:
+    _t += ["", "CORE COMPETENCIES & TECHNICAL SKILLS:"] + [f"- {c}: {', '.join(i)}" if c else f"- {', '.join(i)}" for c, i in RESUME["skills"]]
+if RESUME["experience"]:
+    _t += ["", "PROFESSIONAL EXPERIENCE:"] + _txt_jobs(RESUME["experience"])
+if RESUME["education"]:
+    _t += ["", "EDUCATION & CERTIFICATIONS:"] + [f"- {d} | {s}" if s else f"- {d}" for d, s in RESUME["education"]]
+for _o in RESUME["other"]:
+    _t += ["", _o["title"].upper() + ":"]
+    if _o["paragraph"]:
+        _t.append(_o["paragraph"])
+    _t += _txt_jobs(_o["entries"]) + [f"- {b}" for b in _o["bullets"]]
+_txt = "\n".join(_t) + "\n"
+assert not PHONE.search(_txt) and "@" not in _txt, "Phone or email in resume.txt; refusing to build."
+write("assets/resume.txt", _txt)
