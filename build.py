@@ -196,6 +196,7 @@ def page(path, title, desc, section, body, extra_foot=""):
     </div>
   </footer>
   <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>{extra_foot}
+  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
 """
