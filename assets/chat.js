@@ -49,7 +49,14 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history }),
       });
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (!res.ok) {
+        // The server sends a short, visitor-friendly explanation (rate limit, empty question, etc.)
+        const msg = (await res.text().catch(() => "")).slice(0, 300);
+        bot.className = "msg bot";
+        bot.textContent = msg || "Error connecting to the AI assistant. Please try again.";
+        history.pop();
+        return;
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
