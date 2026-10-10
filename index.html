@@ -44,7 +44,36 @@
     </div>
   </section>
   <main id="main">
-    <section class="band">
+    <section class="band" id="ask">
+      <div class="wrap grid-2">
+        <div>
+          <p class="eyebrow">Ask me anything</p>
+          <h2>Talk to my AI resume assistant</h2>
+          <p>Curious about my experience, leadership, or technical skills? This assistant is trained on my professional background and can answer in seconds, any time of day.</p>
+          <p>Prefer a person? <a href="/contact/">Reach out directly</a>.</p>
+          <div class="facts">
+            <div><h3>Today</h3><p>Applications Systems Analyst at Ventas, Inc.</p></div>
+            <div><h3>Education &amp; certifications</h3><ul><li>Master of Business Administration (MBA) in Project Management, Amberton University (In Progress)</li><li>Master of Science (MS) in Applied Information Technology, Bellarmine University</li><li>Bachelor of Science (BS) in Information Technology (Honors), University of Phoenix</li><li>ITIL 4 Foundation, PeopleCert</li><li>Google Data Analytics Professional Certificate, Coursera / Google</li></ul></div>
+          </div>
+        </div>
+      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience">
+        <div id="chips-wrapper">
+          <button class="chip" data-q="What is David's core skill set?">Core Skills</button>
+          <button class="chip" data-q="What roles is David targeting?">Target Roles</button>
+          <button class="chip" data-q="Tell me about David's work at Ventas.">Ventas Experience</button>
+          <button class="chip" data-q="What is David's education background?">Education &amp; Certs</button>
+        </div>
+        <div id="chat-box" aria-live="polite">
+          <div class="msg bot">Hi! I&rsquo;m an AI assistant trained on David Creason&rsquo;s professional experience. Ask me anything or select a topic above!</div>
+        </div>
+        <div id="input-area">
+          <input type="text" id="user-input" placeholder="Ask a question..." aria-label="Your question">
+          <button id="send-btn">Send</button>
+        </div>
+      </div>
+      </div>
+    </section>
+    <section class="band alt">
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow">Now building</p><h2>Active projects</h2></div>
@@ -74,7 +103,7 @@
         </div>
       </div>
     </section>
-    <section class="band alt">
+    <section class="band">
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow">Selected work</p><h2>Past projects</h2></div>
@@ -101,35 +130,6 @@
           </div>
         </article>
         </div>
-      </div>
-    </section>
-    <section class="band" id="ask">
-      <div class="wrap grid-2">
-        <div>
-          <p class="eyebrow">Ask me anything</p>
-          <h2>Talk to my AI resume assistant</h2>
-          <p>Curious about my experience, leadership, or technical skills? This assistant is trained on my professional background and can answer in seconds, any time of day.</p>
-          <p>Prefer a person? <a href="/contact/">Reach out directly</a>.</p>
-          <div class="facts">
-            <div><h3>Today</h3><p>Applications Systems Analyst at Ventas, Inc.</p></div>
-            <div><h3>Education &amp; certifications</h3><ul><li>Master of Business Administration (MBA) in Project Management, Amberton University (In Progress)</li><li>Master of Science (MS) in Applied Information Technology, Bellarmine University</li><li>Bachelor of Science (BS) in Information Technology (Honors), University of Phoenix</li><li>ITIL 4 Foundation, PeopleCert</li><li>Google Data Analytics Professional Certificate, Coursera / Google</li></ul></div>
-          </div>
-        </div>
-      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience">
-        <div id="chips-wrapper">
-          <button class="chip" data-q="What is David's core skill set?">Core Skills</button>
-          <button class="chip" data-q="What roles is David targeting?">Target Roles</button>
-          <button class="chip" data-q="Tell me about David's work at Ventas.">Ventas Experience</button>
-          <button class="chip" data-q="What is David's education background?">Education &amp; Certs</button>
-        </div>
-        <div id="chat-box" aria-live="polite">
-          <div class="msg bot">Hi! I&rsquo;m an AI assistant trained on David Creason&rsquo;s professional experience. Ask me anything or select a topic above!</div>
-        </div>
-        <div id="input-area">
-          <input type="text" id="user-input" placeholder="Ask a question..." aria-label="Your question">
-          <button id="send-btn">Send</button>
-        </div>
-      </div>
       </div>
     </section>
     <section class="band cta">

@@ -307,28 +307,6 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
     </div>
   </section>
   <main id="main">
-    <section class="band">
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="eyebrow">Now building</p><h2>Active projects</h2></div>
-          <a class="more" href="/projects/">All projects &rarr;</a>
-        </div>
-        <div class="projects">
-{project_card(active[0], featured=True)}
-{chr(10).join(project_card(p) for p in active[1:])}
-        </div>
-      </div>
-    </section>
-    <section class="band alt">
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="eyebrow">Selected work</p><h2>Past projects</h2></div>
-        </div>
-        <div class="projects">
-{chr(10).join(project_card(p) for p in past)}
-        </div>
-      </div>
-    </section>
     <section class="band" id="ask">
       <div class="wrap grid-2">
         <div>
@@ -342,6 +320,28 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
           </div>
         </div>
 {CHAT}
+      </div>
+    </section>
+    <section class="band alt">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="eyebrow">Now building</p><h2>Active projects</h2></div>
+          <a class="more" href="/projects/">All projects &rarr;</a>
+        </div>
+        <div class="projects">
+{project_card(active[0], featured=True)}
+{chr(10).join(project_card(p) for p in active[1:])}
+        </div>
+      </div>
+    </section>
+    <section class="band">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="eyebrow">Selected work</p><h2>Past projects</h2></div>
+        </div>
+        <div class="projects">
+{chr(10).join(project_card(p) for p in past)}
+        </div>
       </div>
     </section>
     <section class="band cta">
