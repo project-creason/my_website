@@ -73,14 +73,14 @@ PROJECTS = [
         "slug": "jobber-import-etl",
         "title": "Vendor Price Sheet → Jobber Import ETL",
         "status": "active",
-        "badge": "In development",
+        "badge": "Live · in development",
         "year": "2026",
         "summary": "A config-driven Python pipeline that turns any manufacturer's price sheet into a clean, validated Jobber product import, with every rejected row explained.",
         "tags": ["Python", "pandas", "ETL", "Data quality", "Jobber"],
         "image": "/assets/projects/jobber-etl.jpg",
         "image_alt": "The four pipeline stages: extract, transform, validate, load",
         "links": [
-            ("Read more", "/projects/jobber-import-etl/", True),
+            ("Launch the demo", "https://project-creason.github.io/jobber_import_etl/", True),
             ("Source on GitHub", "https://github.com/project-creason/jobber_import_etl", False),
         ],
     },
@@ -752,8 +752,9 @@ detail_page(by["jobber-import-etl"],
             <li>Tested on real rows from three manufacturers, chosen because they contain the problems above.</li>
             <li>15 rows imported cleanly; 3 rejected, each with the correct reason: a missing price, a $0 item, and a duplicate part number.</li>
           </ul>
-          <h2 style="margin-top:28px">Next</h2>
+          <h2 style="margin-top:28px">Try it, and what's next</h2>
           <ul>
+            <li><a href="https://project-creason.github.io/jobber_import_etl/" rel="noopener" target="_blank">Try the live demo</a>: run the sample price sheets or your own, right in the browser. It runs the same Python code as the repo, and files never leave your computer.</li>
             <li>Run it on every full price sheet in the catalog.</li>
             <li>Watch a shared Drive folder and convert new price sheets automatically when they arrive.</li>
           </ul>

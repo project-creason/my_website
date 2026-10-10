@@ -33,11 +33,11 @@
   <main id="main">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
-      <p class="meta"><span class="badge active">In development</span><span>2026</span></p>
+      <p class="meta"><span class="badge active">Live · in development</span><span>2026</span></p>
       <h1 class="page-title">Vendor Price Sheet → Jobber Import ETL</h1>
       <p class="lede">Crestwood Home &amp; Hearth sold and installed products from many manufacturers, and Jobber, its field-service software, needed every one of them in its product list. Each manufacturer publishes its price sheet in its own layout, so each Jobber import file was built one vendor at a time. This pipeline replaces that with one repeatable run.</p>
       <ul class="tags"><li>Python</li><li>pandas</li><li>ETL</li><li>Data quality</li><li>Jobber</li></ul>
-      <div class="actions"><a class="btn ghost" href="https://github.com/project-creason/jobber_import_etl" rel="noopener" target="_blank">Source on GitHub</a></div>
+      <div class="actions"><a class="btn" href="https://project-creason.github.io/jobber_import_etl/" rel="noopener" target="_blank">Launch the demo</a><a class="btn ghost" href="https://github.com/project-creason/jobber_import_etl" rel="noopener" target="_blank">Source on GitHub</a></div>
       <figure class="shot-fig">
         <img class="hero-shot" src="/assets/projects/jobber-etl.jpg" alt="The four pipeline stages: extract, transform, validate, load">
         <figcaption>One command turns a folder of vendor price sheets into Jobber-ready imports.</figcaption>
@@ -88,8 +88,9 @@
             <li>Tested on real rows from three manufacturers, chosen because they contain the problems above.</li>
             <li>15 rows imported cleanly; 3 rejected, each with the correct reason: a missing price, a $0 item, and a duplicate part number.</li>
           </ul>
-          <h2 style="margin-top:28px">Next</h2>
+          <h2 style="margin-top:28px">Try it, and what's next</h2>
           <ul>
+            <li><a href="https://project-creason.github.io/jobber_import_etl/" rel="noopener" target="_blank">Try the live demo</a>: run the sample price sheets or your own, right in the browser. It runs the same Python code as the repo, and files never leave your computer.</li>
             <li>Run it on every full price sheet in the catalog.</li>
             <li>Watch a shared Drive folder and convert new price sheets automatically when they arrive.</li>
           </ul>
