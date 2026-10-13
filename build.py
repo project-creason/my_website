@@ -49,12 +49,11 @@ PROJECTS = [
         "badge": "Live · in development",
         "year": "2026",
         "summary": "Enter your home's measurements and get a complete DuraVent DuraTech chimney parts list that follows the manufacturer's installation rules and NFPA 211.",
-        "tags": ["JavaScript", "Rules engine", "CSV → JSON catalog", "GitHub Pages"],
+        "tags": ["NFPA 211 checked", "Part numbers & quantities", "Flags problems early", "CSV export"],
         "image": "/assets/projects/chimney-planner.jpg",
         "image_alt": "Screenshot of the DuraTech Chimney Planner form and generated parts list",
         "links": [
             ("Launch the planner", "https://project-creason.github.io/chimney_planner/", True),
-            ("Source on GitHub", "https://github.com/project-creason/chimney_planner", False),
         ],
     },
     {
@@ -465,16 +464,25 @@ detail_page(by["chimney-planner"],
           </ul>
         </section>
         <section>
-          <h2>How it&rsquo;s built</h2>
+          <h2>Why it matters</h2>
           <ul>
-            <li>The DuraVent catalog is kept as editable CSV files, compiled to JSON for the site.</li>
-            <li>All the logic runs in the browser in plain JavaScript, with no server or database.</li>
-            <li>Hosted free on GitHub Pages.</li>
-            <li>Instead of a stove database that would always be out of date, users enter their appliance&rsquo;s own requirements.</li>
+            <li>Turns hours of cross-checking a catalog, a code book, and an appliance manual into a few minutes of measurements.</li>
+            <li>Never shorts a requirement: heights and clearances can be exceeded but never undercut, and pipe lengths always round up.</li>
+            <li>Catches problems before anything is bought, like an offset that won&rsquo;t fit in the attic or a chase too wide for stock flashing.</li>
+            <li>Gets the order right the first time, with exact part numbers and quantities.</li>
+            <li>Works for any stove or fireplace: you enter what its manual requires, so the planner never falls behind new models.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
+          <h2>Built for</h2>
+          <ul>
+            <li><strong>Homeowners</strong> planning an install and wanting to know what it takes before they start.</li>
+            <li><strong>Installers and sweeps</strong> quoting jobs quickly and consistently.</li>
+            <li><strong>Hearth retailers</strong> building a complete, correct order with a customer at the counter.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Coming next</h2>
           <ul>
             <li>Offsets on through-the-wall installations</li>
             <li>Free-standing stove placement and stovepipe</li>

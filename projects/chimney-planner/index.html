@@ -36,8 +36,8 @@
       <p class="meta"><span class="badge active">Live · in development</span><span>2026</span></p>
       <h1 class="page-title">DuraTech Chimney Planner</h1>
       <p class="lede">Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: describe the installation and it returns every part you need, with quantities and part numbers.</p>
-      <ul class="tags"><li>JavaScript</li><li>Rules engine</li><li>CSV → JSON catalog</li><li>GitHub Pages</li></ul>
-      <div class="actions"><a class="btn" href="https://project-creason.github.io/chimney_planner/" rel="noopener" target="_blank">Launch the planner</a><a class="btn ghost" href="https://github.com/project-creason/chimney_planner" rel="noopener" target="_blank">Source on GitHub</a></div>
+      <ul class="tags"><li>NFPA 211 checked</li><li>Part numbers &amp; quantities</li><li>Flags problems early</li><li>CSV export</li></ul>
+      <div class="actions"><a class="btn" href="https://project-creason.github.io/chimney_planner/" rel="noopener" target="_blank">Launch the planner</a></div>
       <img class="hero-shot" src="/assets/projects/chimney-planner.jpg" alt="The planner's form and generated parts list">
       <div class="cols">
         <section>
@@ -50,16 +50,25 @@
           </ul>
         </section>
         <section>
-          <h2>How it&rsquo;s built</h2>
+          <h2>Why it matters</h2>
           <ul>
-            <li>The DuraVent catalog is kept as editable CSV files, compiled to JSON for the site.</li>
-            <li>All the logic runs in the browser in plain JavaScript, with no server or database.</li>
-            <li>Hosted free on GitHub Pages.</li>
-            <li>Instead of a stove database that would always be out of date, users enter their appliance&rsquo;s own requirements.</li>
+            <li>Turns hours of cross-checking a catalog, a code book, and an appliance manual into a few minutes of measurements.</li>
+            <li>Never shorts a requirement: heights and clearances can be exceeded but never undercut, and pipe lengths always round up.</li>
+            <li>Catches problems before anything is bought, like an offset that won&rsquo;t fit in the attic or a chase too wide for stock flashing.</li>
+            <li>Gets the order right the first time, with exact part numbers and quantities.</li>
+            <li>Works for any stove or fireplace: you enter what its manual requires, so the planner never falls behind new models.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
+          <h2>Built for</h2>
+          <ul>
+            <li><strong>Homeowners</strong> planning an install and wanting to know what it takes before they start.</li>
+            <li><strong>Installers and sweeps</strong> quoting jobs quickly and consistently.</li>
+            <li><strong>Hearth retailers</strong> building a complete, correct order with a customer at the counter.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Coming next</h2>
           <ul>
             <li>Offsets on through-the-wall installations</li>
             <li>Free-standing stove placement and stovepipe</li>
