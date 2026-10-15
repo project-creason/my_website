@@ -2,6 +2,11 @@
   "id": "quillmetrics",
   "name": "Quillmetrics",
   "label": "Quillmetrics (product analytics)",
+  "brand": {
+    "name": "Quillmetrics",
+    "accent": "#5B3FD6",
+    "soft": "#EEEAFD"
+  },
   "unit": "1k tracked users",
   "companyExample": "e.g. Harbor Lane Outfitters",
   "reviewTag": "SE review",

@@ -15,6 +15,7 @@
     d = d && typeof d === "object" ? d : {};
     return {
       mode: d.mode === "seller" ? "seller" : "buyer",
+      brand: d.brand && typeof d.brand === "object" ? { name: str(d.brand.name, 40), accent: /^#[0-9a-f]{6}$/i.test(d.brand.accent || "") ? d.brand.accent : "", soft: /^#[0-9a-f]{6}$/i.test(d.brand.soft || "") ? d.brand.soft : "" } : null,
       recipientName: str(d.recipientName, 80),
       company: str(d.company, 100),
       product: str(d.product, 60) || "your",
@@ -35,6 +36,7 @@
 
   function render(input, opts) {
     const d = clean(input), o = opts || {};
+    const B = d.brand && d.brand.name ? d.brand : null, A = (B && B.accent) || C.accent, S = (B && B.soft) || C.soft;
     const first = d.recipientName.split(/\s+/)[0];
     const subject = d.mode === "seller"
       ? `${d.company || "Your"} ${d.product} scope${d.plan ? `: ${d.plan} plan` : ""}`
@@ -45,7 +47,7 @@
 
     const h2 = t => `<tr><td style="padding:24px 32px 8px;font:600 12px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(t)}</td></tr>`;
     const stats = d.stats.length ? `<tr><td style="padding:8px 32px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>${d.stats.map(s =>
-      `<td valign="top" style="padding:14px 12px 14px 0;border-top:2px solid ${C.accent};width:${Math.floor(100 / d.stats.length)}%">
+      `<td valign="top" style="padding:14px 12px 14px 0;border-top:2px solid ${A};width:${Math.floor(100 / d.stats.length)}%">
         <div style="font:600 11px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(s.label)}</div>
         <div style="font:700 26px/1.15 ${FONT};color:${C.ink};margin-top:4px">${esc(s.value)}</div>
         ${s.sub ? `<div style="font:13px ${FONT};color:${C.muted};margin-top:2px">${esc(s.sub)}</div>` : ""}</td>`).join("")}</tr></table></td></tr>` : "";
@@ -56,8 +58,10 @@
     const reasons = d.reasons.length ? h2(`Why ${d.plan || "this plan"}`) + `<tr><td style="padding:0 32px"><ul style="margin:0;padding-left:20px;font:15px/1.55 ${FONT};color:${C.ink}">${d.reasons.map(r => `<li style="margin:2px 0">${esc(r)}</li>`).join("")}</ul></td></tr>` : "";
     const invest = d.investment ? h2("Investment") + `<tr><td style="padding:0 32px"><div style="font:700 22px ${FONT};color:${C.ink}">${esc(d.investment)}</div>${d.investmentNote ? `<div style="font:13px/1.45 ${FONT};color:${C.muted};margin-top:4px">${esc(d.investmentNote)}</div>` : ""}</td></tr>` : "";
     const notes = d.notes.length ? h2("Worth knowing") + `<tr><td style="padding:0 32px">${d.notes.map(n =>
-      `<div style="background:${C.soft};border-radius:6px;padding:10px 12px;margin:0 0 6px;font:14px/1.45 ${FONT};color:${C.ink}">${n.tag ? `<strong style="color:${C.accent}">${esc(n.tag)}:</strong> ` : ""}${esc(n.msg)}</div>`).join("")}</td></tr>` : "";
-    const logo = o.logoUrl
+      `<div style="background:${S};border-radius:6px;padding:10px 12px;margin:0 0 6px;font:14px/1.45 ${FONT};color:${C.ink}">${n.tag ? `<strong style="color:${A}">${esc(n.tag)}:</strong> ` : ""}${esc(n.msg)}</div>`).join("")}</td></tr>` : "";
+    const logo = B
+      ? `<span style="font:700 24px ${FONT};color:${A}">${esc(B.name)}</span>`
+      : o.logoUrl
       ? `<img src="${esc(o.logoUrl)}" width="150" height="34" alt="ScopeOut" style="display:block;border:0;outline:none;height:auto;width:150px">`
       : `<span style="font:700 22px ${FONT};color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></span>`;
 
@@ -67,13 +71,13 @@
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border-collapse:collapse"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${C.card};border:1px solid ${C.line};border-radius:10px;border-collapse:separate">
 <tr><td style="padding:24px 32px 18px;border-bottom:1px solid ${C.line}"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>${logo}</td><td align="right" style="font:13px ${FONT};color:${C.muted}">Scope summary</td></tr></table></td></tr>
-<tr><td style="padding:28px 32px 4px;font:700 26px/1.2 ${FONT};color:${C.ink}">Your ${esc(d.product)} scope${d.plan ? `: <span style="color:${C.accent}">${esc(d.plan)}</span>` : ""}</td></tr>
+<tr><td style="padding:28px 32px 4px;font:700 26px/1.2 ${FONT};color:${C.ink}">Your ${esc(d.product)} scope${d.plan ? `: <span style="color:${A}">${esc(d.plan)}</span>` : ""}</td></tr>
 <tr><td style="padding:10px 32px 4px;font:15px/1.55 ${FONT};color:${C.ink}">${first ? `Hi ${esc(first)},<br><br>` : ""}${esc(intro).replace(/\n/g, "<br>")}</td></tr>
 ${stats}${highlights}${lines}${reasons}${invest}${notes}
 <tr><td style="padding:26px 32px 28px"><div style="background:${C.bg};border-radius:8px;padding:14px 16px;font:15px/1.5 ${FONT};color:${C.ink}"><strong>Questions?</strong> Just reply to this email and it goes straight to your solutions engineer.</div></td></tr>
 </table>
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px"><tr><td style="padding:16px 32px;font:12px/1.5 ${FONT};color:${C.muted}" align="center">
-Sent with <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · guided deal scoping<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
+${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · guided deal scoping<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
 </td></tr></table>
 </td></tr></table></body></html>`;
 
