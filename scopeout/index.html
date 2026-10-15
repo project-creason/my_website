@@ -1030,7 +1030,7 @@ function buildPresets(){
 /* ---------- Help icons ---------- */
 function helpHtml(key){
   const q=allQs().find(x=>x.key===key), h=q&&q.help; if(!h) return "";
-  return (mode==="seller"?`<div><b>Why it matters</b>${esc(h.why)}</div><div><b>Listen for</b>${esc(h.listen)}</div><div><b>Follow-up</b>${esc(h.ask)}</div>`:`<div>${esc(h.buyer)}</div>`)+`<div><a data-goto="gf-${esc(key)}">More in the guide</a></div>`;
+  return (mode==="seller"?`<div><b>Why it matters</b>${esc(h.why)}</div><div><b>Listen for</b>${esc(h.listen)}</div><div><b>Follow-up</b>${esc(h.ask)}</div>`:`<div>${esc(h.buyer)}</div>`)+(mode==="seller"?`<div><a data-goto="gf-${esc(key)}">More in the guide</a></div>`:"");
 }
 function buildHelp(){
   document.querySelectorAll(".q[data-key]").forEach(q=>{
@@ -1391,7 +1391,11 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("clic
 function setMode(m){ mode=m; $("modeSeller").setAttribute("aria-pressed",m==="seller"); $("modeBuyer").setAttribute("aria-pressed",m==="buyer");
   $("qTitle").textContent=m==="buyer"?"Tell us about your project":"Discovery questions";
   $("qSub").textContent=m==="buyer"?"About two minutes. Tap i on any question for more detail.":"Answer what you learned on the call. Tap i for what to dig into.";
-  $("presets").hidden=m==="buyer"; buildForm(); render(); }
+  $("presets").hidden=m==="buyer";
+  // Buyers only ever see their scope: no Admin, Output (CRM data) or internal Guide.
+  document.querySelector("nav.tabs").hidden=m==="buyer";
+  if(m==="buyer"&&$("p-scope").hidden) $("tab-scope").click();
+  buildForm(); render(); }
 $("modeSeller").onclick=()=>setMode("seller"); $("modeBuyer").onclick=()=>setMode("buyer");
 document.querySelectorAll("#audPick input").forEach(i=>{ i.checked=i.value===aud; i.addEventListener("change",()=>{ aud=i.value; render(); }); });
 document.querySelectorAll("[data-send]").forEach(b=>b.addEventListener("click",()=>{ $("toast-"+b.dataset.send).hidden=false; }));
