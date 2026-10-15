@@ -1038,6 +1038,8 @@ function updateAdmin(){
   $("roleSel").value=role;
   document.querySelectorAll("#p-rules input:not([type=file]), #p-rules select:not(#roleSel)").forEach(el=>el.disabled=!admin);
   document.querySelectorAll(".adminOnly").forEach(el=>el.hidden=!admin);
+  if(!admin) $("rb").hidden=true;
+  $("rbOpen").hidden=!admin||!$("rb").hidden;
   const d=diffs();
   $("draftBar").hidden=!d.length;
   $("draftText").textContent=`${d.length} unpublished change${d.length===1?"":"s"}${admin?"":" (draft, waiting for an admin)"}`;
@@ -1195,8 +1197,9 @@ function catStats(){ const d=W().def; $("catTitle").textContent=d.label||d.name;
 function switchCatalog(id){
   active=id; $("catSel").value=id;
   $("footNote").textContent=W().def.guide?.footer||"";
+  $("rb").hidden=true;
   buildPresets(); buildForm(); buildRules(); buildGuide(); catStats(); render(); renderLog(); updateAdmin();
-  $("csvMsgs").hidden=true; $("catMsgs").hidden=true; $("rb").hidden=true; $("rbOpen").hidden=false;
+  $("csvMsgs").hidden=true; $("catMsgs").hidden=true;
 }
 
 /* ---------- Events ---------- */
@@ -1283,7 +1286,7 @@ function rbOpen(){ const {def}=W(); $("rb").hidden=false; $("rbOpen").hidden=tru
   $("rbTag").value=""; $("rbMsg").value=""; rbKind(); rbPreview(); }
 function rbKind(){ const k=document.querySelector('input[name="rbKind"]:checked').value; $("rbPlanBox").hidden=k!=="plan"; $("rbFlagBox").hidden=k!=="flag"; }
 $("rbOpen").addEventListener("click",()=>{ if(role==="admin") rbOpen(); });
-$("rbCancel").addEventListener("click",()=>{ $("rb").hidden=true; $("rbOpen").hidden=false; });
+$("rbCancel").addEventListener("click",()=>{ $("rb").hidden=true; updateAdmin(); });
 $("rb").addEventListener("change",e=>{ const row=e.target.closest(".rbcond"); if(row&&(e.target.classList.contains("rbq")||e.target.classList.contains("rbop"))) rbSync(row); if(e.target.name==="rbKind") rbKind(); rbPreview(); });
 $("rb").addEventListener("input",()=>rbPreview());
 $("rb").addEventListener("click",e=>{ if(e.target.dataset.rbdel!==undefined){ e.target.closest(".rbcond").remove(); rbPreview(); }
@@ -1291,7 +1294,7 @@ $("rb").addEventListener("click",e=>{ if(e.target.dataset.rbdel!==undefined){ e.
 $("rbSave").addEventListener("click",()=>{ if(role!=="admin") return; const r=rbRule(); if(r.err){ rbPreview(); return; }
   const {draft,pub}=W(), used=[...(draft.customRules||[]),...(pub.customRules||[])].map(x=>+String(x.id).slice(1)||0);
   const id="C"+(Math.max(0,...used)+1); draft.customRules=(draft.customRules||[]).concat([{id,src:"Rule builder",custom:true,...r}]); draft.rules[id]=true;
-  $("rb").hidden=true; $("rbOpen").hidden=false; buildRules(); updateAdmin(); });
+  $("rb").hidden=true; buildRules(); updateAdmin(); });
 $("ruleRows").addEventListener("click",e=>{ const id=e.target.dataset.delrule; if(!id||role!=="admin") return; const {draft}=W();
   draft.customRules=draft.customRules.filter(r=>r.id!==id); delete draft.rules[id]; buildRules(); updateAdmin(); });
 $("csvFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ importCsv(String(rd.result)); e.target.value=""; }; rd.readAsText(f); });
