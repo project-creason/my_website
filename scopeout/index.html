@@ -214,6 +214,13 @@ input.disc{width:68px;padding:3px 6px;font-size:14px;text-align:right}
 .powered svg{width:16px;height:16px}
 @media (max-width:480px){.vendor b{font-size:28px}}
 .q input.wide{flex:1 1 220px;min-width:0}
+.flags li.fgroup{display:grid;grid-template-columns:minmax(0,1fr);gap:0;background:none;padding:10px 0 2px;font:600 12px var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--ink)}
+.flags li.fgroup:first-child{padding-top:0}
+.flags li.fgroup small{font:400 12px var(--f-body);text-transform:none;letter-spacing:0;color:var(--muted)}
+.effect{display:flex;margin-top:6px;background:var(--surface);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:4px 10px;font:600 13px var(--f-body);cursor:pointer;text-align:left}
+.effect:hover{background:var(--accent-soft)}
+tr.flash td{background:var(--accent-soft)!important;box-shadow:inset 0 0 0 2px var(--accent)}
+@media (prefers-reduced-motion:no-preference){#lines tr td{transition:background .3s,box-shadow .3s}}
 tr.added td{background:var(--accent-soft)}
 tr.added td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .addpill{display:inline-block;font:600 11px var(--f-body);color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:1px 8px;margin-left:8px;vertical-align:1px;white-space:nowrap}
@@ -782,7 +789,7 @@ function compute(){
   const P=plans[idx]; env.P=P; env.plan=P.name;
   (def.metrics||[]).filter(m=>m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
   if(idx===0) trace.push(["—",`No rule raised the plan; ${esc(names[0])} fits`]);
-  const flag=(f,where)=>safe(where,()=>flags.push({level:f.level,tag:f.tag,msg:tpl(f.msg,env,true),show:f.show||"seller"}));
+  const flag=(f,where)=>safe(where,()=>flags.push({id:f.id||"",level:f.level,tag:f.tag,msg:tpl(f.msg,env,true),show:f.show||"seller"}));
   (def.checks||[]).filter(c=>c.at==="start").forEach((c,i)=>{ if(safe(`Check ${i+1}`,()=>ev(c.when,env),false)) flag(c,`Check ${i+1}`); });
   allRules(cfg).forEach(r=>{
     if(r.kind!=="flag"||!cfg.rules[r.id]) return;
@@ -801,7 +808,7 @@ function compute(){
     return {name:l.name,detail:safe(`Line ${l.name}`,()=>tpl(l.detail||"",env),""),qty:q,price:pr,addedBy:ar?ar.id:"",addedTag:ar?(ar.tag||ar.id):""};
   });
   const D=discounts(lines,cfg);
-  if(D.flag) flags.push(D.flag);
+  if(D.flag) flags.push({...D.flag,kind:"discount"});
   if(!flags.length) flags.push({level:"info",tag:"Clear",msg:"No exceptions. This scope can go straight to quote.",show:"lead"});
   env.whyRaw=reasons.join("; ")||"your requirements fit the base plan";
   env.whyText=reasons.map(x=>x.toLowerCase()).join("; ")||"your requirements fit the base plan";
@@ -861,7 +868,7 @@ function render(){
     $("legend").innerHTML=(A.legend||[]).map(l=>`<span>${l.color?`<i style="background:var(${l.color==="p"?"--prod":"--accent"})"></i>`:""}<span>${safeTpl(l.text,env,true)}</span></span>`).join("");
   }
   const shown=view==="seller"?r.flags:view==="exec"?r.flags.filter(f=>f.show==="all"):r.flags.filter(f=>f.show==="all"||f.show==="lead");
-  $("flags").innerHTML=(shown.length?shown:[{level:"info",tag:"Clear",msg:"Your setup fits a standard plan."}]).map(f=>`<li class="f-${f.level}"><span class="tag">${esc(f.tag)}</span><span>${f.msg}</span></li>`).join("");
+  renderChecks(r,shown,view);
   const D=r.D, total=D.list, any=D.priced, seller=mode==="seller", showD=seller&&any, anyD=showD&&D.max>0;
   $("linesHead").innerHTML=`<tr><th>Item</th><th>Detail</th><th style="text-align:right">Qty</th><th style="text-align:right" class="sellerOnly">Price / yr</th>${showD?`<th style="text-align:right">Disc. %</th>`:""}${anyD?`<th style="text-align:right">Net / yr</th>`:""}</tr>`;
   const pol=D.pol, appr=D.status==="approved";
@@ -895,6 +902,28 @@ function render(){
   applyBrand(); lastEnv=env; renderOutput(r); renderCsv(); mailCopy(); ensureTs();
 }
 let lastEnv=null;
+/* Checks, grouped by effect: what changed the scope, what needs action, and what is just a note */
+function renderChecks(r,shown,view){
+  const {def}=W(), seller=view==="seller";
+  const addedBy={}; r.lines.forEach(l=>{ if(l.addedBy) (addedBy[l.addedBy]=addedBy[l.addedBy]||[]).push(l); });
+  const scope=[], action=[], note=[];
+  if(view!=="exec"&&r.reasons.length) scope.push({level:"info",tag:"Plan",msg:esc(`${r.P.name}, because: ${r.reasons.join("; ")}.`)});
+  shown.filter(f=>f.tag!=="Clear").forEach(f=>{
+    const ls=f.id&&addedBy[f.id];
+    if(ls) scope.push({...f,effect:ls});
+    else if(f.level==="crit"||f.tag===def.reviewTag||f.kind==="discount"&&f.level!=="info") action.push(f);
+    else note.push(f);
+  });
+  const li=f=>`<li class="f-${f.level}"><span class="tag">${esc(f.tag)}</span><span>${f.msg}${f.effect?f.effect.map(l=>`<button type="button" class="effect" data-goline="${esc(l.name)}">${seller?"Added to the bill":"Added to your scope"}: ${esc(l.name)} · ${fmt(l.qty)}</button>`).join(""):""}</span></li>`;
+  const grp=(title,sub,items)=>items.length?`<li class="fgroup"><span>${esc(title)}</span>${sub?`<small>${esc(sub)}</small>`:""}</li>`+items.map(li).join(""):"";
+  const html=grp(seller?"Changed the scope":"Shaped your scope",seller?"These set the plan or added lines to the bill.":"",scope)
+    +grp("Needs action before quoting",seller?"Resolve these before the scope goes to the prospect.":"",action)
+    +grp("Warnings and notes",seller?"Worth discussing. These don't change the bill.":"",note);
+  $("flags").innerHTML=html||`<li class="f-info"><span class="tag">Clear</span><span>${seller?"No exceptions. This scope can go straight to quote.":"Your setup fits a standard plan."}</span></li>`;
+}
+$("flags").addEventListener("click",e=>{ const b=e.target.closest("[data-goline]"); if(!b) return;
+  const row=[...document.querySelectorAll("#lines tr")].find(t=>t.cells[0]&&t.cells[0].firstChild&&t.cells[0].firstChild.textContent===b.dataset.goline);
+  if(!row) return; row.scrollIntoView({block:"center"}); row.classList.add("flash"); setTimeout(()=>row.classList.remove("flash"),1600); });
 // Buyer-facing screens wear the catalog's brand (white-label); seller and admin screens stay ScopeOut.
 const HEX=/^#[0-9a-f]{6}$/i;
 function applyBrand(){ const b=W().def.brand, on=mode==="buyer"&&b&&b.name, st=document.documentElement.style;
