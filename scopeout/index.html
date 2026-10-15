@@ -213,6 +213,15 @@ input.disc{width:68px;padding:3px 6px;font-size:14px;text-align:right}
 .powered{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--muted)}
 .powered svg{width:16px;height:16px}
 @media (max-width:480px){.vendor b{font-size:28px}}
+input.disc.over{border:2px solid var(--warn);background:var(--warn-bg);color:var(--warn);font-weight:700}
+input.disc.block{border:2px solid var(--crit);background:var(--crit-bg);color:var(--crit);font-weight:700}
+tr.row-over td{background:var(--warn-bg)} tr.row-block td{background:var(--crit-bg)}
+.dalert{display:grid;gap:6px;border-radius:8px;padding:14px 16px;border:2px solid var(--line);font-size:14px}
+.dalert strong{font-size:16px}
+.dalert.warn{border-color:var(--warn);background:var(--warn-bg)} .dalert.warn strong{color:var(--warn)}
+.dalert.crit{border-color:var(--crit);background:var(--crit-bg)} .dalert.crit strong{color:var(--crit)}
+.dalert.info{border-color:var(--info);background:var(--info-bg)} .dalert.info strong{color:var(--info)}
+.dalert .row{margin-top:4px}
 footer{font-size:12px;color:var(--muted);padding-block:0 32px}
 @media (prefers-reduced-motion:no-preference){.cell{transition:background .2s}}
 </style>
@@ -254,6 +263,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
       </div>
 
       <div class="result">
+        <div id="discAlert" class="dalert" role="alert" hidden></div>
         <div class="panel">
           <div class="verdict" id="verdict"></div>
           <div id="allocWrap">
@@ -421,6 +431,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
     <div class="panel" style="margin-top:20px">
       <h2>Email to prospect<span class="livetag" id="liveTag"></span></h2>
       <p class="sub" id="msHint"></p>
+      <div id="msDiscWarn" class="dalert" hidden style="margin-bottom:12px;max-width:560px"></div>
       <form id="msForm" class="mform" novalidate style="max-width:560px">
         <label for="msName">Prospect name</label><input type="text" id="msName" maxlength="80" autocomplete="off" placeholder="e.g. Jordan Ellis">
         <label for="msEmail">Prospect email</label><input type="email" id="msEmail" maxlength="254" autocomplete="off" placeholder="Their work email address">
@@ -848,14 +859,16 @@ function render(){
   $("flags").innerHTML=(shown.length?shown:[{level:"info",tag:"Clear",msg:"Your setup fits a standard plan."}]).map(f=>`<li class="f-${f.level}"><span class="tag">${esc(f.tag)}</span><span>${f.msg}</span></li>`).join("");
   const D=r.D, total=D.list, any=D.priced, seller=mode==="seller", showD=seller&&any, anyD=showD&&D.max>0;
   $("linesHead").innerHTML=`<tr><th>Item</th><th>Detail</th><th style="text-align:right">Qty</th><th style="text-align:right" class="sellerOnly">Price / yr</th>${showD?`<th style="text-align:right">Disc. %</th>`:""}${anyD?`<th style="text-align:right">Net / yr</th>`:""}</tr>`;
+  const pol=D.pol, appr=D.status==="approved";
   $("lines").innerHTML=r.lines.map(l=>{
-    const dcell=showD?`<td class="n">${l.price>0?`<input type="number" class="disc" min="0" max="100" step="0.5" data-disc="${esc(l.name)}" value="${l.disc||""}" placeholder="0" aria-label="Discount for ${esc(l.name)}">`:""}</td>`:"";
+    const lvl=l.disc>pol.approvalMax?"block":l.disc>pol.repMax&&!appr?"over":"";
+    const dcell=showD?`<td class="n">${l.price>0?`<input type="number" class="disc ${lvl}" min="0" max="100" step="0.5" data-disc="${esc(l.name)}" value="${l.disc||""}" placeholder="0" aria-label="Discount for ${esc(l.name)}">`:""}</td>`:"";
     const ncell=anyD?`<td class="n">${l.price==null?"—":l.price===0?"incl.":money(l.net)}</td>`:"";
-    return `<tr><td>${esc(l.name)}</td><td class="muted">${esc(l.detail)}</td><td class="n">${fmt(l.qty)}</td><td class="n sellerOnly">${l.price==null?"—":l.price===0?"incl.":money(l.price)}</td>${dcell}${ncell}</tr>`;}).join("")
+    return `<tr${lvl?` class="row-${lvl}"`:""}><td>${esc(l.name)}</td><td class="muted">${esc(l.detail)}</td><td class="n">${fmt(l.qty)}</td><td class="n sellerOnly">${l.price==null?"—":l.price===0?"incl.":money(l.price)}</td>${dcell}${ncell}</tr>`;}).join("")
     +(any&&seller?(anyD
       ?`<tr class="tot"><td colspan="3">List total</td><td class="n">${money(total)}</td><td></td><td class="n"></td></tr><tr class="tot"><td colspan="3">Discount (${pct(D.blended)} blended)</td><td class="n"></td><td></td><td class="n">−${money(total-D.net)}</td></tr><tr class="tot"><td colspan="3"><strong>Net annual total</strong></td><td></td><td></td><td class="n"><strong>${money(D.net)}</strong></td></tr>`
       :`<tr class="tot"><td colspan="3"><strong>Annual total (from your price book)</strong></td><td class="n"><strong>${money(total)}</strong></td>${showD?"<td></td>":""}</tr>`):"");
-  renderDiscBar(D,showD);
+  renderDiscBar(D,showD); renderDiscAlert(D,showD);
   $("priceNote").textContent=mode==="buyer"?"":(any?"Prices come from the published price book on the Admin tab.":"No price book loaded. A RevOps admin can add prices on the Admin tab.");
   $("priceNote").hidden=mode==="buyer";
   $("trace").innerHTML=r.trace.map(([id,t])=>`<li><code>${esc(id)}</code><span>${t}</span></li>`).join("");
@@ -881,6 +894,23 @@ function applyBrand(){ const b=W().def.brand, on=mode==="buyer"&&b&&b.name, st=d
   $("vendorBrand").hidden=!on; $("brandName").hidden=!!on; $("tagline").hidden=!!on;
   if(on){ $("vendorName").textContent=b.name; if(HEX.test(b.accent||"")) st.setProperty("--accent",b.accent); if(HEX.test(b.soft||"")) st.setProperty("--accent-soft",b.soft); }
   else { st.removeProperty("--accent"); st.removeProperty("--accent-soft"); } }
+const UNAPPROVED=["needs","pending","rejected","blocked"];
+function renderDiscAlert(D,show){
+  const box=$("discAlert"), warn=$("msDiscWarn"), pol=D.pol, where=`${pct(D.max)} on ${D.maxLine}`, on=show&&UNAPPROVED.includes(D.status);
+  box.hidden=!on; warn.hidden=!(on&&mode==="seller");
+  if(!on){ box.innerHTML=""; warn.innerHTML=""; return; }
+  const reduce=`<button class="btn ghost" type="button" data-appr="cap">Reduce to ${pol.repMax}%</button>`;
+  const v={
+    needs:["warn","This discount needs approval",`${where} is above your ${pol.repMax}% limit. You can't quote or send it until a sales manager approves.`,`<button class="btn" type="button" data-appr="request">Request approval</button>${reduce}`],
+    pending:["info","Waiting for sales manager approval",`${where} is pending. Until it's approved, the prospect only sees list price.`,role==="manager"?`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>`:`<button class="btn ghost" type="button" data-appr="asmanager">Switch to sales manager (demo)</button>`],
+    rejected:["crit","Discount declined",`A sales manager declined ${where}. Reduce it to ${pol.repMax}% or less, or change it and request approval again.`,`${reduce}<button class="btn ghost" type="button" data-appr="request">Request approval again</button>`],
+    blocked:["crit","Discount over the ceiling",`${where} is above the ${pol.approvalMax}% that a sales manager can approve. Route this deal to the deal desk, or reduce it.`,`<button class="btn" type="button" data-appr="capmax">Reduce to ${pol.approvalMax}%</button>${reduce}`]
+  }[D.status];
+  box.className="dalert "+v[0];
+  box.innerHTML=`<strong>${esc(v[1])}</strong><span>${esc(v[2])}</span><div class="row">${v[3]}</div>`;
+  warn.className="dalert "+v[0];
+  warn.innerHTML=`<strong>Unapproved discount: the prospect will see list price</strong><span>${esc(where)} isn't approved, so this email shows the list price of ${money(D.list)} / yr. Get it approved first, or send at list price.</span><div class="row"><button class="btn ghost" type="button" data-goscope>Go to the discount</button></div>`;
+}
 function renderDiscBar(D,show){
   const bar=$("discBar"); bar.hidden=!show; if(!show) return;
   const pol=D.pol, a=W().approval;
@@ -1246,15 +1276,18 @@ $("pbLoad").addEventListener("click",()=>{ if(role!=="admin") return; const {def
 /* ---------- Discount entry and approvals (Scope tab) ---------- */
 function logEvent(who,what){ W().log.push({t:stamp(),who,what}); renderLog(); }
 $("lines").addEventListener("change",e=>{ const t=e.target; if(!t.dataset.disc) return; W().disc[t.dataset.disc]=Math.max(0,Math.min(100,+t.value||0)); render(); });
-$("discBar").addEventListener("click",e=>{ const b=e.target.closest("[data-appr]"); if(!b) return; const ws=W(), a=b.dataset.appr;
+function apprClick(e){ const b=e.target.closest("[data-appr]"); if(!b) return; const ws=W(), a=b.dataset.appr;
   const r=compute(), D=r.D, co=(ws.s.company||"").trim()||"this prospect", desc=`${pct(D.max)} on ${D.maxLine} for ${co}`;
   if(a==="applyall"){ const v=Math.max(0,Math.min(100,+$("discAll").value||0)); r.lines.forEach(l=>{ if(l.price>0) ws.disc[l.name]=v; }); }
   else if(a==="clear"){ ws.disc={}; }
+  else if(a==="cap"||a==="capmax"){ const lim=a==="cap"?D.pol.repMax:D.pol.approvalMax; Object.keys(ws.disc).forEach(k=>{ if(ws.disc[k]>lim) ws.disc[k]=lim; }); }
   else if(a==="request"){ ws.approval={status:"pending",key:discKey(),by:""}; logEvent(ROLES[role],`requested approval: ${desc}.`); }
   else if(a==="asmanager"){ setRole("manager"); return; }
   else if(a==="approve"&&role==="manager"){ ws.approval={status:"approved",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`approved ${desc}.`); }
   else if(a==="decline"&&role==="manager"){ ws.approval={status:"rejected",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`declined ${desc}.`); }
-  render(); });
+  render(); }
+$("discBar").addEventListener("click",apprClick); $("discAlert").addEventListener("click",apprClick);
+$("msDiscWarn").addEventListener("click",e=>{ if(e.target.closest("[data-goscope]")){ $("tab-scope").click(); $("discAlert").scrollIntoView({block:"center"}); } });
 
 /* ---------- Rule builder (dropdowns only) ---------- */
 const OPS={num:[["==","is"],["!=","is not"],[">","is more than"],[">=","is at least"],["<","is less than"],["<=","is at most"]],
@@ -1381,10 +1414,17 @@ function ensureTs(){
   ["buyer","seller"].forEach(k=>{ const el=$(MF[k].ts); if(tsIds[k]!==undefined||!el||el.offsetParent===null) return;
     tsIds[k]=turnstile.render(el,{sitekey:CFG.turnstileSiteKey,appearance:"interaction-only",theme:"auto"}); });
 }
+let sendAtList=false;
 async function sendEmail(kind){
   const f=MF[kind], m=mailInput(kind), st=$(f.status), say=(t,bad)=>{ st.textContent=t; st.classList.toggle("bad",!!bad); };
   if(!EMAIL_OK.test(m.to)) return say("Enter a valid email address.",true);
   if(kind==="buyer"&&!m.consent) return say("Tick the box so we can email you this scope.",true);
+  if(kind==="seller"&&UNAPPROVED.includes(compute().D.status)&&!sendAtList){
+    say("Stopped: this scope has a discount that isn't approved. The prospect would only see list price.",true);
+    st.insertAdjacentHTML("beforeend",` <button class="linkbtn" type="button" id="sendList">Send at list price</button>`);
+    $("sendList").addEventListener("click",()=>{ sendAtList=true; sendEmail("seller").finally(()=>{ sendAtList=false; }); });
+    $("msDiscWarn").scrollIntoView({block:"center"}); return;
+  }
   if(!live()){ say("Demo mode: this copy isn't connected to an email service, so here's exactly what would be sent."); openPreview(kind,"Demo mode: nothing was sent. This is exactly what the email looks like."); return; }
   const token=window.turnstile&&tsIds[kind]!==undefined?turnstile.getResponse(tsIds[kind]):"";
   if(!token){ ensureTs(); return say("One moment: confirming you're a person. Try again in a few seconds.",true); }
