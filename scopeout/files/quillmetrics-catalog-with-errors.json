@@ -615,6 +615,7 @@
     {
       "name": "Extra onboarding",
       "when": "sessGap > 0",
+      "addedBy": "Q8",
       "detail": "Sessions needed minus included",
       "qty": "sessGap",
       "price": "isnum(p.sessionRate) ? sessGap * num(p.sessionRate) : null"
@@ -622,6 +623,7 @@
     {
       "name": "EU workspace",
       "when": "eu",
+      "addedBy": "Q9",
       "detail": "Dedicated EU region, quoted by an SE",
       "qty": "1",
       "price": "none"

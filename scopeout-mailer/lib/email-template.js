@@ -22,7 +22,7 @@
       plan: str(d.plan, 40),
       stats: list(d.stats, 3).map(s => ({ label: str(s && s.label, 30), value: str(s && s.value, 24), sub: str(s && s.sub, 60) })).filter(s => s.label && s.value),
       highlights: list(d.highlights, 6).map(h => ({ label: str(h && h.label, 30), text: str(h && h.text, 240) })).filter(h => h.label && h.text),
-      lines: list(d.lines, 20).map(l => ({ name: str(l && l.name, 60), detail: str(l && l.detail, 160), qty: str(l && l.qty, 16) })).filter(l => l.name),
+      lines: list(d.lines, 20).map(l => ({ name: str(l && l.name, 60), detail: str(l && l.detail, 160), qty: str(l && l.qty, 16), added: !!(l && l.added) })).filter(l => l.name),
       reasons: list(d.reasons, 8).map(r => str(r, 160)).filter(Boolean),
       investment: str(d.investment, 80),
       investmentNote: str(d.investmentNote, 200),
@@ -54,7 +54,7 @@
     const highlights = d.highlights.length ? h2("At a glance") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.highlights.map(x =>
       `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 13px ${FONT};color:${C.muted};width:130px">${esc(x.label)}</td><td style="padding:9px 0;border-top:1px solid ${C.line};font:15px/1.45 ${FONT};color:${C.ink}">${esc(x.text)}</td></tr>`).join("")}</table></td></tr>` : "";
     const lines = d.lines.length ? h2("What's included") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.lines.map(l =>
-      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 15px ${FONT};color:${C.ink}">${esc(l.name)}<div style="font:400 13px/1.4 ${FONT};color:${C.muted};margin-top:2px">${esc(l.detail)}</div></td><td valign="top" align="right" style="padding:9px 0;border-top:1px solid ${C.line};font:15px ${FONT};color:${C.ink};white-space:nowrap">${esc(l.qty)}</td></tr>`).join("")}</table></td></tr>` : "";
+      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 15px ${FONT};color:${C.ink}">${esc(l.name)}${l.added ? ` <span style="display:inline-block;font:600 11px ${FONT};color:${A};background:${S};border-radius:999px;padding:2px 8px;margin-left:4px;vertical-align:2px">Recommended</span>` : ""}<div style="font:400 13px/1.4 ${FONT};color:${C.muted};margin-top:2px">${esc(l.detail)}</div></td><td valign="top" align="right" style="padding:9px 0;border-top:1px solid ${C.line};font:15px ${FONT};color:${C.ink};white-space:nowrap">${esc(l.qty)}</td></tr>`).join("")}</table></td></tr>` : "";
     const reasons = d.reasons.length ? h2(`Why ${d.plan || "this plan"}`) + `<tr><td style="padding:0 32px"><ul style="margin:0;padding-left:20px;font:15px/1.55 ${FONT};color:${C.ink}">${d.reasons.map(r => `<li style="margin:2px 0">${esc(r)}</li>`).join("")}</ul></td></tr>` : "";
     const invest = d.investment ? h2("Investment") + `<tr><td style="padding:0 32px"><div style="font:700 22px ${FONT};color:${C.ink}">${esc(d.investment)}</div>${d.investmentNote ? `<div style="font:13px/1.45 ${FONT};color:${C.muted};margin-top:4px">${esc(d.investmentNote)}</div>` : ""}</td></tr>` : "";
     const notes = d.notes.length ? h2("Worth knowing") + `<tr><td style="padding:0 32px">${d.notes.map(n =>
@@ -87,7 +87,7 @@ ${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span styl
     t.push(intro, "");
     d.stats.forEach(s => t.push(`${s.label}: ${s.value}${s.sub ? ` (${s.sub})` : ""}`));
     if (d.highlights.length) { t.push("", "AT A GLANCE"); d.highlights.forEach(x => t.push(`- ${x.label}: ${x.text}`)); }
-    if (d.lines.length) { t.push("", "WHAT'S INCLUDED"); d.lines.forEach(l => t.push(`- ${l.name}: ${l.detail} (${l.qty})`)); }
+    if (d.lines.length) { t.push("", "WHAT'S INCLUDED"); d.lines.forEach(l => t.push(`- ${l.name}${l.added ? " [recommended]" : ""}: ${l.detail} (${l.qty})`)); }
     if (d.reasons.length) { t.push("", `WHY ${(d.plan || "this plan").toUpperCase()}`); d.reasons.forEach(r => t.push(`- ${r}`)); }
     if (d.investment) { t.push("", "INVESTMENT", d.investment + (d.investmentNote ? ` (${d.investmentNote})` : "")); }
     if (d.notes.length) { t.push("", "WORTH KNOWING"); d.notes.forEach(n => t.push(`- ${n.tag ? n.tag + ": " : ""}${n.msg}`)); }
