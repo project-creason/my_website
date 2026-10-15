@@ -1,0 +1,7 @@
+{
+  "name": "scopeout-mailer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sends ScopeOut scope summaries by email (Vercel function).",
+  "engines": { "node": ">=18" }
+}

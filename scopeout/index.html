@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ScopeOut · Guided deal scoping</title>
+<meta name="description" content="ScopeOut turns discovery answers into a validated deal scope. A demo by David Creason.">
+<link rel="icon" href="scopeout-mark.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: spec-sheet tool — header band, three tabs, questions left / live scope right */
+:root{
+  --bg:#F3F5F1; --surface:#FFFFFF; --sunk:#E9EDE7; --ink:#16201B; --muted:#56635B; --line:#D5DCD4;
+  --accent:#1E6B57; --accent-soft:#DCEDE6; --on-accent:#FFFFFF; --prod:#2C4A7A; --prod-soft:#DDE5F2;
+  --warn:#8A4B00; --warn-bg:#FBEEDA; --crit:#9B2028; --crit-bg:#F7E0E1; --info:#2C4A7A; --info-bg:#E3EAF5; --overlay:rgba(22,32,27,.5);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1512; --surface:#17201B; --sunk:#1D2722; --ink:#E4EAE6; --muted:#9AA79F; --line:#2B3630;
+  --accent:#5CBF9C; --accent-soft:#1D3A30; --on-accent:#0B1410; --prod:#8FB0E6; --prod-soft:#1F2C42;
+  --warn:#EBA94F; --warn-bg:#30260F; --crit:#F08088; --crit-bg:#34191C; --info:#8FB0E6; --info-bg:#1C2738; --overlay:rgba(0,0,0,.65); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1512; --surface:#17201B; --sunk:#1D2722; --ink:#E4EAE6; --muted:#9AA79F; --line:#2B3630;
+  --accent:#5CBF9C; --accent-soft:#1D3A30; --on-accent:#0B1410; --prod:#8FB0E6; --prod-soft:#1F2C42;
+  --warn:#EBA94F; --warn-bg:#30260F; --crit:#F08088; --crit-bg:#34191C; --info:#8FB0E6; --info-bg:#1C2738; --overlay:rgba(0,0,0,.65); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+header .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-block:14px}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand b{font-family:var(--f-display);font-size:38px;line-height:1;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:12px}
+.brand b .out{color:var(--accent)}
+.mark{width:52px;height:52px;flex:none}
+.brand > span{font-size:16px}
+@media (max-width:480px){.brand b{font-size:30px;gap:10px}.mark{width:42px;height:42px}.brand > span{font-size:14px}}
+.mark .br{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mark .sd{fill:var(--accent)} .mark .sp{fill:var(--prod)}
+.brand > span{color:var(--muted)}
+.catalog{font-family:var(--f-mono);font-size:12px;color:var(--muted);background:var(--sunk);padding:3px 8px;border-radius:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:500 13px var(--f-body);background:transparent;color:var(--muted);border:0;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:18px;overflow-x:auto}
+nav.tabs button{font:600 14px var(--f-body);background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:20px 48px}
+.grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+h2{font-family:var(--f-display);font-size:19px;margin:0 0 4px;text-wrap:balance}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;font-weight:600}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chip{font:500 12px var(--f-body);border:1px solid var(--line);background:var(--sunk);color:var(--ink);border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.q{display:grid;gap:5px;padding-block:10px;border-top:1px solid var(--line)}
+.q label.t{font-weight:600;font-size:14px}
+.q .h{font-size:12px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+input[type=number],input[type=text],select{font:15px var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:6px 8px;min-width:0}
+input[type=number]{width:84px;font-variant-numeric:tabular-nums}
+.opt{display:inline-flex;gap:5px;align-items:center;font-size:14px}
+.result{display:grid;gap:16px}
+.verdict{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end}
+.verdict .big{font-family:var(--f-display);font-size:40px;line-height:1;letter-spacing:-.02em}
+.verdict .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.planpill{display:inline-block;font:600 13px var(--f-body);background:var(--accent-soft);color:var(--accent);padding:3px 10px;border-radius:999px;margin-top:6px}
+.cells{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:8px;--cs:30px}
+.cells.mid{--cs:22px} .cells.dense{--cs:14px}
+.cgroup{display:grid;gap:6px;align-content:start;min-width:0}
+.cgroup .cap{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cgroup .cap b{color:var(--ink);font-weight:600}
+.sq{display:flex;flex-wrap:wrap;gap:5px;max-width:calc(var(--cs)*8 + 35px)}
+.cell{width:var(--cs);height:var(--cs);border-radius:5px}
+.cells.dense .cell{border-radius:3px}
+.cell.d{background:var(--accent)}
+.cell.p{background:var(--prod)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.flags{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.flags li{font-size:14px;padding:8px 10px;border-radius:5px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:baseline}
+.flags .tag{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.04em}
+.f-crit{background:var(--crit-bg);color:var(--crit)} .f-crit span:last-child{color:var(--ink)}
+.f-warn{background:var(--warn-bg);color:var(--warn)} .f-warn span:last-child{color:var(--ink)}
+.f-info{background:var(--info-bg);color:var(--info)} .f-info span:last-child{color:var(--ink)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px}
+.tbl td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+.tbl td.n{text-align:right;font-family:var(--f-mono);font-size:13px}
+.scroll{overflow-x:auto}
+.trace{display:grid;gap:4px;margin:0;padding:0;list-style:none;font-size:13px}
+.trace li{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px}
+.trace code{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.muted{color:var(--muted)}
+.cta{border:1px dashed var(--accent);border-radius:8px;padding:16px;display:grid;gap:8px}
+.btn{font:600 14px var(--f-body);background:var(--accent);color:var(--on-accent);border:0;border-radius:6px;padding:9px 14px;cursor:pointer;justify-self:start}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+pre{font-family:var(--f-mono);font-size:12.5px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:12px;overflow:auto;max-height:440px;margin:0;white-space:pre}
+pre.wrapped{white-space:pre-wrap}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.rule{display:grid;grid-template-columns:auto 46px minmax(0,1fr);gap:10px;align-items:baseline;padding-block:8px;border-top:1px solid var(--line);font-size:14px}
+.rule code{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.rule .src{font-size:12px;color:var(--muted)}
+.assume{font:500 11px var(--f-mono);color:var(--warn);background:var(--warn-bg);padding:1px 6px;border-radius:3px;margin-left:6px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.toast{font-size:13px;color:var(--accent)}
+.qh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.info{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--sunk);color:var(--muted);font:600 12px/1 var(--f-mono);cursor:pointer;display:inline-grid;place-items:center}
+.info:hover,.info[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.help{font-size:13px;background:var(--sunk);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.help b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);display:block}
+.aud{display:grid;gap:6px;margin-bottom:14px}
+.aud label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;border:1px solid var(--line);border-radius:6px;padding:10px;cursor:pointer;font-size:14px}
+.aud label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.aud small{display:block;color:var(--muted);font-size:12px}
+.glance{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.glance li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;font-size:14px;border-top:1px solid var(--line);padding-top:10px}
+.glance li span:first-child{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+@media (max-width:480px){.glance li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.pkg{display:grid;gap:8px;margin:0;padding-left:18px;font-size:14px}
+.pricebox{font-family:var(--f-display);font-size:26px;letter-spacing:-.01em}
+.vis{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14px}
+.lblh{display:inline-flex;align-items:center;gap:6px}
+th .info{width:18px;height:18px;font-size:10px;vertical-align:middle;margin-left:4px}
+.vis .help{grid-column:1/-1}
+.help a,.guide a{color:var(--accent);font-weight:600;text-decoration:none;cursor:pointer}
+.help a:hover,.guide a:hover{text-decoration:underline}
+.guide{display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.guide{grid-template-columns:minmax(0,1fr)}}
+.gnav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:grid;gap:2px}
+@media (max-width:860px){.gnav{position:static;display:flex;flex-wrap:wrap;gap:6px}}
+.gnav a{font-size:14px;padding:6px 10px;border-radius:5px;color:var(--muted);font-weight:500}
+.gnav a:hover{background:var(--sunk);color:var(--ink);text-decoration:none}
+.gbody{display:grid;gap:20px;min-width:0}
+.gbody section{scroll-margin-top:16px}
+.gbody p,.gbody li{max-width:68ch}
+.gbody h2{font-size:22px;margin-bottom:8px}
+.gbody ol,.gbody ul{padding-left:20px;margin:0;display:grid;gap:6px}
+.ref{display:grid;gap:0}
+.ref div{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:4px 20px;padding-block:10px;border-top:1px solid var(--line);font-size:14px}
+@media (max-width:620px){.ref div{grid-template-columns:minmax(0,1fr)}}
+.ref dt{font-weight:600}
+.ref dd{margin:0;display:grid;gap:4px}
+.ref dd span{color:var(--muted)}
+.ref dd em{font-style:normal;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:600;margin-right:6px}
+.faq details{border-top:1px solid var(--line);padding-block:10px;font-size:14px}
+.faq summary{font-weight:600;cursor:pointer}
+.faq p{margin:8px 0 0}
+.adminbar{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px}
+.adminbar .who{display:grid;gap:2px;font-size:14px}
+.adminbar .who span{color:var(--muted);font-size:13px}
+.lockpill{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);margin-left:8px}
+.lockpill.on{background:var(--accent-soft);color:var(--accent)}
+.draftbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--warn-bg);border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:14px}
+.draftbar ul{margin:0;padding-left:18px;flex-basis:100%;font-size:13px}
+#p-rules input:disabled,#p-rules select:disabled{opacity:.6;cursor:not-allowed}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.msgs{margin:8px 0 0;padding-left:18px;font-size:13px;display:grid;gap:3px}
+.msgs.err{color:var(--crit)} .msgs.ok{color:var(--accent);list-style:none;padding-left:0}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:0;font-size:14px}
+.log li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 16px;border-top:1px solid var(--line);padding-block:8px}
+@media (max-width:620px){.log li{grid-template-columns:minmax(0,1fr)}}
+.log time{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.log b{font-weight:600}
+.planned{font:600 11px var(--f-mono);color:var(--muted);background:var(--sunk);padding:1px 6px;border-radius:3px;margin-left:6px}
+.catalog{display:inline-flex;align-items:center;gap:6px}
+.catalog select{font:500 12px var(--f-mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 4px;max-width:100%}
+.cathead{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-start;justify-content:space-between}
+.cathead > div{min-width:0}
+#catJson{margin-top:12px;max-height:360px}
+.tot td{border-bottom:0;padding-block:5px}
+input.disc{width:68px;padding:3px 6px;font-size:14px;text-align:right}
+#discBar{display:grid;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+#discBar #discAll{width:72px}
+.pill{font:600 12px var(--f-body);padding:4px 10px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.pill.ok{background:var(--accent-soft);color:var(--accent)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.info{background:var(--info-bg);color:var(--info)} .pill.crit{background:var(--crit-bg);color:var(--crit)}
+.apprrow .h{flex-basis:100%}
+#discBar .h,.pbrow .h,.rbcond .h,.adminbar .h{font-size:12px;color:var(--muted)}
+.pbrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:12px;font-size:14px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:600 13px var(--f-body);cursor:pointer}
+.linkbtn:hover{text-decoration:underline}
+.rule{display:grid;grid-template-columns:auto 46px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding-block:8px;border-top:1px solid var(--line);font-size:14px}
+.rb{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px dashed var(--accent);border-radius:8px}
+.rbcond{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.rbcond .h{min-width:34px}
+.rb select,.rb input[type=text]{max-width:100%}
+.rbgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:center;font-size:14px}
+.rbgrid input[type=text]{width:100%}
+#rbPrev{font-size:13px;background:var(--sunk);border-radius:6px;padding:10px 12px;overflow-wrap:anywhere}
+.limits{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14px}
+.mform{display:grid;gap:8px;margin-top:6px}
+.mform label:not(.opt){font-weight:600;font-size:13px}
+.mform input[type=text],.mform input[type=email],.mform textarea{width:100%;font:15px var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:7px 9px}
+.mform textarea{min-height:84px;resize:vertical}
+.mform .row{margin-top:4px}
+.hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.mstatus{font-size:13px;color:var(--accent);margin:0;min-height:1em}
+.mstatus.bad{color:var(--crit)}
+.btn:disabled{opacity:.6;cursor:wait}
+.modal{position:fixed;inset:0;z-index:50;background:var(--overlay);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.mbox{background:var(--surface);border-radius:10px;width:100%;max-width:700px;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden}
+.mhead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line)}
+.mhead > div{min-width:0;overflow-wrap:anywhere}
+.mnote{margin:0;padding:10px 16px;background:var(--info-bg);color:var(--info);font-size:13px}
+.mbody{background:#F3F5F1;overflow-x:auto}
+.livetag{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);margin-left:8px;vertical-align:middle}
+footer{font-size:12px;color:var(--muted);padding-block:0 32px}
+@media (prefers-reduced-motion:no-preference){.cell{transition:background .2s}}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><b id="brandName" aria-label="ScopeOut"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="br" d="M4 11V7Q4 4 7 4H11"/><path class="br" d="M21 4H25Q28 4 28 7V11"/><path class="br" d="M28 21V25Q28 28 25 28H21"/><path class="br" d="M11 28H7Q4 28 4 25V21"/><rect class="sd" x="9.6" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="16.8" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="9.6" y="16.8" width="5.6" height="5.6" rx="1.3"/><rect class="sp" x="16.8" y="16.8" width="5.6" height="5.6" rx="1.3"/></svg><span aria-hidden="true">Scope<span class="out">Out</span></span></b><span>Guided deal scoping</span><label class="catalog" for="catSel">Catalog <select id="catSel"></select></label></div>
+    <div class="row"><span class="muted" style="font-size:13px">View as</span>
+      <div class="seg" role="group" aria-label="View as">
+        <button id="modeSeller" aria-pressed="true">Seller</button><button id="modeBuyer" aria-pressed="false">Buyer</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-scope" aria-selected="true" data-tab="scope">Scope</button>
+    <button role="tab" id="tab-rules" aria-selected="false" data-tab="rules">Admin</button>
+    <button role="tab" id="tab-output" aria-selected="false" data-tab="output">Output</button>
+    <button role="tab" id="tab-guide" aria-selected="false" data-tab="guide">Guide</button>
+  </nav>
+
+  <main>
+  <!-- SCOPE -->
+  <section id="p-scope">
+    <div class="grid">
+      <div class="panel">
+        <h2 id="qTitle">Discovery questions</h2>
+        <p class="sub" id="qSub">Answer what you learned on the call. The scope updates as you go.</p>
+        <div class="presets" id="presets"></div>
+        <div class="aud buyerOnly" id="audPick" hidden>
+          <label><input type="radio" name="aud" value="exec"><span><strong>I need a quick overview</strong><small>For a CIO or CDO deciding whether this is worth a closer look</small></span></label>
+          <label><input type="radio" name="aud" value="lead"><span><strong>I'm scoping a project</strong><small>For a director or lead building the package for leadership approval</small></span></label>
+        </div>
+        <div id="qList"></div>
+      </div>
+
+      <div class="result">
+        <div class="panel">
+          <div class="verdict" id="verdict"></div>
+          <div id="allocWrap">
+            <div style="margin-top:16px" class="lbl" aria-hidden="true" id="allocCap"></div>
+            <div class="cells" id="cells" aria-label="Allocation"></div>
+            <div class="legend" id="legend"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Checks</h3>
+          <ul class="flags" id="flags"></ul>
+        </div>
+        <div class="panel execOnly" hidden>
+          <h3>At a glance</h3>
+          <ul class="glance" id="glance"></ul>
+        </div>
+        <div class="panel notExec">
+          <h3>Bill of scope</h3>
+          <div class="scroll"><table class="tbl"><thead id="linesHead"></thead><tbody id="lines"></tbody></table></div>
+          <div id="discBar" hidden></div>
+          <p class="note" id="priceNote"></p>
+        </div>
+        <div class="panel sellerOnly">
+          <h3>Why this scope</h3>
+          <ul class="trace" id="trace"></ul>
+        </div>
+        <div class="panel leadOnly" hidden>
+          <h3>Leadership package</h3>
+          <p class="sub">Everything your leadership will ask for, in one document.</p>
+          <div class="pricebox" id="pkgPrice"></div>
+          <p class="note" id="pkgPriceNote" style="margin-top:2px"></p>
+          <ol class="pkg" id="pkgList"></ol>
+        </div>
+        <div class="cta buyerOnly" id="mailBuyer" hidden>
+          <strong>Email me this scope</strong>
+          <span class="muted" id="mbSub"></span>
+          <form id="mbForm" class="mform" novalidate>
+            <label for="mbName">Name</label><input type="text" id="mbName" maxlength="80" autocomplete="name" placeholder="Your name">
+            <label for="mbEmail">Work email</label><input type="email" id="mbEmail" maxlength="254" autocomplete="email" placeholder="Your work email address">
+            <label class="opt"><input type="checkbox" id="mbCall"> <span id="mbCallLbl"></span></label>
+            <label class="opt"><input type="checkbox" id="mbConsent"> Email me this scope. A solutions engineer may follow up about it.</label>
+            <div class="hp" aria-hidden="true"><label for="mbWeb">Leave this empty</label><input type="text" id="mbWeb" tabindex="-1" autocomplete="off"></div>
+            <div id="tsBuyer"></div>
+            <div class="row"><button class="btn" type="submit" id="mbSend">Email me this scope</button><button class="btn ghost" type="button" data-preview="buyer">Preview the email</button></div>
+            <p class="mstatus" id="mbStatus" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section id="p-rules" hidden>
+    <div class="adminbar">
+      <div class="who"><strong id="roleName">Signed in as Sales rep<span class="lockpill" id="lockPill">View only</span></strong><span id="roleNote">Packaging and rules are managed by RevOps. Ask an admin to request a change.</span></div>
+      <label class="row" for="roleSel"><span class="h">Demo role</span><select id="roleSel"><option value="rep">Sales rep</option><option value="manager">Sales manager</option><option value="admin">RevOps admin</option></select></label>
+    </div>
+    <div class="draftbar" id="draftBar" hidden>
+      <strong id="draftText"></strong>
+      <button class="btn" id="publishBtn" type="button">Publish to all reps</button>
+      <button class="btn ghost" id="discardBtn" type="button">Discard draft</button>
+      <ul id="draftList"></ul>
+    </div>
+    <p class="toast" id="pubToast" hidden style="margin:0 0 12px"></p>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="cathead">
+        <div><h2 id="catTitle"></h2><p class="sub" id="catStats" style="margin:0"></p></div>
+        <div class="row">
+          <label class="btn filebtn adminOnly" for="catFile">Import catalog file<input type="file" id="catFile" accept=".json,application/json"></label>
+          <button class="btn ghost" type="button" id="catShow" aria-controls="catJson" aria-expanded="false">Show catalog file</button>
+          <button class="btn ghost" type="button" data-copy="catJson">Copy catalog file</button><span class="toast" id="t-catJson" hidden>Copied</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">A catalog file defines one product: its questions, plans, rules and outputs. Import a new file and ScopeOut reconfigures, with no code changes. Files are checked before anything loads.</p>
+      <ul class="msgs" id="catMsgs" hidden></ul>
+      <pre id="catJson" hidden></pre>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <h2>Packaging</h2>
+        <p class="sub" id="pkgNote"></p>
+        <div class="pbrow"><span>Price book: <strong id="pbName"></strong></span><select id="pbSel" aria-label="Price book to load"></select><button class="btn ghost adminOnly" type="button" id="pbLoad">Load into draft</button><span class="h" id="pbNote" style="flex-basis:100%"></span></div>
+        <div class="scroll"><table class="tbl"><thead id="planHead"></thead><tbody id="planRows"></tbody></table></div>
+        <div class="help" id="pkHelp" hidden style="margin-top:10px"></div>
+        <h3 style="margin-top:20px">Estimating and thresholds</h3>
+        <div class="scroll"><table class="tbl"><tbody id="paramRows"></tbody></table></div>
+        <p class="note" id="estNote"></p>
+        <h3 style="margin-top:20px">Discount limits</h3>
+        <div class="limits">
+          <span class="lblh"><label for="discRep">Reps can give up to (%)</label><button type="button" class="info" data-set="disc-rep" aria-controls="sh-disc-rep" aria-expanded="false" aria-label="About the rep discount limit">i</button></span>
+          <input type="number" id="discRep" data-dpol="repMax" min="0" max="100">
+          <div class="help" id="sh-disc-rep" hidden style="grid-column:1/-1"></div>
+          <span class="lblh"><label for="discMax">Manager can approve up to (%)</label><button type="button" class="info" data-set="disc-max" aria-controls="sh-disc-max" aria-expanded="false" aria-label="About the approval ceiling">i</button></span>
+          <input type="number" id="discMax" data-dpol="approvalMax" min="0" max="100">
+          <div class="help" id="sh-disc-max" hidden style="grid-column:1/-1"></div>
+        </div>
+        <h3 style="margin-top:20px">What each website visitor sees</h3>
+        <div class="vis">
+          <span class="lblh"><label for="vis-exec">Executive overview: pricing</label><button type="button" class="info" data-set="vis-exec" aria-controls="sh-vis-exec" aria-expanded="false" aria-label="About Executive overview: pricing">i</button></span>
+          <select id="vis-exec" data-vis="exec"><option value="hidden">Hidden</option><option value="range">Indicative range</option><option value="list">List price</option></select>
+          <div class="help" id="sh-vis-exec" hidden></div>
+          <span class="lblh"><label for="vis-lead">Project lead package: pricing</label><button type="button" class="info" data-set="vis-lead" aria-controls="sh-vis-lead" aria-expanded="false" aria-label="About Project lead package: pricing">i</button></span>
+          <select id="vis-lead" data-vis="lead"><option value="hidden">Hidden</option><option value="range">Indicative range</option><option value="list">List price</option></select>
+          <div class="help" id="sh-vis-lead" hidden></div>
+          <span class="lblh"><label for="vis-band">Range width (± %)</label><button type="button" class="info" data-set="vis-band" aria-controls="sh-vis-band" aria-expanded="false" aria-label="About Range width (± %)">i</button></span>
+          <input type="number" id="vis-band" data-param="rangePct" min="0" max="50">
+          <div class="help" id="sh-vis-band" hidden></div>
+        </div>
+        <p class="note">Sellers always see list price. With no price book loaded, every visitor sees "pricing on request".</p>
+      </div>
+      <div class="panel">
+        <h2>Rules</h2>
+        <p class="sub">Each rule can only raise the requirement. The strictest rule sets the plan, and every decision lands in the trace.</p>
+        <div id="ruleRows"></div>
+        <button class="btn ghost adminOnly" type="button" id="rbOpen" style="margin-top:12px">Add a rule</button>
+        <div class="rb" id="rb" hidden>
+          <strong>New rule</strong>
+          <div class="row"><label class="opt"><input type="radio" name="rbKind" value="plan" checked> Raise the plan</label><label class="opt"><input type="radio" name="rbKind" value="flag"> Add a flag</label></div>
+          <div id="rbConds"></div>
+          <button type="button" class="linkbtn" id="rbAnd" style="justify-self:start">+ And another condition</button>
+          <div class="rbgrid" id="rbPlanBox"><label for="rbPlan">Then the plan is at least</label><select id="rbPlan"></select></div>
+          <div class="rbgrid" id="rbFlagBox" hidden>
+            <label for="rbTag">Flag label</label><input type="text" id="rbTag" maxlength="24" placeholder="e.g. Security review">
+            <label for="rbMsg">Message</label><input type="text" id="rbMsg" maxlength="200" placeholder="What the rep should do">
+            <label for="rbLevel">Level</label><select id="rbLevel"><option value="warn">Warning</option><option value="info">Info</option><option value="crit">Critical</option></select>
+            <label for="rbShow">Shown to</label><select id="rbShow"><option value="seller">Sellers only</option><option value="lead">Sellers and project leads</option><option value="all">Everyone, including executives</option></select>
+          </div>
+          <div id="rbPrev" aria-live="polite"></div>
+          <div class="row"><button class="btn" type="button" id="rbSave">Add to draft</button><button class="btn ghost" type="button" id="rbCancel">Cancel</button></div>
+          <p class="note" style="margin:0">Simple rules are built here. Calculated rules, like the services estimate, live in the catalog file.</p>
+        </div>
+        <h3 style="margin-top:20px">Packaging data file<button type="button" class="info" data-pk="csv" aria-label="About the packaging data file" style="margin-left:6px">i</button></h3>
+        <pre id="csv"></pre>
+        <div class="row" style="margin-top:10px">
+          <label class="btn ghost filebtn adminOnly" for="csvFile">Import CSV<input type="file" id="csvFile" accept=".csv,text/csv"></label>
+          <button class="btn ghost" type="button" data-copy="csv">Copy CSV</button><span class="toast" id="t-csv" hidden>Copied</span>
+        </div>
+        <ul class="msgs" id="csvMsgs" hidden></ul>
+        <p class="note">Imported files are checked row by row and land in the draft. Nothing reaches reps until an admin publishes.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h2>Change log</h2>
+      <p class="sub">Every published change, who made it and when. Scopes record which version they were built on.</p>
+      <ul class="log" id="changeLog"></ul>
+    </div>
+  </section>
+
+  <!-- OUTPUT -->
+  <section id="p-output" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>Buyer summary</h2>
+        <p class="sub">Paste into a proposal or follow-up email.</p>
+        <pre class="wrapped" id="summary"></pre>
+        <div class="row" style="margin-top:10px"><button class="btn ghost" data-copy="summary">Copy summary</button><span class="toast" id="t-summary" hidden>Copied</span></div>
+      </div>
+      <div class="panel">
+        <h2>CRM payload</h2>
+        <p class="sub">Deal properties and line items, typed for the CRM. No re-keying.</p>
+        <pre id="payload"></pre>
+        <div class="row" style="margin-top:10px"><button class="btn ghost" data-copy="payload">Copy JSON</button><span class="toast" id="t-payload" hidden>Copied</span></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h2>Email to prospect<span class="livetag" id="liveTag"></span></h2>
+      <p class="sub" id="msHint"></p>
+      <form id="msForm" class="mform" novalidate style="max-width:560px">
+        <label for="msName">Prospect name</label><input type="text" id="msName" maxlength="80" autocomplete="off" placeholder="e.g. Jordan Ellis">
+        <label for="msEmail">Prospect email</label><input type="email" id="msEmail" maxlength="254" autocomplete="off" placeholder="Their work email address">
+        <label for="msNote">Personal note (optional)</label><textarea id="msNote" maxlength="600" placeholder="Thanks for the time today. Here's the scope we talked through…"></textarea>
+        <div class="hp" aria-hidden="true"><label for="msWeb">Leave this empty</label><input type="text" id="msWeb" tabindex="-1" autocomplete="off"></div>
+        <div id="tsSeller"></div>
+        <div class="row"><button class="btn" type="submit" id="msSend">Send to prospect</button><button class="btn ghost" type="button" data-preview="seller">Preview the email</button></div>
+        <p class="mstatus" id="msStatus" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+  <!-- GUIDE -->
+  <section id="p-guide" hidden>
+    <div class="guide">
+      <nav class="gnav" aria-label="Guide sections">
+        <a data-goto="g-start">Getting started</a><a data-goto="g-terms">Key terms</a><a data-goto="g-rules">How the plan is chosen</a>
+        <a data-goto="g-views">Seller and buyer views</a><a data-goto="g-roles">Roles and access</a><a data-goto="g-fields">Question reference</a><a data-goto="g-settings">Settings reference</a><a data-goto="g-faq">FAQ</a>
+      </nav>
+      <div class="gbody">
+        <section class="panel" id="g-start"><h2>Getting started</h2>
+          <p class="sub">Your first scope takes about five minutes.</p>
+          <ol>
+            <li>Type the prospect's company name, or load one of the example scenarios to see how a finished scope looks.</li>
+            <li>Answer the questions as you learn the answers on the call. You don't need them in order. Tap <strong>i</strong> on any question for what to listen for and what to ask next.</li>
+            <li>Watch the <strong>Checks</strong> panel. A warning means ask another question, or route the deal to a solutions engineer before quoting.</li>
+            <li>Read <strong>Why this scope</strong> so you can explain the plan to the buyer in one sentence.</li>
+            <li>Open <strong>Output</strong> and copy the buyer summary into your follow-up email, or the CRM payload into the deal.</li>
+          </ol>
+        </section>
+        <section class="panel" id="g-terms"><h2>Key terms</h2>
+          <dl class="ref" id="gTerms"></dl>
+        </section>
+        <section class="panel" id="g-rules"><h2>How the plan is chosen</h2>
+          <p id="gRuleIntro"></p>
+          <p id="gRuleExample"></p>
+          <p id="gRuleFlags"></p>
+          <p id="gCatalogs" class="note"></p>
+        </section>
+        <section class="panel" id="g-views"><h2>Seller and buyer views</h2>
+          <div class="scroll"><table class="tbl">
+            <thead><tr><th>View</th><th>Who it's for</th><th>What they see</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Seller</strong></td><td>Reps and solutions engineers on a call</td><td>All questions with coaching tips, every check, the rule trace, list prices and the CRM output.</td></tr>
+              <tr><td><strong>Buyer: quick overview</strong></td><td>Executives deciding whether to look closer</td><td><span id="execCount">Six</span> questions and an at-a-glance summary. Pricing follows the setting for this audience.</td></tr>
+              <tr><td><strong>Buyer: scoping a project</strong></td><td>Directors building a case for approval</td><td>All questions, the full scope and a leadership package. Pricing follows the setting for this audience.</td></tr>
+            </tbody></table></div>
+          <p class="note">Buyers never see internal flags such as SE review or services gaps, or the rule trace.</p>
+        </section>
+        <section class="panel" id="g-roles"><h2>Roles and access</h2>
+          <p>Reps can see the packaging but can't change it, and can discount up to the rep limit. Bigger discounts need a sales manager. RevOps admins edit packaging, rules and pricing visibility in a draft, then publish it to every rep at once. Each publish is recorded in the change log.</p>
+          <div class="scroll"><table class="tbl">
+            <thead><tr><th>Role</th><th>Can do</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Sales rep</strong></td><td>Build scopes, share buyer summaries, view packaging and the change log.</td></tr>
+              <tr><td><strong>Sales manager</strong></td><td>Everything a rep can do, plus approve or decline discounts between the rep limit and the approval ceiling.</td></tr>
+              <tr><td><strong>RevOps admin</strong></td><td>Everything a rep can do, plus edit packaging, price books, discount limits and rules (including new rules from the rule builder), import catalog and CSV files, set what website visitors see, and publish.</td></tr>
+              <tr><td><strong>Solutions engineer</strong><span class="planned">planned</span></td><td>Approve deals flagged for SE review, and override a plan with a recorded reason.</td></tr>
+              <tr><td><strong>Finance approver</strong><span class="planned">planned</span></td><td>Second approval before any price book change is published.</td></tr>
+              <tr><td><strong>Partner</strong><span class="planned">planned</span></td><td>Scope with a partner price book, limited to the plans that partner resells.</td></tr>
+            </tbody></table></div>
+        </section>
+        <section class="panel" id="g-fields"><h2>Question reference</h2>
+          <dl class="ref" id="gFields"></dl>
+        </section>
+        <section class="panel" id="g-settings"><h2>Settings reference</h2>
+          <p class="sub">These live on the Admin tab. Changes apply to every new scope immediately.</p>
+          <dl class="ref" id="gSettings"></dl>
+        </section>
+        <section class="panel faq" id="g-faq"><h2>FAQ</h2>
+          <div id="faqList"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+<div class="modal" id="mailModal" hidden role="dialog" aria-modal="true" aria-labelledby="mmTitle">
+  <div class="mbox">
+    <div class="mhead"><div><strong id="mmTitle">Email preview</strong><div class="h" id="mmMeta"></div></div><button class="btn ghost" type="button" id="mmClose">Close</button></div>
+    <p class="mnote" id="mmNote"></p>
+    <div class="mbody" id="mmBody"></div>
+  </div>
+</div>
+<footer class="wrap" id="footNote"></footer>
+
+<script>
+/* ScopeOut scope email. One template, used by the page (preview) and by the mail server (real send).
+   It takes plain data, never HTML, so nothing a visitor types can change the email's markup. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.ScopeOutEmail = factory();
+})(typeof self !== "undefined" ? self : this, function () {
+  const C = { bg: "#F3F5F1", card: "#FFFFFF", ink: "#16201B", muted: "#56635B", line: "#D5DCD4", accent: "#1E6B57", soft: "#DCEDE6", prod: "#2C4A7A", warnBg: "#FBEEDA", warn: "#8A4B00" };
+  const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+  const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const str = (v, max) => String(v == null ? "" : v).replace(/<[^>]*>/g, "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
+  const list = (v, max) => (Array.isArray(v) ? v : []).slice(0, max);
+
+  /* Coerce untrusted input into the shape the template expects, with hard length limits. */
+  function clean(d) {
+    d = d && typeof d === "object" ? d : {};
+    return {
+      mode: d.mode === "seller" ? "seller" : "buyer",
+      recipientName: str(d.recipientName, 80),
+      company: str(d.company, 100),
+      product: str(d.product, 60) || "your",
+      plan: str(d.plan, 40),
+      stats: list(d.stats, 3).map(s => ({ label: str(s && s.label, 30), value: str(s && s.value, 24), sub: str(s && s.sub, 60) })).filter(s => s.label && s.value),
+      highlights: list(d.highlights, 6).map(h => ({ label: str(h && h.label, 30), text: str(h && h.text, 240) })).filter(h => h.label && h.text),
+      lines: list(d.lines, 20).map(l => ({ name: str(l && l.name, 60), detail: str(l && l.detail, 160), qty: str(l && l.qty, 16) })).filter(l => l.name),
+      reasons: list(d.reasons, 8).map(r => str(r, 160)).filter(Boolean),
+      investment: str(d.investment, 80),
+      investmentNote: str(d.investmentNote, 200),
+      notes: list(d.notes, 5).map(n => ({ tag: str(n && n.tag, 24), msg: str(n && n.msg, 240) })).filter(n => n.msg),
+      note: str(d.note, 600),
+      wantsCall: !!d.wantsCall,
+      demoFooter: str(d.demoFooter, 300),
+      pageUrl: str(d.pageUrl, 200)
+    };
+  }
+
+  function render(input, opts) {
+    const d = clean(input), o = opts || {};
+    const first = d.recipientName.split(/\s+/)[0];
+    const subject = d.mode === "seller"
+      ? `${d.company || "Your"} ${d.product} scope${d.plan ? `: ${d.plan} plan` : ""}`
+      : `Your ${d.product} scope${d.plan ? `: ${d.plan} plan` : ""}`;
+    const intro = d.mode === "seller"
+      ? (d.note || `As promised, here's the scope we put together${d.company ? ` for ${d.company}` : ""}. Reply with any questions and I'll walk you through it.`)
+      : `Here's the scope you built${d.company ? ` for ${d.company}` : ""}. A solutions engineer will review it and follow up within one business day${d.wantsCall ? " to set up your call" : ""}.`;
+
+    const h2 = t => `<tr><td style="padding:24px 32px 8px;font:600 12px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(t)}</td></tr>`;
+    const stats = d.stats.length ? `<tr><td style="padding:8px 32px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>${d.stats.map(s =>
+      `<td valign="top" style="padding:14px 12px 14px 0;border-top:2px solid ${C.accent};width:${Math.floor(100 / d.stats.length)}%">
+        <div style="font:600 11px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(s.label)}</div>
+        <div style="font:700 26px/1.15 ${FONT};color:${C.ink};margin-top:4px">${esc(s.value)}</div>
+        ${s.sub ? `<div style="font:13px ${FONT};color:${C.muted};margin-top:2px">${esc(s.sub)}</div>` : ""}</td>`).join("")}</tr></table></td></tr>` : "";
+    const highlights = d.highlights.length ? h2("At a glance") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.highlights.map(x =>
+      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 13px ${FONT};color:${C.muted};width:130px">${esc(x.label)}</td><td style="padding:9px 0;border-top:1px solid ${C.line};font:15px/1.45 ${FONT};color:${C.ink}">${esc(x.text)}</td></tr>`).join("")}</table></td></tr>` : "";
+    const lines = d.lines.length ? h2("What's included") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.lines.map(l =>
+      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 15px ${FONT};color:${C.ink}">${esc(l.name)}<div style="font:400 13px/1.4 ${FONT};color:${C.muted};margin-top:2px">${esc(l.detail)}</div></td><td valign="top" align="right" style="padding:9px 0;border-top:1px solid ${C.line};font:15px ${FONT};color:${C.ink};white-space:nowrap">${esc(l.qty)}</td></tr>`).join("")}</table></td></tr>` : "";
+    const reasons = d.reasons.length ? h2(`Why ${d.plan || "this plan"}`) + `<tr><td style="padding:0 32px"><ul style="margin:0;padding-left:20px;font:15px/1.55 ${FONT};color:${C.ink}">${d.reasons.map(r => `<li style="margin:2px 0">${esc(r)}</li>`).join("")}</ul></td></tr>` : "";
+    const invest = d.investment ? h2("Investment") + `<tr><td style="padding:0 32px"><div style="font:700 22px ${FONT};color:${C.ink}">${esc(d.investment)}</div>${d.investmentNote ? `<div style="font:13px/1.45 ${FONT};color:${C.muted};margin-top:4px">${esc(d.investmentNote)}</div>` : ""}</td></tr>` : "";
+    const notes = d.notes.length ? h2("Worth knowing") + `<tr><td style="padding:0 32px">${d.notes.map(n =>
+      `<div style="background:${C.soft};border-radius:6px;padding:10px 12px;margin:0 0 6px;font:14px/1.45 ${FONT};color:${C.ink}">${n.tag ? `<strong style="color:${C.accent}">${esc(n.tag)}:</strong> ` : ""}${esc(n.msg)}</div>`).join("")}</td></tr>` : "";
+    const logo = o.logoUrl
+      ? `<img src="${esc(o.logoUrl)}" width="150" height="34" alt="ScopeOut" style="display:block;border:0;outline:none;height:auto;width:150px">`
+      : `<span style="font:700 22px ${FONT};color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></span>`;
+
+    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(subject)}</title></head>
+<body style="margin:0;padding:0;background:${C.bg}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(d.plan ? `${d.plan} plan, ready for your review.` : "Your scope is ready.")}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border-collapse:collapse"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${C.card};border:1px solid ${C.line};border-radius:10px;border-collapse:separate">
+<tr><td style="padding:24px 32px 18px;border-bottom:1px solid ${C.line}"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>${logo}</td><td align="right" style="font:13px ${FONT};color:${C.muted}">Scope summary</td></tr></table></td></tr>
+<tr><td style="padding:28px 32px 4px;font:700 26px/1.2 ${FONT};color:${C.ink}">Your ${esc(d.product)} scope${d.plan ? `: <span style="color:${C.accent}">${esc(d.plan)}</span>` : ""}</td></tr>
+<tr><td style="padding:10px 32px 4px;font:15px/1.55 ${FONT};color:${C.ink}">${first ? `Hi ${esc(first)},<br><br>` : ""}${esc(intro).replace(/\n/g, "<br>")}</td></tr>
+${stats}${highlights}${lines}${reasons}${invest}${notes}
+<tr><td style="padding:26px 32px 28px"><div style="background:${C.bg};border-radius:8px;padding:14px 16px;font:15px/1.5 ${FONT};color:${C.ink}"><strong>Questions?</strong> Just reply to this email and it goes straight to your solutions engineer.</div></td></tr>
+</table>
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px"><tr><td style="padding:16px 32px;font:12px/1.5 ${FONT};color:${C.muted}" align="center">
+Sent with <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · guided deal scoping<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
+</td></tr></table>
+</td></tr></table></body></html>`;
+
+    const t = [];
+    t.push(`Your ${d.product} scope${d.plan ? `: ${d.plan}` : ""}`, "");
+    if (first) t.push(`Hi ${first},`, "");
+    t.push(intro, "");
+    d.stats.forEach(s => t.push(`${s.label}: ${s.value}${s.sub ? ` (${s.sub})` : ""}`));
+    if (d.highlights.length) { t.push("", "AT A GLANCE"); d.highlights.forEach(x => t.push(`- ${x.label}: ${x.text}`)); }
+    if (d.lines.length) { t.push("", "WHAT'S INCLUDED"); d.lines.forEach(l => t.push(`- ${l.name}: ${l.detail} (${l.qty})`)); }
+    if (d.reasons.length) { t.push("", `WHY ${(d.plan || "this plan").toUpperCase()}`); d.reasons.forEach(r => t.push(`- ${r}`)); }
+    if (d.investment) { t.push("", "INVESTMENT", d.investment + (d.investmentNote ? ` (${d.investmentNote})` : "")); }
+    if (d.notes.length) { t.push("", "WORTH KNOWING"); d.notes.forEach(n => t.push(`- ${n.tag ? n.tag + ": " : ""}${n.msg}`)); }
+    t.push("", "Questions? Just reply to this email.", "", "Sent with ScopeOut, guided deal scoping.", d.demoFooter);
+    return { subject, html, text: t.join("\n"), data: d };
+  }
+  return { render, clean };
+});
+
+/* ScopeOut engine. Knows nothing about any product: every question, rule, plan and output comes from a catalog. */
+const $=id=>document.getElementById(id);
+const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const fmt=n=>(+n).toLocaleString("en-US");
+const money=n=>"$"+Math.round(n).toLocaleString("en-US");
+
+/* ---------- Rule language: small expressions, evaluated without eval() ---------- */
+const FUNCS={
+  ceil:Math.ceil, floor:Math.floor, round:Math.round, abs:Math.abs,
+  max:(...a)=>Math.max(...a), min:(...a)=>Math.min(...a),
+  ceil5:n=>Math.ceil(n/5)*5,
+  count:a=>Array.isArray(a)?a.length:0,
+  has:(a,v)=>Array.isArray(a)&&a.includes(v),
+  join:a=>Array.isArray(a)?a.join(", "):"",
+  isnum:v=>v!==""&&v!=null&&isFinite(parseFloat(v)),
+  num:v=>parseFloat(v),
+  unl:v=>(+v>=999?"unlimited":v),
+  fmtk:n=>{n=+n||0;return n>=1000?(Math.round(n/100)/10).toLocaleString("en-US")+"M":Math.round(n).toLocaleString("en-US")+"k";},
+  s:n=>(n==1?"":"s"),
+  nextPlanWith:()=>"", planAttr:()=>undefined
+};
+const BAD=new Set(["__proto__","constructor","prototype","__fn"]);
+function tokenize(src){
+  const re=/\s*(?:(\d+(?:\.\d+)?|\.\d+)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|([A-Za-z_$][\w$]*)|(==|!=|<=|>=|&&|\|\||[-+*\/%<>!?:(),.]))/y;
+  const out=[];
+  while(re.lastIndex<src.length){
+    const at=re.lastIndex, m=re.exec(src);
+    if(!m){ if(/^\s*$/.test(src.slice(at))) break; throw new Error(`can't read "${src.slice(at).trim().slice(0,14)}"`); }
+    if(m[1]!==undefined) out.push({t:"num",v:parseFloat(m[1])});
+    else if(m[2]!==undefined) out.push({t:"str",v:m[2].slice(1,-1).replace(/\\(.)/g,(_,c)=>c==="n"?"\n":c)});
+    else if(m[3]!==undefined) out.push({t:"id",v:m[3]});
+    else out.push({t:"op",v:m[4]});
+  }
+  return out;
+}
+function compile(src){
+  const toks=tokenize(String(src)); let k=0; const names=new Set(), params=new Set();
+  const is=v=>k<toks.length&&toks[k].t==="op"&&toks[k].v===v;
+  const expect=v=>{ if(!is(v)) throw new Error(`expected "${v}"`+(k<toks.length?` but found "${toks[k].v}"`:" at the end")); k++; };
+  const bin=(sub,ops,mk)=>()=>{ let l=sub(); while(ops.some(is)){ const op=toks[k++].v, a=l, b=sub(); l=mk(op,a,b); } return l; };
+  let ternary;
+  function primary(){
+    const t=toks[k++]; if(!t) throw new Error("the expression ends too early");
+    if(t.t==="num"||t.t==="str"){ const v=t.v; return {fn:()=>v}; }
+    if(t.t==="id"){
+      if(t.v==="true") return {fn:()=>true}; if(t.v==="false") return {fn:()=>false}; if(t.v==="null") return {fn:()=>null};
+      if(is("(")){
+        k++; const name=t.v; if(!Object.prototype.hasOwnProperty.call(FUNCS,name)) throw new Error(`unknown function "${name}"`);
+        const args=[]; if(!is(")")){ do{ args.push(ternary()); }while(is(",")&&++k); } expect(")");
+        return {fn:e=>{ const f=(e.__fn&&e.__fn[name])||FUNCS[name]; return f(...args.map(a=>a(e))); }};
+      }
+      if(BAD.has(t.v)) throw new Error(`"${t.v}" isn't allowed`);
+      names.add(t.v); const n=t.v; return {fn:e=>e[n], ident:n};
+    }
+    if(t.t==="op"&&t.v==="("){ const a=ternary(); expect(")"); return {fn:a}; }
+    throw new Error(`unexpected "${t.v}"`);
+  }
+  function postfix(){
+    const p0=primary(); let fn=p0.fn, base=p0.ident||null;
+    while(is(".")){
+      k++; const t=toks[k++]; if(!t||t.t!=="id") throw new Error('expected a name after "."');
+      if(BAD.has(t.v)) throw new Error(`"${t.v}" isn't allowed`);
+      if(base==="p") params.add(t.v); base=null;
+      const o=fn, prop=t.v; fn=e=>{ const v=o(e); return v==null?undefined:v[prop]; };
+    }
+    return fn;
+  }
+  const unary=()=>{ if(is("!")){k++;const a=unary();return e=>!a(e);} if(is("-")){k++;const a=unary();return e=>-a(e);} return postfix(); };
+  const mul=bin(unary,["*","/","%"],(op,a,b)=>op==="*"?e=>a(e)*b(e):op==="/"?e=>a(e)/b(e):e=>a(e)%b(e));
+  const add=bin(mul,["+","-"],(op,a,b)=>op==="+"?e=>a(e)+b(e):e=>a(e)-b(e));
+  const rel=bin(add,["<=",">=","<",">"],(op,a,b)=>op==="<"?e=>a(e)<b(e):op==="<="?e=>a(e)<=b(e):op===">"?e=>a(e)>b(e):e=>a(e)>=b(e));
+  const eq=bin(rel,["==","!="],(op,a,b)=>op==="=="?e=>a(e)==b(e):e=>a(e)!=b(e));
+  const and=bin(eq,["&&"],(op,a,b)=>e=>a(e)&&b(e));
+  const or=bin(and,["||"],(op,a,b)=>e=>a(e)||b(e));
+  ternary=()=>{ const c=or(); if(is("?")){ k++; const a=ternary(); expect(":"); const b=ternary(); return e=>c(e)?a(e):b(e); } return c; };
+  if(!toks.length) throw new Error("the expression is empty");
+  const fn=ternary(); if(k<toks.length) throw new Error(`unexpected "${toks[k].v}"`);
+  return {fn,names:[...names],params:[...params]};
+}
+const CC=new Map();
+function cexpr(src){ src=String(src); if(!CC.has(src)) CC.set(src,compile(src)); return CC.get(src); }
+const ev=(src,env)=>cexpr(src).fn(env);
+const TC=new Map();
+function ctpl(src){
+  src=String(src); if(TC.has(src)) return TC.get(src);
+  const out=[]; let buf="", i=0;
+  while(i<src.length){
+    if(src[i]!=="{"){ buf+=src[i++]; continue; }
+    let j=i+1, q=null, depth=0;
+    for(;j<src.length;j++){ const d=src[j];
+      if(q){ if(d==="\\"){j++;continue;} if(d===q) q=null; continue; }
+      if(d==="'"||d==='"'){ q=d; continue; }
+      if(d==="(") depth++; else if(d===")") depth--; else if(d==="}"&&depth<=0) break; }
+    if(j>=src.length) throw new Error('a "{" has no closing "}"');
+    out.push(buf); buf=""; out.push(cexpr(src.slice(i+1,j))); i=j+1;
+  }
+  out.push(buf); TC.set(src,out); return out;
+}
+const val=(v,html)=>{ const s=v==null?"":Array.isArray(v)?v.join(", "):String(v); return html?esc(s):s; };
+// Catalog text may use <b>, <strong>, <em> and the "confirm" pill; anything else is shown as text.
+const rich=s=>esc(s).replace(/&lt;(\/?)(b|strong|em)&gt;/g,"<$1$2>").replace(/&lt;span class=&quot;assume&quot;&gt;(.*?)&lt;\/span&gt;/g,'<span class="assume">$1</span>');
+function tpl(src,env,html){ return ctpl(src).map(p=>typeof p==="string"?(html?rich(p):p):val(p.fn(env),html)).join(""); }
+
+/* ---------- Built-in catalogs (same format as an imported catalog file) ---------- */
+const BUILTIN=[{"id": "cloverdx", "name": "CloverDX", "label": "CloverDX (data integration)", "unit": "DX Unit", "companyExample": "e.g. Ridgeline Freight Co.", "reviewTag": "SE review", "planColumns": [{"key": "nonprod", "label": "Non-prod servers", "csv": "nonprod_servers", "type": "intU", "term": "non-prod servers", "confirm": true, "help": "Dev, QA and staging servers included with the plan. They don't use DX Units. Enhanced includes unlimited, so adding environments can push a scope to a higher plan."}, {"key": "ps", "label": "PS hrs incl.", "csv": "ps_hours", "type": "int", "term": "PS hours", "diff": "PS hours included", "confirm": true, "help": "Professional Services hours bundled into the plan. When the project estimate is higher, the scope flags the gap and adds a line for the extra hours."}, {"key": "training", "label": "Training credits", "csv": "training_credits", "type": "int", "term": "training credits", "help": "Instructor-led training credits included with the plan. Standard relies on self-paced courses in CloverDX Academy."}, {"key": "support", "label": "Support", "csv": "support", "type": "enum", "values": ["Business hours", "24/7"], "term": "support"}, {"key": "price", "label": "Price / DXU / yr", "csv": "price_per_dxu", "type": "price", "term": "price", "diff": "price per DXU", "help": "Your list price per DX Unit per year. Leave it blank to hide pricing everywhere; enter it to show totals for sellers and ranges for buyers."}], "plans": [{"name": "Standard", "nonprod": 1, "ps": 24, "training": 0, "support": "Business hours", "price": ""}, {"name": "Plus", "nonprod": 2, "ps": 40, "training": 2, "support": "Business hours", "price": ""}, {"name": "Enhanced", "nonprod": 999, "ps": 100, "training": 4, "support": "24/7", "price": ""}], "priceBooks": [{"name": "Illustrative list prices", "note": "Made-up numbers for the demo. These are not CloverDX prices.", "prices": {"Standard": 2000, "Plus": 2400, "Enhanced": 3000}, "params": {"psRate": 200}}], "params": [{"key": "psBase", "label": "Base PS hours per project", "term": "base PS hours", "value": 12, "help": "Fixed hours every project needs whatever its size: kickoff, installation, environment setup and handover. Raise it if your projects always include a security review."}, {"key": "psLow", "label": "Hours per source: simple", "term": "hours per simple source", "value": 2, "help": "Hours for each source or target that only needs straight field mappings."}, {"key": "psMed", "label": "Hours per source: moderate", "term": "hours per moderate source", "value": 4, "help": "Hours for each source that needs lookups, joins or cleansing."}, {"key": "psHigh", "label": "Hours per source: complex", "term": "hours per complex source", "value": 8, "help": "Hours for each source with business rules, validation and error handling."}, {"key": "expNew", "label": "Experience factor: new team", "term": "new-team factor", "value": 1.5, "help": "Multiplies the PS estimate for teams new to CloverDX, because they need more guidance. 1.5 means 50% more hours. Teams with some experience use 1.2."}, {"key": "expSome", "label": "Experience factor: some experience", "value": 1.2, "hidden": true}, {"key": "expExpert", "label": "Experience factor: experienced", "value": 1, "hidden": true}, {"key": "seReviewCores", "label": "SE review above (production cores)", "title": "SE review threshold", "term": "SE review threshold", "value": 32, "help": "Deals with more production cores than this go to a solutions engineer before quoting. Large deployments usually need an architecture review and custom pricing."}, {"key": "minWeeksNew", "label": "Minimum weeks to go-live, new team", "term": "minimum weeks for new teams", "value": 8, "help": "If a new team's go-live date is sooner than this, the scope flags a timeline risk so the rep can add training or phase the project."}, {"key": "psRate", "label": "PS add-on rate ($/h)", "title": "PS add-on rate", "term": "PS add-on rate", "value": "", "allowBlank": true, "help": "Hourly rate for PS hours beyond what the plan includes. Leave it blank to show hours without a price."}, {"key": "freeBizSeats", "label": "Free Business Tools seats", "value": 1, "hidden": true}], "questions": [{"key": "designers", "label": "How many developers will build pipelines?", "buyerLabel": "How many people on your team will build data pipelines?", "controls": [{"key": "designers", "type": "number", "min": 0, "max": 200, "sellerHint": "Designer seats, 1 DXU each"}], "help": {"why": "Each Designer seat is one DXU, so this sizes part of the pool.", "listen": "Contractors, partner developers, or a team that's still being hired.", "ask": "Who builds pipelines today, and who maintains them a year from now?", "buyer": "Count the people who will build or change pipelines, not people who only use the results."}}, {"key": "cores", "label": "Production server size", "buyerLabel": "How big is your production workload?", "aud": "lead", "controls": [{"key": "cores", "type": "select", "num": true, "options": [2, 4, 8, 16, 32], "suffix": "cores per node"}, {"key": "ha", "type": "checkbox", "label": "High-availability cluster (2 nodes)"}], "help": {"why": "Production cores are usually most of the DXU pool, and HA doubles them.", "listen": "Uptime SLAs, overnight batch windows, or \"this can't go down.\"", "ask": "What happens to the business if a job misses its window? What are peak volumes?", "buyer": "Not sure? Leave it at 8 cores and an engineer will right-size it. High availability means two servers, so one failure doesn't stop your jobs."}}, {"key": "envs", "label": "Non-production environments", "buyerLabel": "Test environments you'll need", "aud": "lead", "controls": [{"key": "envs", "type": "multi", "options": ["Dev", "QA", "Stage", "Training"]}], "help": {"why": "Non-prod allowances differ by plan and can force an upgrade.", "listen": "Change control, audit requirements, or a separate QA team.", "ask": "How do changes get promoted to production today?", "buyer": "Copies of your setup for building and testing. They don't use DX Units."}}, {"key": "deploy", "label": "Where will it run?", "controls": [{"key": "deploy", "type": "select", "options": ["On-premise", "Docker / Kubernetes", "AWS", "Azure", "Google Cloud"]}], "help": {"why": "CloverDX is self-hosted, so this drives install effort and the marketplace route.", "listen": "Committed cloud spend, data residency, or a long security review.", "ask": "Who owns the infrastructure? Is there committed AWS or Azure spend to draw down?", "buyer": "CloverDX runs in your own environment, so your data never passes through a vendor's cloud."}}, {"key": "support", "label": "Support hours needed", "controls": [{"key": "support", "type": "radio", "options": [{"v": "business", "l": "Business hours"}, {"v": "24x7", "l": "24/7 for production"}]}], "help": {"why": "A 24/7 requirement means Enhanced.", "listen": "Overnight runs, global teams, or data feeds that customers depend on.", "ask": "If a production job fails at 2 a.m., who gets called, and how fast must it be fixed?", "buyer": "Choose 24/7 if your pipelines feed customers or run overnight with no one watching."}}, {"key": "exp", "label": "Team experience with CloverDX", "buyerLabel": "Your team's experience with CloverDX", "aud": "lead", "controls": [{"key": "exp", "type": "select", "options": [{"v": "new", "l": "New to CloverDX"}, {"v": "some", "l": "Some experience"}, {"v": "expert", "l": "Experienced"}]}], "help": {"why": "Drives training credits and the PS estimate.", "listen": "Previous tools (SSIS, Informatica, Talend), Java skills, or no data engineers at all.", "ask": "What do they use today, and what do they like or dislike about it?", "buyer": "Helps us include the right amount of training."}}, {"key": "sources", "label": "First project: sources and targets", "aud": "lead", "controls": [{"key": "sources", "type": "number", "min": 0, "max": 500}, {"key": "complexity", "type": "select", "aria": "Complexity", "options": [{"v": "low", "l": "Simple mappings"}, {"v": "med", "l": "Moderate transforms"}, {"v": "high", "l": "Complex rules / validation"}]}], "help": {"why": "The main input to the PS estimate.", "listen": "Legacy file formats, undocumented APIs, or one spreadsheet a single person maintains.", "ask": "Which source is the hardest to work with, and why?", "buyer": "Count the systems and file feeds your first project reads from or writes to."}}, {"key": "weeks", "label": "Weeks to first go-live", "controls": [{"key": "weeks", "type": "number", "min": 1, "max": 104}], "help": {"why": "Short timelines with new teams are where services overrun.", "listen": "Hard dates: a contract renewal, a system being retired, an audit.", "ask": "What's driving the date, and what happens if it slips?", "buyer": "Your target date for the first pipeline running in production."}}, {"key": "biz", "label": "Business users (Wrangler)", "buyerLabel": "People who prepare data without code", "aud": "lead", "controls": [{"key": "biz", "type": "number", "min": 0, "max": 500}], "help": {"why": "Business Tools seats beyond the free one are a separate line item.", "listen": "Analysts prepping data in Excel, or operations teams fixing records by hand.", "ask": "Who fixes bad data today, and how long does it take them?", "buyer": "People who prepare or fix data without writing code."}}, {"key": "pii", "label": "Data includes personal or regulated data", "boxOnly": true, "controls": [{"key": "pii", "type": "checkbox"}], "help": {"why": "Adds anonymization work and usually a security review.", "listen": "HIPAA, GDPR, PCI, or data clauses in customer contracts.", "ask": "Who signs off on security, and how long does that review usually take?", "buyer": "Personal, financial or health data. We'll include anonymization in the plan."}}], "metrics": [{"key": "designers", "expr": "max(0, designers)"}, {"key": "nodes", "expr": "ha ? 2 : 1"}, {"key": "prodCores", "expr": "nodes * cores"}, {"key": "pool", "expr": "designers + prodCores"}, {"key": "np", "expr": "count(envs)"}, {"key": "ps", "expr": "ceil5(p.psBase + sources * (complexity == 'high' ? p.psHigh : complexity == 'med' ? p.psMed : p.psLow) * (exp == 'new' ? p.expNew : exp == 'some' ? p.expSome : p.expExpert))"}, {"key": "extraBiz", "expr": "max(0, biz - p.freeBizSeats)"}, {"key": "gap", "expr": "max(0, ps - P.ps)", "after": true}, {"key": "up", "expr": "nextPlanWith('ps', ps)", "after": true}, {"key": "npText", "expr": "P.nonprod >= 999 ? 'unlimited included' : P.nonprod + ' included'", "after": true}], "rules": [{"id": "R1", "kind": "info", "txt": "DXU pool = Designer seats + (production nodes × cores per node)", "src": "Public pricing", "trace": "{designers} Designer + {nodes} × {cores}-core = {pool} DXU"}, {"id": "R2", "kind": "plan", "txt": "24/7 support for production → Enhanced", "src": "Public pricing", "when": "support == '24x7'", "plan": "Enhanced", "why": "24/7 production support requested"}, {"id": "R3", "kind": "fit", "txt": "Non-prod environments needed > plan allowance → lowest plan that covers them", "src": "Public pricing", "fit": "cand.nonprod >= np", "why": "{np} non-prod environments ({prevPlan} includes {prev.nonprod})", "ok": "{np} non-prod environment{s(np)} fits {firstPlan}"}, {"id": "R4", "kind": "plan", "txt": "New team and complex first project → at least Plus (training + PS)", "src": "Sales playbook", "when": "exp == 'new' && complexity == 'high'", "plan": "Plus", "why": "New team on a complex first project"}, {"id": "R5", "kind": "flag", "txt": "PS estimate > hours included → flag the gap, add PS hours line", "src": "Services", "when": "gap > 0", "level": "warn", "tag": "PS gap", "show": "seller", "msg": "Estimate {ps} h vs {P.ps} h included in {plan}: {gap} h short.{up ? ' ' + up + ' includes ' + planAttr(up, 'ps') + ' h; compare before quoting add-on hours.' : ' Quote add-on PS hours.'}", "trace": "PS estimate {ps} h exceeds {P.ps} h included → add {gap} h", "okTrace": "PS estimate {ps} h within {P.ps} h included"}, {"id": "R6", "kind": "flag", "txt": "HA cluster on nodes under 4 cores → SE review", "src": "Solutions", "when": "ha && cores < 4", "level": "warn", "tag": "SE review", "show": "seller", "msg": "HA cluster on 2-core nodes. Check failover sizing with a solutions engineer.", "trace": "HA on nodes under 4 cores → SE review"}, {"id": "R7", "kind": "flag", "txt": "Production cores above threshold → SE review (custom deal)", "src": "Solutions", "when": "prodCores > p.seReviewCores", "level": "warn", "tag": "SE review", "show": "seller", "msg": "{prodCores} production cores is above the {p.seReviewCores}-core threshold. Route to Solutions as a custom deal.", "trace": "{prodCores} cores > {p.seReviewCores} → SE review"}, {"id": "R8", "kind": "flag", "txt": "New team and go-live sooner than minimum weeks → timeline risk", "src": "Services", "when": "exp == 'new' && weeks < p.minWeeksNew", "level": "warn", "tag": "Timeline", "show": "lead", "msg": "Go-live in {weeks} weeks for a new team; plan assumes {p.minWeeksNew}+. Front-load training or phase the project.", "trace": "New team, {weeks} weeks < {p.minWeeksNew} → timeline risk"}, {"id": "R9", "kind": "flag", "txt": "Personal or regulated data → include anonymization template", "src": "Marketplace", "when": "pii", "level": "info", "tag": "Data", "show": "all", "msg": "Personal data in scope. Include the anonymization template from the CloverDX Marketplace in the project plan.", "trace": "Regulated data → anonymization template"}, {"id": "R10", "kind": "flag", "txt": "Business users beyond the complimentary seat → Business Tools seats line", "src": "Public pricing", "when": "extraBiz > 0", "level": "info", "tag": "Seats", "show": "seller", "msg": "{extraBiz} Business Tools seat{s(extraBiz)} beyond the complimentary one. Price from the RevOps price book.", "trace": "{biz} business users − {p.freeBizSeats} free = {extraBiz} seats"}], "checks": [{"at": "start", "when": "designers < 1", "level": "crit", "tag": "Missing", "show": "all", "msg": "No Designer seats. Someone has to build the pipelines; confirm with the prospect."}, {"at": "end", "when": "deploy == 'AWS' || deploy == 'Azure'", "level": "info", "tag": "Deploy", "show": "all", "msg": "Self-hosted on {deploy}; the {deploy} Marketplace listing can speed the first install."}], "lines": [{"name": "Designer seats", "detail": "DXU allocated to developers", "qty": "designers", "price": "unit"}, {"name": "Production server cores", "detail": "{nodes} × {cores}-core{ha ? ', HA cluster' : ''}", "qty": "prodCores", "price": "unit"}, {"name": "Non-production servers", "detail": "{join(envs) || 'none'} ({npText})", "qty": "np", "price": "included"}, {"name": "Professional Services", "detail": "{P.ps} h included with {plan}", "qty": "P.ps", "price": "included"}, {"name": "PS add-on hours", "when": "gap > 0", "detail": "Estimate minus included hours", "qty": "gap", "price": "isnum(p.psRate) ? gap * num(p.psRate) : null"}, {"name": "Instructor-led training", "when": "P.training", "detail": "Credits included", "qty": "P.training", "price": "included"}, {"name": "Business Tools seats", "when": "extraBiz > 0", "detail": "Wrangler users beyond the free seat", "qty": "extraBiz", "price": "none"}, {"name": "Support", "detail": "{P.support}", "qty": "1", "price": "included"}], "verdict": [{"label": "DX Unit pool", "value": "{pool}"}, {"label": "Recommended plan", "value": "{plan}"}, {"label": "PS hours", "value": "{ps}", "sub": "{gap > 0 ? P.ps + ' included, ' + gap + ' short' : P.ps + ' included'}", "notExec": true}], "allocation": {"caption": "Allocation, one square per DXU", "groups": [{"count": "designers", "color": "d", "label": "<b>{designers}<\/b> Designer seat{s(designers)}"}, {"count": "cores", "repeat": "nodes", "color": "p", "label": "<b>{cores}<\/b> {nodes > 1 ? 'cores · node ' + i : 'production cores'}"}], "legend": [{"color": "d", "text": "{designers} Designer seat{s(designers)}"}, {"color": "p", "text": "{prodCores} production cores"}, {"text": "+ {np} non-prod server{s(np)} at no DXU cost"}]}, "glance": [{"label": "Fit", "text": "{plan} plan, starting around {pool} DX Units for a team of {designers} developer{s(designers)}."}, {"label": "Where it runs", "text": "Self-hosted on {deploy}. Your data stays in your environment; there is no vendor-hosted SaaS copy."}, {"label": "Support", "text": "{P.support == '24/7' ? '24/7 support for production, plus a named pool of expert engineering hours.' : 'Business-hours support from the product team, plus built-in Professional Services hours.'}"}, {"label": "Time to value", "text": "First pipeline in production targeted for week {weeks}, with onboarding and training included in the plan."}, {"label": "Security", "text": "{pii ? 'Regulated data in scope: anonymization is built in, and the platform deploys inside your security perimeter.' : 'Deploys inside your security perimeter, under your access controls and audit.'}"}, {"label": "Investment", "text": "{priceText}"}], "package": ["<strong>Recommended scope:<\/strong> {plan} plan, {pool} DX Units ({designers} Designer seats, {prodCores} production cores{ha ? ' in an HA cluster' : ''}).", "<strong>Why this plan:<\/strong> {whyText}.", "<strong>Services and timeline:<\/strong> about {ps} hours for your first project; {P.ps} are included{gap > 0 ? ', with ' + gap + ' more recommended' : ''}. Target go-live: week {weeks}.", "<strong>Deployment and security:<\/strong> self-hosted on {deploy}{pii ? ', with anonymization for regulated data' : ''}.", "<strong>Support and training:<\/strong> {P.support}{P.training ? ', ' + P.training + ' instructor-led training credits' : ', self-paced training'}.", "<strong>Questions leadership usually asks:<\/strong> total cost over 3 years, what happens if volumes grow, and who maintains the pipelines. Your SE will answer these in the package."], "summary": "Proposed CloverDX scope for {co}\n\nPlan: {plan}, {pool} DX Units\n- {designers} Designer seat{s(designers)} for pipeline development\n- Production: {nodes} × {cores}-core server{nodes > 1 ? 's in a high-availability cluster' : ''} ({prodCores} DXU)\n- Non-production: {join(envs) || 'none'} ({P.nonprod >= 999 ? 'unlimited' : P.nonprod} included)\n- Deployment: self-hosted on {deploy}\n- Support: {P.support}\n- Professional Services: {P.ps} hours included{gap > 0 ? '; we estimate ' + ps + ' hours for the first project, so we suggest ' + gap + ' additional hours' : ', covering the estimated ' + ps + ' hours'}\n{P.training ? '- Instructor-led training: ' + P.training + ' credits\\n' : ''}\nWhy {plan}: {whyRaw}.\n\nFirst project: {sources} sources/targets, go-live target {weeks} weeks.", "payload": [["dealname", "co + ': CloverDX ' + plan"], ["scope_plan", "plan"], ["scope_dxu_total", "pool"], ["scope_designer_seats", "designers"], ["scope_production_cores", "prodCores"], ["scope_ha_cluster", "ha"], ["scope_nonprod_servers", "np"], ["scope_deployment", "deploy"], ["scope_support", "P.support"], ["scope_ps_hours_estimate", "ps"], ["scope_ps_hours_included", "P.ps"], ["scope_ps_hours_gap", "gap"]], "presets": {"Pricing-page example": {"designers": 4, "cores": 8, "ha": true, "envs": ["Dev", "QA", "Stage"], "deploy": "AWS", "support": "24x7", "exp": "some", "sources": 12, "complexity": "med", "weeks": 12, "biz": 1, "pii": false}, "New team, tight deadline": {"designers": 2, "cores": 4, "ha": false, "envs": ["Dev", "QA"], "deploy": "Azure", "support": "business", "exp": "new", "sources": 20, "complexity": "high", "weeks": 6, "biz": 3, "pii": true}, "Small starter": {"designers": 1, "cores": 2, "ha": false, "envs": ["Dev"], "deploy": "Docker / Kubernetes", "support": "business", "exp": "expert", "sources": 4, "complexity": "low", "weeks": 10, "biz": 1, "pii": false}}, "terms": [["DX Unit (DXU)", "The unit CloverDX is licensed in. Each one becomes either a Designer seat or a production server core, and can be reallocated later."], ["Designer seat", "A licence for one developer to build pipelines. Uses 1 DXU."], ["Production server core", "One CPU core on a server running pipelines in production. Uses 1 DXU per core."], ["Non-production server", "A dev, QA or staging server. Included with the plan rather than paid in DXUs."], ["HA cluster", "Two production servers working together so jobs keep running if one fails. Doubles the production cores."], ["Professional Services (PS) hours", "CloverDX engineer time for projects, code review or advice. Each plan includes some hours."], ["Training credits", "Seats on instructor-led CloverDX courses."], ["Business Tools seat", "A seat for business users who prepare data without code (Wrangler). One comes free."], ["SE review", "A flag that sends the scope to a solutions engineer before it's quoted."]], "faq": [["Why did the plan jump to Enhanced?", "A rule required it, most often 24/7 support. Check <strong>Why this scope<\/strong>: each line names the rule and the answer that triggered it."], ["Do test environments use DX Units?", "No. Non-production servers come with the plan. Each plan includes a different number, which is why adding environments can move a scope to a higher plan."], ["What does \"SE review\" mean?", "The deal is outside the normal pattern, for example very large or unusually configured. Send it to a solutions engineer before quoting. The scope is still a good starting point."], ["Where do the default numbers come from?", "The plan structure comes from CloverDX's public pricing page. Values marked <span class=\"assume\">confirm<\/span> are placeholders for RevOps to set."]], "guide": {"ruleExample": "Example: a team asks for 24/7 support and three test environments. The support rule requires Enhanced, and the environment rule requires Plus. The stricter one wins, so the scope is Enhanced. Both reasons appear under <strong>Why this scope<\/strong>.", "ruleFlags": "Some rules don't change the plan. They raise a flag instead: a services gap, a tight timeline, a deal large enough for SE review.", "estimateNote": "PS estimate = base + sources × hours per source (by complexity) × experience factor, rounded up to 5.", "packagingNote": "Plan allowances the engine scopes against. Edit a value and the Scope tab updates. Structure from the public CloverDX pricing page; numbers marked <span class=\"assume\">confirm<\/span> are placeholders for RevOps.", "footer": "Demo build. Catalog modeled on CloverDX's public pricing page (cloverdx.com/pricing); allowances, hours and prices are placeholders, not CloverDX figures.", "created": "Catalog created from the public CloverDX pricing page. Values marked confirm are placeholders.", "emailFooter": "A demo by David Creason. Packaging is modeled on CloverDX's public pricing page; all figures and prices are illustrative."}}, {"id": "quillmetrics", "name": "Quillmetrics", "label": "Quillmetrics (product analytics)", "unit": "1k tracked users", "companyExample": "e.g. Harbor Lane Outfitters", "reviewTag": "SE review", "planColumns": [{"key": "integrations", "label": "Integrations incl.", "csv": "integrations", "type": "intU", "term": "integrations", "help": "How many destination tools (CRM, warehouse, messaging) the plan can sync to. Enterprise is unlimited, so a long tool list can push a scope up a tier."}, {"key": "history", "label": "History (months)", "csv": "history_months", "type": "int", "term": "months of history", "confirm": true, "help": "How far back analysts can query. Teams with year-over-year reporting need at least 12 months."}, {"key": "sso", "label": "SSO", "csv": "sso", "type": "enum", "values": ["Yes", "No"], "term": "SSO", "help": "Whether SAML single sign-on is included. It's a common security requirement, so it often decides the tier on its own."}, {"key": "onboarding", "label": "Onboarding sessions", "csv": "onboarding_sessions", "type": "int", "term": "onboarding sessions", "confirm": true, "help": "Live sessions with a Quillmetrics analyst to set up dashboards for a team. When more teams need onboarding than the plan includes, the scope adds sessions."}, {"key": "support", "label": "Support", "csv": "support", "type": "enum", "values": ["Email", "Business hours", "24/7 + named TAM"], "term": "support"}, {"key": "price", "label": "Price / 1k users / yr", "csv": "price_per_1k_users", "type": "price", "term": "price", "diff": "price per 1k users", "help": "List price per 1,000 billable monthly tracked users per year. Leave it blank to hide pricing."}], "plans": [{"name": "Starter", "integrations": 2, "history": 3, "sso": "No", "onboarding": 1, "support": "Email", "price": ""}, {"name": "Growth", "integrations": 5, "history": 12, "sso": "No", "onboarding": 3, "support": "Business hours", "price": ""}, {"name": "Scale", "integrations": 10, "history": 24, "sso": "Yes", "onboarding": 6, "support": "Business hours", "price": ""}, {"name": "Enterprise", "integrations": 999, "history": 60, "sso": "Yes", "onboarding": 12, "support": "24/7 + named TAM", "price": ""}], "priceBooks": [{"name": "Illustrative list prices", "note": "Quillmetrics is fictional, and so are its prices.", "prices": {"Starter": 30, "Growth": 42, "Scale": 55, "Enterprise": 70}, "params": {"sessionRate": 750}}], "params": [{"key": "bufferShare", "label": "Share of expected growth to pre-commit", "term": "growth buffer share", "value": 0.5, "help": "How much of the customer's expected growth is built into the first-year commitment. 0.5 means half: a team expecting to double commits to 1.5× today's users."}, {"key": "sessionsPerTeam", "label": "Onboarding sessions per team", "term": "sessions per team", "value": 1, "help": "Live sessions each team needs to get its first dashboards running."}, {"key": "sessionRate", "label": "Extra onboarding rate ($/session)", "title": "Extra onboarding rate", "term": "extra onboarding rate", "value": "", "allowBlank": true, "help": "Price for each onboarding session beyond what the plan includes. Leave it blank to show sessions without a price."}, {"key": "reviewUsers", "label": "SE review above (thousand users)", "title": "Volume review threshold", "term": "volume review threshold", "value": 2000, "help": "Deals with more billable users than this go to a solutions engineer for custom volume pricing. 2000 means 2 million users."}, {"key": "minLaunchWeeks", "label": "Minimum weeks for 4+ integrations", "term": "minimum launch weeks", "value": 6, "help": "Launching four or more integrations faster than this flags a timeline risk, so the rep can phase them."}], "questions": [{"key": "mtu", "label": "Monthly tracked users today", "buyerLabel": "How many people use your product each month?", "controls": [{"key": "mtu", "type": "number", "min": 0, "max": 100000, "suffix": "thousand", "sellerHint": "Billed per 1k users"}], "help": {"why": "Billable usage starts here, so it sizes most of the deal.", "listen": "Seasonal peaks, a big launch coming, or free users who never log in.", "ask": "Is that monthly active users or total sign-ups? What does a peak month look like?", "buyer": "People who use your product at least once a month, in thousands. 250 means 250,000."}}, {"key": "growth", "label": "Expected user growth, next 12 months", "buyerLabel": "How fast do you expect to grow this year?", "aud": "lead", "controls": [{"key": "growth", "type": "select", "num": true, "options": [{"v": 0, "l": "Flat"}, {"v": 25, "l": "Up to 25%"}, {"v": 50, "l": "Up to 50%"}, {"v": 100, "l": "Doubling or more"}]}], "help": {"why": "Part of expected growth is built into the commitment, so the customer isn't forced into an upgrade mid-term.", "listen": "Funding rounds, new markets, or a product launch.", "ask": "What's the growth target the board is holding you to?", "buyer": "We build some headroom into your plan so you don't have to renegotiate as you grow."}}, {"key": "dest", "label": "Tools it needs to send data to", "buyerLabel": "Which tools should your analytics connect to?", "controls": [{"key": "dest", "type": "multi", "options": ["Salesforce", "HubSpot", "Snowflake", "BigQuery", "Braze", "Zendesk", "Slack", "S3"]}], "help": {"why": "Each plan includes a set number of integrations, so a long list can move the tier.", "listen": "A data warehouse, a CRM the sales team lives in, or marketing automation.", "ask": "Which of these must be live on day one, and which can wait?", "buyer": "Pick the tools your teams already use. We sync your product data into them."}}, {"key": "history", "label": "How far back analysts need to query", "buyerLabel": "How much history do you need to report on?", "aud": "lead", "controls": [{"key": "history", "type": "select", "num": true, "options": [{"v": 3, "l": "3 months"}, {"v": 12, "l": "12 months"}, {"v": 24, "l": "24 months"}, {"v": 36, "l": "36 months"}]}], "help": {"why": "History allowances differ by plan and can force a higher tier.", "listen": "Year-over-year reporting, board decks, or seasonal comparisons.", "ask": "What's the oldest data someone asked for last quarter?", "buyer": "Year-over-year reporting needs at least 12 months."}}, {"key": "teams", "label": "Teams who'll use it", "buyerLabel": "How many teams will use dashboards?", "aud": "lead", "controls": [{"key": "teams", "type": "number", "min": 0, "max": 100, "suffix": "teams"}], "help": {"why": "Each team needs onboarding, which decides whether extra sessions are needed.", "listen": "Product, marketing, customer success, growth, or an exec team that wants its own view.", "ask": "Which team gets value first, and who's the internal champion for each?", "buyer": "For example product, marketing and customer success would be three teams."}}, {"key": "sso", "label": "Single sign-on (SAML) required", "boxOnly": true, "controls": [{"key": "sso", "type": "checkbox"}], "help": {"why": "SSO is only included from Scale up, so it often decides the plan by itself.", "listen": "Okta, Azure AD, an IT security questionnaire, or a recent audit.", "ask": "Does IT require SSO for every new tool, or only some?", "buyer": "Tick this if your IT team requires logins through Okta, Azure AD or similar."}}, {"key": "compliance", "label": "Compliance requirements", "buyerLabel": "Security and compliance needs", "controls": [{"key": "compliance", "type": "multi", "options": [{"v": "SOC 2", "l": "SOC 2 report"}, {"v": "HIPAA", "l": "HIPAA (signed BAA)"}, {"v": "EU", "l": "EU data residency"}]}], "help": {"why": "HIPAA needs Enterprise; EU residency needs an SE to set up a regional workspace.", "listen": "Patient data, European customers, or a security review in progress.", "ask": "Who signs off on vendor security, and what's on their checklist?", "buyer": "Tell us now and your solutions engineer will bring the right documents to the first call."}}, {"key": "support", "label": "Support level needed", "controls": [{"key": "support", "type": "radio", "options": [{"v": "email", "l": "Email"}, {"v": "business", "l": "Business hours"}, {"v": "24x7", "l": "24/7, customer-facing"}]}], "help": {"why": "Business-hours support starts at Growth; 24/7 needs Enterprise.", "listen": "Analytics shown to their own customers, or decisions made in real time.", "ask": "If dashboards were down for a day, who would notice first?", "buyer": "Choose 24/7 if your own customers see these numbers."}}, {"key": "launch", "label": "Weeks to launch", "buyerLabel": "When do you need it running?", "aud": "lead", "controls": [{"key": "launch", "type": "number", "min": 1, "max": 52, "suffix": "weeks"}], "help": {"why": "Many integrations on a short timeline is where launches slip.", "listen": "A board meeting, a renewal, or a quarter-end deadline.", "ask": "What's driving the date, and which integration matters most for it?", "buyer": "Your target for the first dashboards in use."}}], "metrics": [{"key": "nDest", "expr": "count(dest)"}, {"key": "billable", "expr": "ceil(mtu * (1 + growth / 100 * p.bufferShare))"}, {"key": "buffer", "expr": "billable - mtu"}, {"key": "sessions", "expr": "teams * p.sessionsPerTeam"}, {"key": "hipaa", "expr": "has(compliance, 'HIPAA')"}, {"key": "eu", "expr": "has(compliance, 'EU')"}, {"key": "sessGap", "expr": "max(0, sessions - P.onboarding)", "after": true}], "rules": [{"id": "Q1", "kind": "info", "txt": "Billable users = users today + a share of expected growth", "src": "Pricing", "trace": "{fmtk(mtu)} users today + {fmtk(buffer)} growth buffer = {fmtk(billable)} billable"}, {"id": "Q2", "kind": "fit", "txt": "Integrations needed > plan allowance → lowest plan that covers them", "src": "Pricing", "fit": "cand.integrations >= nDest", "why": "{nDest} integrations ({prevPlan} includes {prev.integrations})", "ok": "{nDest} integration{s(nDest)} fits {firstPlan}"}, {"id": "Q3", "kind": "fit", "txt": "History needed > plan retention → lowest plan that keeps it", "src": "Pricing", "fit": "cand.history >= history", "why": "{history} months of history ({prevPlan} keeps {prev.history})", "ok": "{history} months of history fits {firstPlan}"}, {"id": "Q4", "kind": "plan", "txt": "SSO required → at least Scale", "src": "Pricing", "when": "sso", "plan": "Scale", "why": "Single sign-on required"}, {"id": "Q5", "kind": "plan", "txt": "Business-hours support → at least Growth", "src": "Support", "when": "support == 'business'", "plan": "Growth", "why": "Business-hours support requested"}, {"id": "Q6", "kind": "plan", "txt": "24/7 support → Enterprise", "src": "Support", "when": "support == '24x7'", "plan": "Enterprise", "why": "24/7 support for a customer-facing product"}, {"id": "Q7", "kind": "plan", "txt": "HIPAA → Enterprise (signed BAA)", "src": "Legal", "when": "hipaa", "plan": "Enterprise", "why": "HIPAA requires a signed BAA"}, {"id": "Q8", "kind": "flag", "txt": "Onboarding needed > sessions included → add sessions", "src": "Customer success", "when": "sessGap > 0", "level": "warn", "tag": "Onboarding gap", "show": "seller", "msg": "{teams} teams need about {sessions} onboarding sessions; {plan} includes {P.onboarding}. Add {sessGap} session{s(sessGap)}.", "trace": "{sessions} sessions needed > {P.onboarding} included → add {sessGap}", "okTrace": "{sessions} onboarding session{s(sessions)} within {P.onboarding} included"}, {"id": "Q9", "kind": "flag", "txt": "EU data residency → SE review (regional workspace)", "src": "Solutions", "when": "eu", "level": "warn", "tag": "SE review", "show": "seller", "msg": "EU data residency needs a dedicated EU workspace. Confirm region and pricing with a solutions engineer.", "trace": "EU residency → SE review"}, {"id": "Q10", "kind": "flag", "txt": "Billable users above threshold → SE review (volume pricing)", "src": "Solutions", "when": "billable > p.reviewUsers", "level": "warn", "tag": "SE review", "show": "seller", "msg": "{fmtk(billable)} billable users is above the {fmtk(p.reviewUsers)} threshold. Route for custom volume pricing.", "trace": "{fmtk(billable)} > {fmtk(p.reviewUsers)} → SE review"}, {"id": "Q11", "kind": "flag", "txt": "4+ integrations on a short launch → timeline risk", "src": "Customer success", "when": "nDest >= 4 && launch < p.minLaunchWeeks", "level": "warn", "tag": "Timeline", "show": "lead", "msg": "{nDest} integrations in {launch} weeks; plan on {p.minLaunchWeeks}+. Launch the most important ones first and phase the rest.", "trace": "{nDest} integrations, {launch} weeks < {p.minLaunchWeeks} → timeline risk"}, {"id": "Q12", "kind": "flag", "txt": "Usage could double → suggest an annual true-up", "src": "Deal desk", "when": "growth >= 100", "level": "info", "tag": "Contract", "show": "lead", "msg": "Usage could double this year. An annual true-up avoids a mid-term upgrade.", "trace": "Growth ≥ 100% → true-up clause"}], "checks": [{"at": "start", "when": "mtu <= 0", "level": "crit", "tag": "Missing", "show": "all", "msg": "No user count yet. Billable usage comes from monthly tracked users; confirm it with the prospect."}, {"at": "end", "when": "has(compliance, 'SOC 2')", "level": "info", "tag": "Security", "show": "all", "msg": "SOC 2 Type II report available under NDA."}], "lines": [{"name": "Tracked users", "detail": "{fmtk(billable)} billable, priced per 1k ({fmtk(buffer)} growth buffer)", "qty": "billable", "price": "unit"}, {"name": "Integrations", "detail": "{join(dest) || 'none'} ({unl(P.integrations)} included)", "qty": "nDest", "price": "included"}, {"name": "Query history", "detail": "{P.history} months", "qty": "P.history", "price": "included"}, {"name": "Single sign-on", "when": "P.sso == 'Yes'", "detail": "SAML SSO", "qty": "1", "price": "included"}, {"name": "Onboarding sessions", "detail": "{P.onboarding} included with {plan}", "qty": "P.onboarding", "price": "included"}, {"name": "Extra onboarding", "when": "sessGap > 0", "detail": "Sessions needed minus included", "qty": "sessGap", "price": "isnum(p.sessionRate) ? sessGap * num(p.sessionRate) : null"}, {"name": "EU workspace", "when": "eu", "detail": "Dedicated EU region, quoted by an SE", "qty": "1", "price": "none"}, {"name": "Support", "detail": "{P.support}", "qty": "1", "price": "included"}], "verdict": [{"label": "Billable users", "value": "{fmtk(billable)}"}, {"label": "Recommended plan", "value": "{plan}"}, {"label": "Integrations", "value": "{nDest}", "sub": "{unl(P.integrations)} included in {plan}", "notExec": true}], "allocation": {"caption": "Usage, one square per 10k tracked users", "groups": [{"count": "ceil(mtu / 10)", "color": "d", "label": "<b>{fmtk(mtu)}<\/b> users today"}, {"count": "ceil(buffer / 10)", "color": "p", "label": "<b>{fmtk(buffer)}<\/b> growth buffer"}], "legend": [{"color": "d", "text": "Current monthly users"}, {"color": "p", "text": "Pre-committed growth"}, {"text": "{nDest} integration{s(nDest)} · {history} months of history"}]}, "glance": [{"label": "Fit", "text": "{plan} plan for about {fmtk(billable)} monthly users, with room to grow."}, {"label": "Connects to", "text": "{join(dest) || 'No integrations selected yet'}."}, {"label": "Security", "text": "{sso ? 'SAML single sign-on. ' : ''}{hipaa ? 'HIPAA with a signed BAA. ' : ''}{eu ? 'EU data residency. ' : ''}SOC 2 Type II report available."}, {"label": "Support", "text": "{P.support}."}, {"label": "Time to value", "text": "First dashboards in days; integrations phased over the first {launch} weeks."}, {"label": "Investment", "text": "{priceText}"}], "package": ["<strong>Recommended scope:<\/strong> {plan} plan, {fmtk(billable)} billable monthly users ({fmtk(buffer)} of that is growth buffer).", "<strong>Why this plan:<\/strong> {whyText}.", "<strong>Integrations and history:<\/strong> {nDest} integration{s(nDest)} ({unl(P.integrations)} included), {P.history} months of queryable history.", "<strong>Onboarding and timeline:<\/strong> {sessions} onboarding session{s(sessions)} for {teams} team{s(teams)}; {P.onboarding} included{sessGap > 0 ? ', with ' + sessGap + ' more recommended' : ''}. Target launch: week {launch}.", "<strong>Security and compliance:<\/strong> {sso ? 'SAML single sign-on' : 'Email and password login'}{hipaa ? ', HIPAA BAA' : ''}{eu ? ', EU data residency' : ''}.", "<strong>Questions leadership usually asks:<\/strong> what happens if users grow past the buffer, how pricing scales, and how fast teams see value. Your SE will answer these in the package."], "summary": "Proposed Quillmetrics scope for {co}\n\nPlan: {plan}, {fmtk(billable)} billable monthly users\n- Today: {fmtk(mtu)} users, plus {fmtk(buffer)} growth buffer\n- Integrations: {join(dest) || 'none'} ({unl(P.integrations)} included)\n- Query history: {P.history} months\n- Single sign-on: {P.sso == 'Yes' ? 'included' : 'not included'}\n- Support: {P.support}\n- Onboarding: {P.onboarding} sessions included{sessGap > 0 ? '; we suggest ' + sessGap + ' more for ' + teams + ' teams' : ''}\n{eu ? '- EU data residency: dedicated EU workspace\\n' : ''}\nWhy {plan}: {whyRaw}.\n\nLaunch target: {launch} weeks.", "payload": [["dealname", "co + ': Quillmetrics ' + plan"], ["scope_plan", "plan"], ["scope_billable_users_k", "billable"], ["scope_current_users_k", "mtu"], ["scope_growth_buffer_k", "buffer"], ["scope_integrations", "dest"], ["scope_history_months", "history"], ["scope_sso", "sso"], ["scope_compliance", "compliance"], ["scope_support", "P.support"], ["scope_onboarding_sessions", "sessions"], ["scope_onboarding_gap", "sessGap"]], "presets": {"Series B, growing fast": {"mtu": 250, "growth": 100, "dest": ["Salesforce", "HubSpot", "Snowflake", "Braze", "Slack", "Zendesk"], "history": 12, "teams": 4, "sso": true, "compliance": ["SOC 2"], "support": "business", "launch": 8}, "Healthcare app": {"mtu": 80, "growth": 25, "dest": ["Salesforce", "Snowflake"], "history": 24, "teams": 3, "sso": true, "compliance": ["SOC 2", "HIPAA"], "support": "24x7", "launch": 6}, "Early-stage startup": {"mtu": 15, "growth": 50, "dest": ["HubSpot", "Slack"], "history": 3, "teams": 1, "sso": false, "compliance": [], "support": "email", "launch": 3}, "Global retailer": {"mtu": 3000, "growth": 25, "dest": ["Salesforce", "Snowflake", "BigQuery", "Braze", "Zendesk"], "history": 36, "teams": 8, "sso": true, "compliance": ["SOC 2", "EU"], "support": "24x7", "launch": 4}}, "terms": [["Monthly tracked user (MTU)", "Someone who uses the customer's product at least once in a month. Quillmetrics is priced per 1,000 of them."], ["Billable users", "Users today plus a pre-committed share of expected growth."], ["Growth buffer", "Headroom built into the commitment so a growing customer isn't forced to upgrade mid-term."], ["Integration", "A destination tool the data syncs to, such as a CRM, warehouse or messaging tool."], ["Query history", "How many months back analysts can report on."], ["Onboarding session", "A live session with a Quillmetrics analyst to set up one team's dashboards."], ["BAA", "Business Associate Agreement, the contract HIPAA requires before handling health data."], ["SE review", "A flag that sends the scope to a solutions engineer before it's quoted."]], "faq": [["Why is billable usage higher than today's users?", "Part of expected growth is built in, set by the growth buffer share on the Admin tab. It keeps a growing customer from hitting a mid-term upgrade."], ["Why did the plan jump to Enterprise?", "Usually 24/7 support or HIPAA. Check <strong>Why this scope<\/strong>: each line names the rule and the answer that triggered it."], ["What counts as an integration?", "Each destination tool counts once, however much data goes to it."], ["Is Quillmetrics a real product?", "No. It's a fictional sample catalog that shows ScopeOut running a second product with different questions, rules and plans, all loaded from one catalog file."]], "guide": {"ruleExample": "Example: a team needs six integrations and single sign-on. Growth includes five integrations, so the integration rule requires Scale, and the SSO rule also requires Scale. The scope is Scale, and both reasons appear under <strong>Why this scope<\/strong>.", "ruleFlags": "Some rules don't change the plan. They raise a flag instead: an onboarding gap, a tight launch, a deal large enough for SE review.", "estimateNote": "Billable users = users today × (1 + expected growth × buffer share), rounded up. Onboarding sessions = teams × sessions per team.", "packagingNote": "Plan allowances the engine scopes against. Quillmetrics is a fictional sample product, loaded from a catalog file to show ScopeOut adapting to a different business.", "footer": "Demo build. Quillmetrics is a fictional product, created to show ScopeOut running a second catalog.", "created": "Sample catalog loaded from quillmetrics-catalog.json.", "emailFooter": "A demo by David Creason. Quillmetrics is a fictional product, and its prices are illustrative."}}];
+
+/* ---------- Workspaces: one per catalog ---------- */
+const WS={}; let active="";
+const W=()=>WS[active];
+function defaultAnswers(def){
+  const s={company:""};
+  def.questions.forEach(q=>q.controls.forEach(c=>{
+    const o=(c.options||[]).map(x=>typeof x==="object"?x.v:x);
+    s[c.key]=c.type==="number"?(c.min||0):c.type==="checkbox"?false:c.type==="multi"?[]:c.type==="text"?"":o[0];
+  }));
+  const first=Object.values(def.presets||{})[0];
+  return Object.assign(s,clone(first||{}));
+}
+function makeWS(def,created){
+  const pub={plans:clone(def.plans),params:Object.fromEntries(def.params.map(p=>[p.key,p.value])),
+    rules:Object.fromEntries(def.rules.map(r=>[r.id,r.on!==false])),vis:{exec:"hidden",lead:"range",...(def.vis||{})},rangePct:def.rangePct??15,
+    customRules:[],discount:{repMax:15,approvalMax:25,...(def.discountPolicy||{})},priceBook:"None"};
+  return {def,pub,draft:clone(pub),log:[{t:"Initial",who:"System",what:created||def.guide?.created||"Catalog created."}],s:defaultAnswers(def),disc:{},approval:{status:"none"}};
+}
+const allRules=cfg=>W().def.rules.concat(cfg.customRules||[]);
+const ROLES={rep:"Sales rep",manager:"Sales manager",admin:"RevOps admin"};
+
+let mode="seller", aud="lead", role="rep";
+const COMPANY_Q={key:"company",label:"Prospect",buyerLabel:"Company",controls:[{key:"company",type:"text"}],
+  help:{why:"Ties the scope to the right CRM record.",listen:"A parent company, a subsidiary, or a partner buying on someone's behalf.",ask:"Which business unit owns the budget for this?",buyer:"So your solutions engineer can find your request before the call."}};
+const allQs=()=>[COMPANY_Q,...W().def.questions];
+const planNames=cfg=>cfg.plans.map(p=>p.name);
+
+/* ---------- Scoping ---------- */
+function compute(){
+  const {def,pub:cfg,s}=W(); const plans=cfg.plans, names=planNames(cfg);
+  const env={p:{...cfg.params},firstPlan:names[0]};
+  def.questions.forEach(q=>q.controls.forEach(c=>env[c.key]=s[c.key]));
+  env.company=s.company||"";
+  env.co=(s.company||"").trim()||(mode==="buyer"?"your company":"[Prospect]");
+  let idx=0;
+  env.__fn={nextPlanWith:(attr,v)=>{const x=plans.find((pl,j)=>j>idx&&+pl[attr]>=v);return x?x.name:"";},
+            planAttr:(n,a)=>{const x=plans.find(pl=>pl.name===n);return x?x[a]:undefined;}};
+  const trace=[],flags=[],reasons=[],errors=[];
+  const safe=(what,f,d)=>{ try{ return f(); }catch(e){ errors.push(`${what}: ${e.message}`); return d; } };
+  (def.metrics||[]).filter(m=>!m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
+  const raise=(lvl,r,why)=>{ trace.push([r.id,esc(why)+` → at least ${esc(names[lvl])}`]); reasons.push(why); if(lvl>idx) idx=lvl; };
+  allRules(cfg).forEach(r=>{
+    if(!cfg.rules[r.id]) return;
+    if(r.kind==="info") safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.trace,env,true)]));
+    else if(r.kind==="plan"){ if(safe(`Rule ${r.id}`,()=>ev(r.when,env),false)){ const lvl=names.indexOf(r.plan); if(lvl>=0) raise(lvl,r,tpl(r.why,env)); } }
+    else if(r.kind==="fit"){
+      let lvl=plans.findIndex(pl=>safe(`Rule ${r.id}`,()=>ev(r.fit,{...env,cand:pl}),false)); if(lvl<0) lvl=plans.length-1;
+      if(lvl>0) raise(lvl,r,tpl(r.why,{...env,prev:plans[lvl-1],prevPlan:names[lvl-1]}));
+      else if(r.ok) trace.push([r.id,tpl(r.ok,env,true)]);
+    }
+  });
+  const P=plans[idx]; env.P=P; env.plan=P.name;
+  (def.metrics||[]).filter(m=>m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
+  if(idx===0) trace.push(["—",`No rule raised the plan; ${esc(names[0])} fits`]);
+  const flag=(f,where)=>safe(where,()=>flags.push({level:f.level,tag:f.tag,msg:tpl(f.msg,env,true),show:f.show||"seller"}));
+  (def.checks||[]).filter(c=>c.at==="start").forEach((c,i)=>{ if(safe(`Check ${i+1}`,()=>ev(c.when,env),false)) flag(c,`Check ${i+1}`); });
+  allRules(cfg).forEach(r=>{
+    if(r.kind!=="flag"||!cfg.rules[r.id]) return;
+    if(safe(`Rule ${r.id}`,()=>ev(r.when,env),false)){ flag(r,`Rule ${r.id}`); if(r.trace) safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.trace,env,true)])); }
+    else if(r.okTrace) safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.okTrace,env,true)]));
+  });
+  (def.checks||[]).filter(c=>c.at!=="start").forEach((c,i)=>{ if(safe(`Check`,()=>ev(c.when,env),false)) flag(c,"Check"); });
+  errors.forEach(m=>flags.push({level:"crit",tag:"Rule error",msg:esc(m),show:"seller"}));
+  const unit=parseFloat(P.price), priced=isFinite(unit);
+  const lines=def.lines.filter(l=>!l.when||safe(`Line ${l.name}`,()=>ev(l.when,env),false)).map(l=>{
+    const q=+safe(`Line ${l.name}`,()=>ev(l.qty,env),0)||0; let pr=null;
+    if(l.price==="unit") pr=priced?q*unit:null;
+    else if(l.price==="included") pr=priced?0:null;
+    else if(l.price&&l.price!=="none"){ const v=safe(`Line ${l.name}`,()=>ev(l.price,env),null); pr=v==null||!isFinite(v)?null:+v; }
+    return {name:l.name,detail:safe(`Line ${l.name}`,()=>tpl(l.detail||"",env),""),qty:q,price:pr};
+  });
+  const D=discounts(lines,cfg);
+  if(D.flag) flags.push(D.flag);
+  if(!flags.length) flags.push({level:"info",tag:"Clear",msg:"No exceptions. This scope can go straight to quote.",show:"lead"});
+  env.whyRaw=reasons.join("; ")||"your requirements fit the base plan";
+  env.whyText=reasons.map(x=>x.toLowerCase()).join("; ")||"your requirements fit the base plan";
+  return {env,P,flags,trace,lines,D,reasons};
+}
+
+/* ---------- Discounts: per line, checked against the published policy ---------- */
+const pct=n=>(Math.round(n*10)/10).toLocaleString("en-US")+"%";
+function discKey(){ const d=W().disc; return JSON.stringify(Object.keys(d).sort().filter(k=>d[k]>0).map(k=>[k,d[k]])); }
+function discounts(lines,cfg){
+  const pol=cfg.discount, ws=W(); let list=0, net=0, max=0, maxLine="";
+  lines.forEach(l=>{ l.disc=0; l.net=l.price;
+    if(l.price>0){ const d=Math.max(0,Math.min(100,+ws.disc[l.name]||0)); l.disc=d; l.net=l.price*(1-d/100); if(d>max){max=d;maxLine=l.name;} }
+    if(l.price!=null){ list+=l.price; net+=l.net; } });
+  const priced=lines.some(l=>l.price!=null);
+  let status="none";
+  if(max>0){
+    if(max<=pol.repMax) status="ok";
+    else if(max>pol.approvalMax) status="blocked";
+    else { const a=ws.approval; status=a.key===discKey()&&["pending","approved","rejected"].includes(a.status)?a.status:"needs"; }
+  }
+  const blended=list>0?(list-net)/list*100:0, where=`${pct(max)} on ${maxLine}`;
+  const flag={needs:{level:"warn",tag:"Discount",msg:esc(`${where} is above your ${pol.repMax}% limit. Request manager approval before quoting.`),show:"seller"},
+    pending:{level:"info",tag:"Discount",msg:esc(`${where} is waiting for sales manager approval.`),show:"seller"},
+    approved:{level:"info",tag:"Discount",msg:esc(`${where} approved by ${ws.approval.by}.`),show:"seller"},
+    rejected:{level:"crit",tag:"Discount",msg:esc(`Sales manager declined ${where}. Bring it to ${pol.repMax}% or less, or change it and request again.`),show:"seller"},
+    blocked:{level:"crit",tag:"Discount",msg:esc(`${where} is over the ${pol.approvalMax}% ceiling. Route this deal to the deal desk.`),show:"seller"}}[status]||null;
+  const quotable=status==="ok"||status==="approved";
+  return {priced,list,net,max,maxLine,blended,status,flag,quotable,pol};
+}
+
+/* ---------- Rendering ---------- */
+function visiblePrice(view,total,any){
+  const cfg=W().pub;
+  if(view==="seller") return any?{kind:"list",text:money(total)+" / yr"}:{kind:"none",text:"No price book loaded"};
+  const v=cfg.vis[view];
+  if(v==="hidden") return {kind:"hidden",text:"Pricing shared by your account team"};
+  if(!any) return {kind:"none",text:"Pricing on request"};
+  if(v==="list") return {kind:"list",text:money(total)+" / yr"};
+  const b=(+cfg.rangePct||0)/100, lo=Math.floor(total*(1-b)/1000)*1000, hi=Math.ceil(total*(1+b)/1000)*1000;
+  return {kind:"range",text:`${money(lo)} – ${money(hi)} / yr`};
+}
+function safeTpl(src,env,html){ try{ return tpl(src,env,html); }catch(e){ return html?`<span class="muted">(${esc(e.message)})</span>`:`(${e.message})`; } }
+function render(){
+  const {def,pub:cfg}=W(), r=compute(), env=r.env;
+  const view=mode==="seller"?"seller":aud;
+  $("verdict").innerHTML=def.verdict.map(v=>`<div${v.notExec?' class="notExec"':""}><div class="lbl">${esc(v.label)}</div><div class="big">${safeTpl(v.value,env,true)}</div>${v.sub?`<div class="muted" style="font-size:12px">${safeTpl(v.sub,env,true)}</div>`:""}</div>`).join("");
+  const A=def.allocation; $("allocWrap").hidden=!A;
+  if(A){
+    $("allocCap").textContent=A.caption||"";
+    const groups=[]; let total=0;
+    A.groups.forEach(g=>{ let reps=1; try{ reps=g.repeat?Math.max(0,+ev(g.repeat,env)||0):1; }catch(e){}
+      for(let i=1;i<=reps;i++){ const e2={...env,i}; let n=0; try{ n=Math.max(0,Math.round(+ev(g.count,e2)||0)); }catch(e){} groups.push([n,g.color==="p"?"p":"d",safeTpl(g.label,e2,true)]); total+=n; } });
+    const sq=(n,c)=>Array.from({length:Math.min(n,64)},()=>`<span class="cell ${c}"></span>`).join("")+(n>64?`<span class="cap">+${n-64}</span>`:"");
+    $("cells").className="cells"+(total>100?" dense":total>40?" mid":"");
+    $("cells").innerHTML=groups.filter(g=>g[0]>0).map(([n,c,cap])=>`<div class="cgroup"><span class="cap">${cap}</span><div class="sq">${sq(n,c)}</div></div>`).join("");
+    $("legend").innerHTML=(A.legend||[]).map(l=>`<span>${l.color?`<i style="background:var(${l.color==="p"?"--prod":"--accent"})"></i>`:""}<span>${safeTpl(l.text,env,true)}</span></span>`).join("");
+  }
+  const shown=view==="seller"?r.flags:view==="exec"?r.flags.filter(f=>f.show==="all"):r.flags.filter(f=>f.show==="all"||f.show==="lead");
+  $("flags").innerHTML=(shown.length?shown:[{level:"info",tag:"Clear",msg:"Your setup fits a standard plan."}]).map(f=>`<li class="f-${f.level}"><span class="tag">${esc(f.tag)}</span><span>${f.msg}</span></li>`).join("");
+  const D=r.D, total=D.list, any=D.priced, seller=mode==="seller", showD=seller&&any, anyD=showD&&D.max>0;
+  $("linesHead").innerHTML=`<tr><th>Item</th><th>Detail</th><th style="text-align:right">Qty</th><th style="text-align:right" class="sellerOnly">Price / yr</th>${showD?`<th style="text-align:right">Disc. %</th>`:""}${anyD?`<th style="text-align:right">Net / yr</th>`:""}</tr>`;
+  $("lines").innerHTML=r.lines.map(l=>{
+    const dcell=showD?`<td class="n">${l.price>0?`<input type="number" class="disc" min="0" max="100" step="0.5" data-disc="${esc(l.name)}" value="${l.disc||""}" placeholder="0" aria-label="Discount for ${esc(l.name)}">`:""}</td>`:"";
+    const ncell=anyD?`<td class="n">${l.price==null?"—":l.price===0?"incl.":money(l.net)}</td>`:"";
+    return `<tr><td>${esc(l.name)}</td><td class="muted">${esc(l.detail)}</td><td class="n">${fmt(l.qty)}</td><td class="n sellerOnly">${l.price==null?"—":l.price===0?"incl.":money(l.price)}</td>${dcell}${ncell}</tr>`;}).join("")
+    +(any&&seller?(anyD
+      ?`<tr class="tot"><td colspan="3">List total</td><td class="n">${money(total)}</td><td></td><td class="n"></td></tr><tr class="tot"><td colspan="3">Discount (${pct(D.blended)} blended)</td><td class="n"></td><td></td><td class="n">−${money(total-D.net)}</td></tr><tr class="tot"><td colspan="3"><strong>Net annual total</strong></td><td></td><td></td><td class="n"><strong>${money(D.net)}</strong></td></tr>`
+      :`<tr class="tot"><td colspan="3"><strong>Annual total (from your price book)</strong></td><td class="n"><strong>${money(total)}</strong></td>${showD?"<td></td>":""}</tr>`):"");
+  renderDiscBar(D,showD);
+  $("priceNote").textContent=mode==="buyer"?"":(any?"Prices come from the published price book on the Admin tab.":"No price book loaded. A RevOps admin can add prices on the Admin tab.");
+  $("priceNote").hidden=mode==="buyer";
+  $("trace").innerHTML=r.trace.map(([id,t])=>`<li><code>${esc(id)}</code><span>${t}</span></li>`).join("");
+  const price=visiblePrice(view,total,any); env.priceText=price.text;
+  if(view==="exec") $("glance").innerHTML=(def.glance||[]).map(g=>`<li><span>${esc(g.label)}</span><span>${safeTpl(g.text,env,true)}</span></li>`).join("");
+  if(view==="lead"){
+    $("pkgPrice").textContent=price.text;
+    $("pkgPriceNote").textContent=price.kind==="range"?`Indicative range for the scope below (±${cfg.rangePct}%). Your solutions engineer confirms the final figure.`:price.kind==="list"?"List price for the scope below, before any agreed discounts.":"";
+    $("pkgList").innerHTML=(def.package||[]).map(x=>`<li>${safeTpl(x,env,true)}</li>`).join("");
+  }
+  document.querySelectorAll(".sellerOnly").forEach(e=>e.hidden=view!=="seller");
+  document.querySelectorAll(".buyerOnly").forEach(e=>e.hidden=view==="seller");
+  document.querySelectorAll(".execOnly").forEach(e=>e.hidden=view!=="exec");
+  document.querySelectorAll(".leadOnly").forEach(e=>e.hidden=view!=="lead");
+  document.querySelectorAll(".notExec").forEach(e=>e.hidden=view==="exec");
+  document.querySelectorAll('.q[data-aud="lead"]').forEach(e=>e.hidden=view==="exec");
+  lastEnv=env; renderOutput(r); renderCsv(); mailCopy(); ensureTs();
+}
+let lastEnv=null;
+function renderDiscBar(D,show){
+  const bar=$("discBar"); bar.hidden=!show; if(!show) return;
+  const pol=D.pol, a=W().approval;
+  const pill={none:["","No discount"],ok:["ok",`Within your ${pol.repMax}% limit`],needs:["warn",`Needs approval: over ${pol.repMax}%`],pending:["info","Waiting for approval"],approved:["ok",`Approved by ${a.by||"sales manager"}`],rejected:["crit","Declined"],blocked:["crit",`Blocked: over ${pol.approvalMax}%`]}[D.status];
+  let act="";
+  if(D.status==="needs"||D.status==="rejected") act=`<button class="btn" type="button" data-appr="request">Request approval</button>`;
+  if(D.status==="pending") act=role==="manager"?`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>`:`<button class="btn ghost" type="button" data-appr="asmanager">Switch to sales manager (demo)</button>`;
+  bar.innerHTML=`<div class="row"><label class="opt" for="discAll">Apply</label><input type="number" id="discAll" min="0" max="100" step="0.5" placeholder="0" aria-label="Discount for all lines"><span class="h">% to all priced lines</span><button class="btn ghost" type="button" data-appr="applyall">Apply</button>${D.max>0?`<button class="btn ghost" type="button" data-appr="clear">Clear discounts</button>`:""}</div>
+    <div class="row apprrow"><span class="pill ${pill[0]}">${esc(pill[1])}</span>${act}<span class="h">Reps can give up to ${pol.repMax}%. A sales manager approves up to ${pol.approvalMax}%. Buyers never see an unapproved discount.</span></div>`;
+}
+function renderOutput(r){
+  const {def}=W(), env=r.env;
+  const D=r.D; let inv="";
+  if(D.priced&&mode==="seller"){
+    inv=D.max>0&&D.quotable?`Annual investment: ${money(D.net)} / yr (list ${money(D.list)}, ${pct(D.blended)} discount)`:`Annual investment: ${money(D.list)} / yr list price`;
+  }
+  $("summary").textContent=safeTpl(def.summary||"",env,false)+(inv?"\n\n"+inv:"");
+  const payload={};
+  (def.payload||[]).forEach(([k,x])=>{ try{ payload[k]=ev(x,env); }catch(e){ payload[k]=null; } });
+  payload.scope_se_review_required=r.flags.some(f=>f.tag===def.reviewTag);
+  payload.scope_rules_fired=r.trace.map(t=>t[0]).filter(x=>x!=="—");
+  if(D.priced){ payload.scope_list_total=Math.round(D.list); payload.scope_discount_pct=Math.round(D.blended*10)/10; payload.scope_net_total=Math.round(D.quotable?D.net:D.list); payload.scope_discount_status=D.status; }
+  payload.line_items=r.lines.map(({name,detail,qty,price,disc,net})=>D.priced?{name,quantity:qty,detail,list_price:price,discount_pct:disc||0,net_price:price==null?null:Math.round(D.quotable?net:price)}:{name,quantity:qty,detail});
+  $("payload").textContent=JSON.stringify(payload,null,2);
+}
+
+/* ---------- Scope form, built from the catalog's questions ---------- */
+const fid=key=>`q-${active}-${key}`;
+const opts=c=>(c.options||[]).map(o=>typeof o==="object"?o:{v:o,l:String(o)});
+function ctrlHtml(c,q){
+  const id=fid(c.key), seller=mode==="seller";
+  const hint=(c.suffix?`<span class="h">${esc(c.suffix)}</span>`:"")+(c.sellerHint&&seller?`<span class="h">${esc(c.sellerHint)}</span>`:"");
+  if(c.type==="text") return `<input type="text" id="${id}" placeholder="${esc(seller?(W().def.companyExample||"e.g. Ridgeline Freight Co."):"Your company name")}" autocomplete="organization">`;
+  if(c.type==="number") return `<input type="number" id="${id}"${c.min!=null?` min="${c.min}"`:""}${c.max!=null?` max="${c.max}"`:""}>`+hint;
+  if(c.type==="select") return `<select id="${id}"${c.aria?` aria-label="${esc(c.aria)}"`:""}>${opts(c).map(o=>`<option value="${esc(o.v)}">${esc(o.l)}</option>`).join("")}</select>`+hint;
+  if(c.type==="checkbox") return `<label class="opt"><input type="checkbox" id="${id}"> ${esc(c.label||"")}</label>`;
+  if(c.type==="multi") return `<div class="row">${opts(c).map((o,i)=>`<label class="opt"><input type="checkbox" id="${id}-${i}" data-multi="${esc(c.key)}" value="${esc(o.v)}"> ${esc(o.l)}</label>`).join("")}</div>`;
+  if(c.type==="radio") return `<div class="row">${opts(c).map((o,i)=>`<label class="opt"><input type="radio" id="${id}-${i}" name="${id}" value="${esc(o.v)}"> ${esc(o.l)}</label>`).join("")}</div>`;
+  return "";
+}
+function qHtml(q){
+  const lab=mode==="buyer"&&q.buyerLabel?q.buyerLabel:q.label, c0=q.controls[0];
+  const aud=q.aud==="lead"?' data-aud="lead"':"";
+  if(q.boxOnly) return `<div class="q" data-key="${esc(q.key)}"${aud}><div class="qh"><label class="opt"><input type="checkbox" id="${fid(c0.key)}"> ${esc(lab)}</label></div></div>`;
+  const labelled=["text","number","select"].includes(c0.type);
+  const title=labelled?`<label class="t" for="${fid(c0.key)}">${esc(lab)}</label>`:`<span class="t" style="font-weight:600;font-size:14px">${esc(lab)}</span>`;
+  const body=q.controls.map(c=>ctrlHtml(c,q)).join("");
+  const simple=q.controls.length===1&&labelled&&!c0.suffix&&!(c0.sellerHint&&mode==="seller");
+  const wrap=simple||["multi","radio"].includes(c0.type)&&q.controls.length===1?body:`<div class="row">${body}</div>`;
+  return `<div class="q" data-key="${esc(q.key)}"${aud}><div class="qh">${title}</div>${wrap}</div>`;
+}
+function buildForm(){ $("qList").innerHTML=allQs().map(qHtml).join(""); loadState(); buildHelp(); }
+function eachCtrl(f){ allQs().forEach(q=>q.controls.forEach(c=>f(c,q))); }
+function loadState(){
+  const s=W().s;
+  eachCtrl(c=>{
+    const v=s[c.key];
+    if(c.type==="multi") [...document.querySelectorAll("[data-multi]")].filter(i=>i.dataset.multi===c.key).forEach(i=>i.checked=Array.isArray(v)&&v.map(String).includes(i.value));
+    else if(c.type==="radio") document.querySelectorAll(`input[name="${fid(c.key)}"]`).forEach(i=>i.checked=String(v)===i.value);
+    else { const el=$(fid(c.key)); if(!el) return; if(c.type==="checkbox") el.checked=!!v; else el.value=v==null?"":String(v); }
+  });
+}
+function readState(){
+  const s=W().s;
+  eachCtrl(c=>{
+    if(c.type==="multi"){ const o=opts(c); s[c.key]=[...document.querySelectorAll("[data-multi]")].filter(i=>i.dataset.multi===c.key&&i.checked).map(i=>{const m=o.find(x=>String(x.v)===i.value);return m?m.v:i.value;}); }
+    else if(c.type==="radio"){ const el=document.querySelector(`input[name="${fid(c.key)}"]:checked`); s[c.key]=el?el.value:""; }
+    else { const el=$(fid(c.key)); if(!el) return;
+      if(c.type==="checkbox") s[c.key]=el.checked;
+      else if(c.type==="number") s[c.key]=+el.value||0;
+      else if(c.type==="select"&&c.num) s[c.key]=+el.value;
+      else s[c.key]=el.value; }
+  });
+}
+function buildPresets(){
+  const p=W().def.presets||{};
+  $("presets").innerHTML=Object.keys(p).map(k=>`<button class="chip" type="button" data-preset="${esc(k)}">${esc(k)}</button>`).join("");
+}
+
+/* ---------- Help icons ---------- */
+function helpHtml(key){
+  const q=allQs().find(x=>x.key===key), h=q&&q.help; if(!h) return "";
+  return (mode==="seller"?`<div><b>Why it matters</b>${esc(h.why)}</div><div><b>Listen for</b>${esc(h.listen)}</div><div><b>Follow-up</b>${esc(h.ask)}</div>`:`<div>${esc(h.buyer)}</div>`)+`<div><a data-goto="gf-${esc(key)}">More in the guide</a></div>`;
+}
+function buildHelp(){
+  document.querySelectorAll(".q[data-key]").forEach(q=>{
+    const k=q.dataset.key, qq=allQs().find(x=>x.key===k); if(!qq||!qq.help) return;
+    const head=q.querySelector(".qh"), hid="help-"+active+"-"+k;
+    let btn=head.querySelector(".info");
+    if(!btn){ btn=document.createElement("button"); btn.type="button"; btn.className="info"; btn.textContent="i";
+      btn.setAttribute("aria-controls",hid); btn.setAttribute("aria-expanded","false"); head.appendChild(btn);
+      const box=document.createElement("div"); box.className="help"; box.id=hid; box.hidden=true; head.after(box);
+      btn.addEventListener("click",()=>{const open=btn.getAttribute("aria-expanded")!=="true"; btn.setAttribute("aria-expanded",open); box.hidden=!open;}); }
+    btn.setAttribute("aria-label",(mode==="seller"?"Discovery tips: ":"More about: ")+head.textContent.replace(/i$/,"").trim());
+    $(hid).innerHTML=helpHtml(k);
+  });
+}
+const ENGINE_SETTINGS={
+  "vis-exec":["Executive overview pricing","What a visitor who picks \"I need a quick overview\" sees for price. Hidden is usual: executives at this stage want fit, not numbers."],
+  "vis-lead":["Project lead pricing","What a visitor scoping a project sees in the leadership package. An indicative range helps them win budget without publishing your list price."],
+  "vis-band":["Range width","How wide the indicative range is around the calculated total. 15 means 15% below to 15% above, rounded to the nearest $1,000."],
+  "disc-rep":["Rep discount limit","The biggest discount a rep can put on any line without approval. Anything above it needs a sales manager."],
+  "disc-max":["Approval ceiling","The biggest discount a sales manager can approve on any line. Anything above it is blocked and goes to the deal desk."]
+};
+const CSV_HELP="The published packaging as a plain CSV file, the same format RevOps keeps in a spreadsheet. Admins can import a revised file instead of editing the table; it is checked row by row before it reaches the draft.";
+function settingInfo(k){ const p=W().def.params.find(x=>x.key===k); return p?[p.title||p.label,p.help||""]:ENGINE_SETTINGS[k]||["",""]; }
+function colHelp(k){ if(k==="csv") return CSV_HELP; const c=W().def.planColumns.find(x=>x.key===k); return c?c.help||"":""; }
+
+/* ---------- Admin: packaging, parameters, rules ---------- */
+function cellHtml(pl,pi,c){
+  const v=pl[c.key], id=`pc-${active}-${pi}-${c.key}`, lab=`${pl.name} ${c.term||c.label}`;
+  if(c.type==="enum") return `<td>${esc(v)}</td>`;
+  if(c.type==="intU"&&+v>=999) return `<td>Unlimited</td>`;
+  if(c.type==="price") return `<td><input type="number" id="${id}" data-pi="${pi}" data-k="${esc(c.key)}" value="${esc(v)}" placeholder="—" aria-label="${esc(lab)}"></td>`;
+  return `<td><input type="number" id="${id}" data-pi="${pi}" data-k="${esc(c.key)}" value="${esc(v)}" aria-label="${esc(lab)}">${c.confirm?'<span class="assume">confirm</span>':""}</td>`;
+}
+function buildRules(){
+  const {def,draft:d}=W(), cols=def.planColumns;
+  $("planHead").innerHTML=`<tr><th>Plan</th>${cols.map(c=>`<th>${esc(c.label)}${c.help?`<button type="button" class="info" data-pk="${esc(c.key)}" aria-controls="pkHelp" aria-expanded="false" aria-label="About ${esc(c.label)}">i</button>`:""}</th>`).join("")}</tr>`;
+  $("planRows").innerHTML=d.plans.map((pl,pi)=>`<tr><td><strong>${esc(pl.name)}</strong></td>${cols.map(c=>cellHtml(pl,pi,c)).join("")}</tr>`).join("");
+  $("pkHelp").hidden=true;
+  $("paramRows").innerHTML=def.params.filter(p=>!p.hidden).map(p=>{ const v=d.params[p.key];
+    return `<tr><td><span class="lblh">${esc(p.label)}${p.help?`<button type="button" class="info" data-set="${esc(p.key)}" aria-controls="sh-${esc(p.key)}" aria-expanded="false" aria-label="About ${esc(p.label)}">i</button>`:""}</span></td><td class="n"><input type="number" step="any" id="pm-${active}-${esc(p.key)}" data-param="${esc(p.key)}" value="${esc(v)}" placeholder="—" aria-label="${esc(p.label)}"></td></tr><tr hidden id="sh-${esc(p.key)}"><td colspan="2"><div class="help"></div></td></tr>`; }).join("");
+  $("ruleRows").innerHTML=allRules(d).map(r=>`<div class="rule"><input type="checkbox" id="rule-${active}-${esc(r.id)}" data-rule="${esc(r.id)}" ${d.rules[r.id]?"checked":""} aria-label="Rule ${esc(r.id)} on"><code>${esc(r.id)}</code><label for="rule-${active}-${esc(r.id)}">${esc(r.txt)}<br><span class="src">Source: ${esc(r.src||"Catalog")}</span>${r.custom?' <span class="planned">custom</span>':""}</label>${r.custom?`<button type="button" class="linkbtn adminOnly" data-delrule="${esc(r.id)}">Remove</button>`:""}</div>`).join("");
+  const pbs=def.priceBooks||[];
+  $("pbName").textContent=d.priceBook;
+  $("pbSel").innerHTML=`<option value="">None (hide pricing)</option>`+pbs.map((b,i)=>`<option value="${i}">${esc(b.name)}</option>`).join("");
+  const cur=pbs.findIndex(b=>b.name===d.priceBook); $("pbSel").value=cur<0?"":String(cur);
+  $("pbNote").textContent=cur<0?"No price book: sellers and buyers see no prices.":(pbs[cur].note||"");
+  $("discRep").value=d.discount.repMax; $("discMax").value=d.discount.approvalMax;
+  $("pkgNote").innerHTML=rich(def.guide?.packagingNote||"");
+  $("estNote").textContent=def.guide?.estimateNote||"";
+  $("estNote").hidden=!def.guide?.estimateNote;
+  syncVis();
+}
+function syncVis(){ const d=W().draft; $("vis-exec").value=d.vis.exec; $("vis-lead").value=d.vis.lead; $("vis-band").value=d.rangePct; }
+const csvCell=(c,v)=>c.type==="intU"&&+v>=999?"unlimited":v==null?"":v;
+function renderCsv(){
+  const {def,draft}=W();
+  $("csv").textContent="plan,"+def.planColumns.map(c=>c.csv).join(",")+"\n"+draft.plans.map(p=>[p.name,...def.planColumns.map(c=>csvCell(c,p[c.key]))].join(",")).join("\n");
+}
+const shownV=v=>v===""||v==null?"blank":v;
+function diffs(){
+  const {def,pub,draft}=W(), out=[];
+  const cv=(c,v)=>v===""||v==null?"blank":c.type==="intU"&&+v>=999?"unlimited":c.type==="price"?money(+v):v;
+  draft.plans.forEach((pl,i)=>def.planColumns.forEach(c=>{ const a=pub.plans[i]?.[c.key], b=pl[c.key]; if(String(a)!==String(b)) out.push(`${pl.name} ${c.diff||c.term||c.label}: ${cv(c,a)} → ${cv(c,b)}`); }));
+  def.params.forEach(p=>{ const a=pub.params[p.key], b=draft.params[p.key]; if(String(a)!==String(b)){ const t=p.term||p.label; out.push(`${t[0].toUpperCase()+t.slice(1)}: ${shownV(a)} → ${shownV(b)}`); } });
+  if(String(pub.rangePct)!==String(draft.rangePct)) out.push(`Range width: ${shownV(pub.rangePct)} → ${shownV(draft.rangePct)}`);
+  if(pub.priceBook!==draft.priceBook) out.push(`Price book: ${pub.priceBook} → ${draft.priceBook}`);
+  if(String(pub.discount.repMax)!==String(draft.discount.repMax)) out.push(`Rep discount limit: ${pub.discount.repMax}% → ${draft.discount.repMax}%`);
+  if(String(pub.discount.approvalMax)!==String(draft.discount.approvalMax)) out.push(`Approval ceiling: ${pub.discount.approvalMax}% → ${draft.discount.approvalMax}%`);
+  const pIds=new Set((pub.customRules||[]).map(r=>r.id)), dIds=new Set((draft.customRules||[]).map(r=>r.id));
+  (draft.customRules||[]).forEach(r=>{ if(!pIds.has(r.id)) out.push(`Rule ${r.id} added: ${r.txt}`); });
+  (pub.customRules||[]).forEach(r=>{ if(!dIds.has(r.id)) out.push(`Rule ${r.id} removed: ${r.txt}`); });
+  allRules(draft).forEach(r=>{ if(pIds.has(r.id)||!r.custom) if(pub.rules[r.id]!==undefined&&pub.rules[r.id]!==draft.rules[r.id]) out.push(`Rule ${r.id} turned ${draft.rules[r.id]?"on":"off"}`); });
+  [["exec","Executive overview pricing"],["lead","Project lead pricing"]].forEach(([k,l])=>{ if(pub.vis[k]!==draft.vis[k]) out.push(`${l}: ${pub.vis[k]} → ${draft.vis[k]}`); });
+  return out;
+}
+function updateAdmin(){
+  const admin=role==="admin";
+  $("roleName").firstChild.textContent=`Signed in as ${ROLES[role]}`;
+  $("lockPill").textContent=admin?"Can edit":"View only"; $("lockPill").classList.toggle("on",admin);
+  $("roleNote").textContent=admin?"Changes go into a draft. Reps keep scoping on the published packaging until you publish.":role==="manager"?"Sales managers approve discounts on the Scope tab. Packaging and rules are managed by RevOps.":"Packaging and rules are managed by RevOps. Ask an admin to request a change.";
+  $("roleSel").value=role;
+  document.querySelectorAll("#p-rules input:not([type=file]), #p-rules select:not(#roleSel)").forEach(el=>el.disabled=!admin);
+  document.querySelectorAll(".adminOnly").forEach(el=>el.hidden=!admin);
+  const d=diffs();
+  $("draftBar").hidden=!d.length;
+  $("draftText").textContent=`${d.length} unpublished change${d.length===1?"":"s"}${admin?"":" (draft, waiting for an admin)"}`;
+  $("publishBtn").hidden=!admin; $("discardBtn").hidden=!admin;
+  $("draftList").innerHTML=d.map(x=>`<li>${esc(x)}</li>`).join("");
+}
+function stamp(){ const n=new Date(); return n.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+n.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}); }
+function renderLog(){ $("changeLog").innerHTML=W().log.slice().reverse().map(e=>`<li><time>${esc(e.t)}</time><span><b>${esc(e.who)}</b> ${esc(e.what)}</span></li>`).join(""); }
+
+/* CSV import of the plan table, checked row by row */
+function importCsv(text){
+  const {def,draft}=W(), msgs=$("csvMsgs"), errs=[], cols=def.planColumns, names=draft.plans.map(p=>p.name);
+  const rows=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  const want=["plan",...cols.map(c=>c.csv)].join(",");
+  const head=(rows.shift()||"").split(",").map(x=>x.trim().toLowerCase()).join(",");
+  if(head!==want) errs.push(`Line 1: expected the columns ${want.replace(/,/g,", ")}.`);
+  const next=clone(draft.plans), seen=new Set();
+  const list=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" or "+a[a.length-1];
+  rows.forEach((line,i)=>{ const n=i+2, c=line.split(",").map(x=>x.trim());
+    if(c.length!==cols.length+1){ errs.push(`Line ${n}: has ${c.length} values; expected ${cols.length+1}.`); return; }
+    const pi=names.indexOf(c[0]);
+    if(pi<0){ errs.push(`Line ${n}: "${c[0]}" isn't a plan. Use ${list(names)}.`); return; }
+    if(seen.has(c[0])) errs.push(`Line ${n}: ${c[0]} appears twice.`); seen.add(c[0]);
+    cols.forEach((col,j)=>{ const v=c[j+1], t=col.term||col.label; const int=/^\d+$/.test(v);
+      if(col.type==="int"){ if(!int) errs.push(`Line ${n}: ${t} must be a whole number.`); else next[pi][col.key]=+v; }
+      else if(col.type==="intU"){ if(!(int||v.toLowerCase()==="unlimited")) errs.push(`Line ${n}: ${t} must be a whole number or "unlimited".`); else next[pi][col.key]=v.toLowerCase()==="unlimited"?999:+v; }
+      else if(col.type==="enum"){ if(!col.values.includes(v)) errs.push(`Line ${n}: ${t} must be ${list(col.values.map(x=>`"${x}"`))}.`); else next[pi][col.key]=v; }
+      else if(col.type==="price"){ if(v!==""&&!/^\d+(\.\d+)?$/.test(v)) errs.push(`Line ${n}: ${t} must be a number or left blank.`); else next[pi][col.key]=v; }
+    });
+  });
+  if(head===want) names.forEach(p=>{ if(!seen.has(p)) errs.push(`Missing a row for ${p}.`); });
+  msgs.hidden=false;
+  if(errs.length){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported. Fix ${errs.length} problem${errs.length===1?"":"s"} and try again:</strong></li>`+errs.map(x=>`<li>${esc(x)}</li>`).join(""); return; }
+  draft.plans=next; buildRules(); renderCsv(); updateAdmin();
+  msgs.className="msgs ok"; msgs.innerHTML=`<li>Imported ${seen.size} plans into the draft. Review the changes above, then publish.</li>`;
+}
+
+/* ---------- Catalog files: validation and import ---------- */
+const ENGINE_NAMES=["p","P","plan","cand","prev","prevPlan","firstPlan","co","company","i","priceText","whyText","whyRaw"];
+function validateCatalog(o){
+  const E=[], add=m=>E.push(m);
+  if(!o||typeof o!=="object"||Array.isArray(o)) return ["The file isn't a catalog: expected a JSON object."];
+  if(typeof o.id!=="string"||!/^[a-z0-9-]+$/.test(o.id)) add('id: use lowercase letters, numbers and dashes, for example "my-product".');
+  if(typeof o.name!=="string"||!o.name.trim()) add("name: give the product a name.");
+  const arr=(k,min)=>{ if(!Array.isArray(o[k])||o[k].length<min){ add(`${k}: expected a list${min?` with at least ${min} item${min>1?"s":""}`:""}.`); return []; } return o[k]; };
+  const cols=arr("planColumns",1), plans=arr("plans",1), params=Array.isArray(o.params)?o.params:(o.params==null?[]:(add("params: expected a list."),[]));
+  const qs=arr("questions",1), rules=arr("rules",1), lines=arr("lines",1), verdict=arr("verdict",1);
+  const colKeys=new Set();
+  cols.forEach((c,i)=>{ const w=`planColumns[${i}]`;
+    if(!c||!c.key) return add(`${w}: needs a key.`);
+    if(colKeys.has(c.key)) add(`${w}: the key "${c.key}" is used twice.`); colKeys.add(c.key);
+    if(!c.csv) add(`${w} (${c.key}): needs a csv column name.`);
+    if(!["int","intU","enum","price"].includes(c.type)) add(`${w} (${c.key}): type must be int, intU, enum or price.`);
+    if(c.type==="enum"&&!(Array.isArray(c.values)&&c.values.length)) add(`${w} (${c.key}): an enum column needs a list of values.`); });
+  const pnames=new Set();
+  plans.forEach((p,i)=>{ const w=`plans[${i}]`;
+    if(!p||!p.name) return add(`${w}: needs a name.`);
+    if(pnames.has(p.name)) add(`${w}: the plan "${p.name}" appears twice.`); pnames.add(p.name);
+    cols.forEach(c=>{ if(!c||!c.key) return; const v=p[c.key];
+      if(v===undefined) add(`${w} (${p.name}): missing a value for "${c.key}".`);
+      else if((c.type==="int"||c.type==="intU")&&!(Number.isInteger(v)&&v>=0)) add(`${w} (${p.name}): "${c.key}" must be a whole number${c.type==="intU"?" (999 means unlimited)":""}.`);
+      else if(c.type==="enum"&&Array.isArray(c.values)&&!c.values.includes(v)) add(`${w} (${p.name}): "${c.key}" must be one of ${c.values.join(", ")}.`); }); });
+  const paramKeys=new Set();
+  params.forEach((p,i)=>{ if(!p||!p.key) return add(`params[${i}]: needs a key.`); if(paramKeys.has(p.key)) add(`params[${i}]: the key "${p.key}" is used twice.`); paramKeys.add(p.key); if(!p.label) add(`params[${i}] (${p.key}): needs a label.`); });
+  const known=new Set(ENGINE_NAMES), ctrlKeys=new Set(["company"]);
+  qs.forEach((q,i)=>{ const w=`questions[${i}]`;
+    if(!q||!q.key) return add(`${w}: needs a key.`);
+    if(!q.label) add(`${w} (${q.key}): needs a label.`);
+    if(!Array.isArray(q.controls)||!q.controls.length) return add(`${w} (${q.key}): needs at least one control.`);
+    q.controls.forEach((c,j)=>{ const cw=`${w}.controls[${j}]`;
+      if(!c||!c.key) return add(`${cw}: needs a key.`);
+      if(ctrlKeys.has(c.key)) add(`${cw}: the key "${c.key}" is already used by another question.`); ctrlKeys.add(c.key); known.add(c.key);
+      if(!["text","number","select","checkbox","multi","radio"].includes(c.type)) add(`${cw} (${c.key}): type must be number, select, checkbox, multi, radio or text.`);
+      if(["select","multi","radio"].includes(c.type)&&!(Array.isArray(c.options)&&c.options.length)) add(`${cw} (${c.key}): a ${c.type} needs options.`); }); });
+  const check=(where,src,isTpl,extra=[])=>{
+    if(src==null||src==="") return add(`${where}: is missing.`);
+    try{
+      const parts=isTpl?ctpl(src).filter(x=>typeof x!=="string"):[cexpr(src)];
+      parts.forEach(c=>{ c.names.forEach(n=>{ if(!known.has(n)&&!extra.includes(n)) add(`${where}: unknown name "${n}". Use a question key, a metric, or p.<setting>.`); });
+        c.params.forEach(n=>{ if(!paramKeys.has(n)) add(`${where}: unknown setting "p.${n}".`); }); });
+    }catch(e){ add(`${where}: ${e.message}.`); }
+  };
+  (Array.isArray(o.metrics)?o.metrics:[]).forEach((m,i)=>{ const w=`metrics[${i}]${m&&m.key?` (${m.key})`:""}`;
+    if(!m||!m.key) return add(`metrics[${i}]: needs a key.`); check(`${w}.expr`,m.expr,false); known.add(m.key); });
+  const ids=new Set();
+  rules.forEach((r,i)=>{ const w=`rules[${i}]${r&&r.id?` (${r.id})`:""}`;
+    if(!r||!r.id) return add(`rules[${i}]: needs an id.`);
+    if(ids.has(r.id)) add(`${w}: the id is used twice.`); ids.add(r.id);
+    if(!r.txt) add(`${w}: needs a description (txt).`);
+    if(r.kind==="info") check(`${w}.trace`,r.trace,true);
+    else if(r.kind==="plan"){ check(`${w}.when`,r.when,false); check(`${w}.why`,r.why,true); if(!pnames.has(r.plan)) add(`${w}: plan "${r.plan}" isn't one of the plans (${[...pnames].join(", ")}).`); }
+    else if(r.kind==="fit"){ check(`${w}.fit`,r.fit,false); check(`${w}.why`,r.why,true); if(r.ok) check(`${w}.ok`,r.ok,true); }
+    else if(r.kind==="flag"){ check(`${w}.when`,r.when,false); check(`${w}.msg`,r.msg,true); if(r.trace) check(`${w}.trace`,r.trace,true); if(r.okTrace) check(`${w}.okTrace`,r.okTrace,true);
+      if(!["crit","warn","info"].includes(r.level)) add(`${w}: level must be crit, warn or info.`); if(!r.tag) add(`${w}: needs a tag.`); }
+    else add(`${w}: kind must be info, plan, fit or flag.`); });
+  (Array.isArray(o.checks)?o.checks:[]).forEach((c,i)=>{ check(`checks[${i}].when`,c.when,false); check(`checks[${i}].msg`,c.msg,true); });
+  lines.forEach((l,i)=>{ const w=`lines[${i}]${l&&l.name?` (${l.name})`:""}`;
+    if(!l||!l.name) return add(`lines[${i}]: needs a name.`);
+    check(`${w}.qty`,l.qty,false); if(l.when) check(`${w}.when`,l.when,false); if(l.detail) check(`${w}.detail`,l.detail,true);
+    if(l.price&&!["unit","included","none"].includes(l.price)) check(`${w}.price`,l.price,false); });
+  verdict.forEach((v,i)=>{ check(`verdict[${i}].value`,v&&v.value,true); if(v&&v.sub) check(`verdict[${i}].sub`,v.sub,true); });
+  if(o.allocation){ (o.allocation.groups||[]).forEach((g,i)=>{ check(`allocation.groups[${i}].count`,g.count,false,["i"]); check(`allocation.groups[${i}].label`,g.label,true,["i"]); if(g.repeat) check(`allocation.groups[${i}].repeat`,g.repeat,false); });
+    (o.allocation.legend||[]).forEach((l,i)=>check(`allocation.legend[${i}]`,l.text,true)); }
+  (o.glance||[]).forEach((g,i)=>check(`glance[${i}]`,g.text,true));
+  (o.package||[]).forEach((x,i)=>check(`package[${i}]`,x,true));
+  if(o.summary) check("summary",o.summary,true);
+  (o.payload||[]).forEach((x,i)=>{ if(!Array.isArray(x)||x.length!==2) add(`payload[${i}]: expected ["field_name", "expression"].`); else check(`payload[${i}] (${x[0]})`,x[1],false); });
+  (Array.isArray(o.priceBooks)?o.priceBooks:[]).forEach((b,i)=>{ const w=`priceBooks[${i}]`; if(!b||!b.name) return add(`${w}: needs a name.`);
+    Object.entries(b.prices||{}).forEach(([k,v])=>{ if(!pnames.has(k)) add(`${w} (${b.name}): "${k}" isn't a plan.`); if(typeof v!=="number"||v<0) add(`${w} (${b.name}): the price for ${k} must be a number.`); });
+    Object.keys(b.params||{}).forEach(k=>{ if(!paramKeys.has(k)) add(`${w} (${b.name}): "${k}" isn't a setting.`); }); });
+  Object.entries(o.presets||{}).forEach(([k,p])=>Object.keys(p||{}).forEach(f=>{ if(!ctrlKeys.has(f)) add(`presets["${k}"]: "${f}" isn't a question key.`); }));
+  return E;
+}
+function importCatalog(text,fileName){
+  const msgs=$("catMsgs"); msgs.hidden=false;
+  let o; try{ o=JSON.parse(text); }catch(e){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported.</strong> ${esc(fileName)} isn't valid JSON: ${esc(e.message)}</li>`; return; }
+  const errs=validateCatalog(o);
+  if(errs.length){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported. Fix ${errs.length} problem${errs.length===1?"":"s"} in ${esc(fileName)} and try again:</strong></li>`+errs.slice(0,12).map(x=>`<li>${esc(x)}</li>`).join("")+(errs.length>12?`<li>…and ${errs.length-12} more.</li>`:""); return; }
+  o.params=o.params||[]; o.metrics=o.metrics||[]; o.checks=o.checks||[]; o.presets=o.presets||{}; o.guide=o.guide||{};
+  const replaced=!!WS[o.id];
+  WS[o.id]=makeWS(o,`Catalog ${replaced?"replaced":"created"} by import from ${fileName}.`);
+  WS[o.id].log[0].t=stamp(); WS[o.id].log[0].who="RevOps admin";
+  buildCatSel(); switchCatalog(o.id);
+  const m=$("catMsgs"); m.hidden=false; m.className="msgs ok";
+  m.innerHTML=`<li>Loaded ${esc(o.name)}: ${o.questions.length} questions, ${o.plans.length} plans, ${o.rules.length} rules. ScopeOut now runs on this catalog; open the Scope tab to try it.</li>`;
+}
+function exportCatalog(){ const {def,pub}=W(); const o=clone(def); o.plans=clone(pub.plans); o.params=def.params.map(p=>({...p,value:pub.params[p.key]}));
+  o.rules=def.rules.concat((pub.customRules||[]).map(({custom,...r})=>r)); o.discountPolicy=clone(pub.discount); return JSON.stringify(o,null,2); }
+
+/* ---------- Guide, built from the active catalog ---------- */
+const NUMW=["No","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve"];
+function buildGuide(){
+  const {def,pub}=W();
+  $("gTerms").innerHTML=(def.terms||[]).map(([t,d])=>`<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("");
+  $("gFields").innerHTML=allQs().filter(q=>q.help).map(q=>`<div id="gf-${esc(q.key)}"><dt>${esc(q.label)}</dt><dd><span>${esc(q.help.buyer)}</span><div><em>Why</em>${esc(q.help.why)}</div><div><em>Ask</em>${esc(q.help.ask)}</div></dd></div>`).join("");
+  $("gSettings").innerHTML=def.params.filter(p=>!p.hidden).map(p=>`<div id="gs-${esc(p.key)}"><dt>${esc(p.title||p.label)}</dt><dd>${esc(p.help||"")}</dd></div>`).join("")
+    +Object.entries(ENGINE_SETTINGS).map(([k,[t,d]])=>`<div id="gs-${k}"><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")
+    +def.planColumns.filter(c=>c.help).map(c=>`<div id="gs-pk-${esc(c.key)}"><dt>Plan: ${esc(c.diff||c.term||c.label)}</dt><dd>${esc(c.help)}</dd></div>`).join("")
+    +`<div id="gs-pk-csv"><dt>Packaging data file</dt><dd>${esc(CSV_HELP)}</dd></div>`;
+  $("gRuleIntro").textContent=`Every answer is checked against the rules on the Admin tab. A rule can only raise the requirement, never lower it, so the strictest rule decides the plan. If no rule raises it, the scope stays on ${planNames(pub)[0]}.`;
+  $("gRuleExample").innerHTML=rich(def.guide?.ruleExample||""); $("gRuleExample").hidden=!def.guide?.ruleExample;
+  $("gRuleFlags").innerHTML=rich(def.guide?.ruleFlags||""); $("gRuleFlags").hidden=!def.guide?.ruleFlags;
+  const n=def.questions.filter(q=>q.aud!=="lead").length+1; $("execCount").textContent=NUMW[n]||String(n);
+  const pol=pub.discount;
+  $("faqList").innerHTML=`<details><summary>Why is the price column blank?</summary><p>No price book is published. A RevOps admin loads one on the Admin tab (or enters a price per ${esc(def.unit||"unit")} for each plan) and publishes it. Totals then appear everywhere, including the buyer ranges.</p></details>`
+    +`<details><summary>How do discounts work?</summary><p>Sellers can discount each priced line. Up to ${pol.repMax}% applies straight away. From ${pol.repMax}% to ${pol.approvalMax}% needs a sales manager to approve it, and anything above ${pol.approvalMax}% is blocked. Buyers never see a discount that hasn't been approved, and website visitors never get one.</p></details>`
+    +`<details><summary>Can I add my own rules?</summary><p>Yes. RevOps admins use <strong>Add a rule</strong> on the Admin tab to raise the plan or add a flag from simple conditions. New rules go into the draft and reach reps when published. Calculated rules live in the catalog file.</p></details>`
+    +(def.faq||[]).map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${rich(a)}</p></details>`).join("");
+  $("gCatalogs").textContent=`ScopeOut is running the ${def.name} catalog. Every question, rule, plan and output on these tabs comes from that one file.`;
+}
+
+/* ---------- Catalog switching ---------- */
+function buildCatSel(){ $("catSel").innerHTML=Object.values(WS).map(w=>`<option value="${esc(w.def.id)}">${esc(w.def.label||w.def.name)}</option>`).join(""); $("catSel").value=active; }
+function catStats(){ const d=W().def; $("catTitle").textContent=d.label||d.name; $("catStats").textContent=`${d.questions.length} questions · ${d.plans.length} plans · ${d.rules.length} rules · priced per ${d.unit||"unit"}`; $("catJson").textContent=exportCatalog(); }
+function switchCatalog(id){
+  active=id; $("catSel").value=id;
+  $("footNote").textContent=W().def.guide?.footer||"";
+  buildPresets(); buildForm(); buildRules(); buildGuide(); catStats(); render(); renderLog(); updateAdmin();
+  $("csvMsgs").hidden=true; $("catMsgs").hidden=true; $("rb").hidden=true; $("rbOpen").hidden=false;
+}
+
+/* ---------- Events ---------- */
+$("presets").addEventListener("click",e=>{ const b=e.target.closest("[data-preset]"); if(!b) return; const p=W().def.presets[b.dataset.preset];
+  W().s={...defaultAnswers(W().def),...clone(p),company:W().s.company}; loadState(); render(); });
+$("qList").addEventListener("input",()=>{ readState(); render(); });
+$("qList").addEventListener("change",()=>{ readState(); render(); });
+$("p-rules").addEventListener("input",e=>{ const t=e.target; if(role!=="admin") return; const {def,draft}=W();
+  if(t.dataset.pi!=null){ const c=def.planColumns.find(x=>x.key===t.dataset.k); draft.plans[+t.dataset.pi][t.dataset.k]=c&&c.type==="price"?t.value:(+t.value||0); }
+  else if(t.dataset.param==="rangePct"){ draft.rangePct=+t.value||0; }
+  else if(t.dataset.dpol){ draft.discount[t.dataset.dpol]=Math.max(0,Math.min(100,+t.value||0)); }
+  else if(t.dataset.param){ const p=def.params.find(x=>x.key===t.dataset.param); draft.params[t.dataset.param]=p&&p.allowBlank?t.value:(+t.value||0); }
+  else if(t.dataset.rule){ draft.rules[t.dataset.rule]=t.checked; }
+  else if(t.dataset.vis){ draft.vis[t.dataset.vis]=t.value; }
+  else return;
+  renderCsv(); updateAdmin(); });
+$("p-rules").addEventListener("change",e=>{ const t=e.target; if(role!=="admin") return; const {draft}=W();
+  if(t.dataset.rule) draft.rules[t.dataset.rule]=t.checked; else if(t.dataset.vis) draft.vis[t.dataset.vis]=t.value; else return; updateAdmin(); });
+$("roleSel").addEventListener("change",e=>setRole(e.target.value));
+function setRole(r){ role=r; updateAdmin(); render(); if(!$("rb").hidden) rbPreview(); }
+$("publishBtn").addEventListener("click",()=>{ const d=diffs(); if(!d.length) return;
+  W().log.push({t:stamp(),who:"RevOps admin",what:"published "+d.length+" change"+(d.length===1?"":"s")+": "+d.join("; ")+"."});
+  W().pub=clone(W().draft); render(); renderLog(); updateAdmin(); catStats();
+  const toast=$("pubToast"); toast.textContent="Published. Every new scope now uses this packaging."; toast.hidden=false; setTimeout(()=>toast.hidden=true,3500); });
+$("discardBtn").addEventListener("click",()=>{ W().draft=clone(W().pub); buildRules(); renderCsv(); updateAdmin(); });
+
+/* ---------- Price books ---------- */
+$("pbLoad").addEventListener("click",()=>{ if(role!=="admin") return; const {def,draft}=W(), v=$("pbSel").value;
+  if(v===""){ draft.plans.forEach(p=>p.price=""); def.params.filter(p=>p.allowBlank).forEach(p=>draft.params[p.key]=""); draft.priceBook="None"; }
+  else { const b=def.priceBooks[+v]; draft.plans.forEach(p=>{ if(b.prices[p.name]!=null) p.price=String(b.prices[p.name]); });
+    Object.entries(b.params||{}).forEach(([k,x])=>{ if(k in draft.params) draft.params[k]=String(x); }); draft.priceBook=b.name; }
+  buildRules(); renderCsv(); updateAdmin(); });
+
+/* ---------- Discount entry and approvals (Scope tab) ---------- */
+function logEvent(who,what){ W().log.push({t:stamp(),who,what}); renderLog(); }
+$("lines").addEventListener("change",e=>{ const t=e.target; if(!t.dataset.disc) return; W().disc[t.dataset.disc]=Math.max(0,Math.min(100,+t.value||0)); render(); });
+$("discBar").addEventListener("click",e=>{ const b=e.target.closest("[data-appr]"); if(!b) return; const ws=W(), a=b.dataset.appr;
+  const r=compute(), D=r.D, co=(ws.s.company||"").trim()||"this prospect", desc=`${pct(D.max)} on ${D.maxLine} for ${co}`;
+  if(a==="applyall"){ const v=Math.max(0,Math.min(100,+$("discAll").value||0)); r.lines.forEach(l=>{ if(l.price>0) ws.disc[l.name]=v; }); }
+  else if(a==="clear"){ ws.disc={}; }
+  else if(a==="request"){ ws.approval={status:"pending",key:discKey(),by:""}; logEvent(ROLES[role],`requested approval: ${desc}.`); }
+  else if(a==="asmanager"){ setRole("manager"); return; }
+  else if(a==="approve"&&role==="manager"){ ws.approval={status:"approved",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`approved ${desc}.`); }
+  else if(a==="decline"&&role==="manager"){ ws.approval={status:"rejected",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`declined ${desc}.`); }
+  render(); });
+
+/* ---------- Rule builder (dropdowns only) ---------- */
+const OPS={num:[["==","is"],["!=","is not"],[">","is more than"],[">=","is at least"],["<","is less than"],["<=","is at most"]],
+  str:[["==","is"],["!=","is not"]], box:[["on","is ticked"],["off","is not ticked"]],
+  multi:[["has","includes"],["nothas","does not include"],["cnt>","has more than"],["cnt<","has fewer than"]]};
+function rbCtrls(){ const out=[]; W().def.questions.forEach(q=>q.controls.forEach(c=>{ if(c.type==="text") return;
+  out.push({c,label:c.type==="checkbox"&&!q.boxOnly?(c.label||q.label):(q.controls.length>1&&c!==q.controls[0]?(c.aria||c.label||c.key):q.label),
+    kind:c.type==="checkbox"?"box":c.type==="multi"?"multi":(c.type==="number"||c.num)?"num":"str"}); })); return out; }
+const lit=v=>typeof v==="number"?String(v):`'${String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}'`;
+function rbCondHtml(i){ const cs=rbCtrls();
+  return `<div class="rbcond" data-i="${i}">${i?'<span class="h">and</span>':'<span class="h">When</span>'}<select class="rbq" aria-label="Question">${cs.map((x,j)=>`<option value="${j}">${esc(x.label)}</option>`).join("")}</select><select class="rbop" aria-label="Comparison"></select><span class="rbval"></span>${i?'<button type="button" class="linkbtn" data-rbdel>Remove</button>':""}</div>`; }
+function rbSync(row){ const x=rbCtrls()[+row.querySelector(".rbq").value], ops=OPS[x.kind], opSel=row.querySelector(".rbop"), keep=opSel.value;
+  opSel.innerHTML=ops.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join(""); if(ops.some(o=>o[0]===keep)) opSel.value=keep;
+  const op=opSel.value, vs=row.querySelector(".rbval"), o=opts(x.c);
+  if(x.kind==="box") vs.innerHTML="";
+  else if(x.kind==="multi"&&(op==="cnt>"||op==="cnt<")||x.kind==="num"&&!o.length) vs.innerHTML=`<input type="number" class="rbv" value="0" aria-label="Value">`;
+  else vs.innerHTML=`<select class="rbv" aria-label="Value">${o.map((y,j)=>`<option value="${j}">${esc(y.l)}</option>`).join("")}</select>`; }
+function rbRead(){ const rows=[...document.querySelectorAll("#rbConds .rbcond")], cs=rbCtrls(), parts=[], words=[];
+  for(const row of rows){ const x=cs[+row.querySelector(".rbq").value], op=row.querySelector(".rbop").value, vEl=row.querySelector(".rbv"), o=opts(x.c), k=x.c.key;
+    let v, vl=""; if(vEl){ if(vEl.tagName==="SELECT"){ const y=o[+vEl.value]; v=y.v; vl=y.l; } else { if(vEl.value==="") return {err:"Enter a value for every condition."}; v=+vEl.value; vl=String(v); } }
+    if(x.kind==="box"){ parts.push(op==="on"?k:`!${k}`); words.push(`${x.label} ${op==="on"?"is ticked":"is not ticked"}`); }
+    else if(x.kind==="multi"){ if(op==="has"||op==="nothas"){ parts.push(`${op==="nothas"?"!":""}has(${k}, ${lit(v)})`); } else parts.push(`count(${k}) ${op.slice(3)} ${lit(+v)}`);
+      words.push(`${x.label} ${OPS.multi.find(z=>z[0]===op)[1]} ${vl}`); }
+    else { parts.push(`${k} ${op} ${lit(x.kind==="num"?+v:v)}`); words.push(`${x.label} ${OPS[x.kind].find(z=>z[0]===op)[1]} ${vl}`); } }
+  return {when:parts.join(" && "),words:words.join(" and ")}; }
+const noBraces=s=>String(s||"").replace(/[{}]/g,"").trim();
+function rbRule(){ const c=rbRead(); if(c.err) return c; const kind=document.querySelector('input[name="rbKind"]:checked').value;
+  if(kind==="plan"){ const plan=$("rbPlan").value; return {kind,when:c.when,plan,why:noBraces(`Custom rule: ${c.words}`),txt:noBraces(`${c.words} → at least ${plan}`)}; }
+  const tag=noBraces($("rbTag").value).slice(0,24), msg=noBraces($("rbMsg").value).slice(0,200);
+  if(!tag||!msg) return {err:"Give the flag a short label and a message."};
+  return {kind,when:c.when,level:$("rbLevel").value,tag,msg,show:$("rbShow").value,trace:noBraces(`Custom flag: ${tag}`),txt:noBraces(`${c.words} → flag "${tag}"`)}; }
+function rbPreview(){ const r=rbRule();
+  if(r.err){ $("rbPrev").innerHTML=`<span class="muted">${esc(r.err)}</span>`; return; }
+  let fires; try{ fires=!!ev(r.when,lastEnv); }catch(e){ $("rbPrev").textContent="This rule can't be read: "+e.message; return; }
+  $("rbPrev").innerHTML=`<strong>Reads as:</strong> ${esc(r.txt)}.<br><strong>On the current scope:</strong> ${fires?"it fires.":"it doesn't fire."} <span class="muted">(${esc(r.when)})</span>`; }
+function rbOpen(){ const {def}=W(); $("rb").hidden=false; $("rbOpen").hidden=true;
+  $("rbConds").innerHTML=rbCondHtml(0); rbSync($("rbConds").firstElementChild);
+  $("rbPlan").innerHTML=def.plans.map(p=>`<option>${esc(p.name)}</option>`).join(""); $("rbPlan").selectedIndex=Math.min(1,def.plans.length-1);
+  $("rbTag").value=""; $("rbMsg").value=""; rbKind(); rbPreview(); }
+function rbKind(){ const k=document.querySelector('input[name="rbKind"]:checked').value; $("rbPlanBox").hidden=k!=="plan"; $("rbFlagBox").hidden=k!=="flag"; }
+$("rbOpen").addEventListener("click",()=>{ if(role==="admin") rbOpen(); });
+$("rbCancel").addEventListener("click",()=>{ $("rb").hidden=true; $("rbOpen").hidden=false; });
+$("rb").addEventListener("change",e=>{ const row=e.target.closest(".rbcond"); if(row&&(e.target.classList.contains("rbq")||e.target.classList.contains("rbop"))) rbSync(row); if(e.target.name==="rbKind") rbKind(); rbPreview(); });
+$("rb").addEventListener("input",()=>rbPreview());
+$("rb").addEventListener("click",e=>{ if(e.target.dataset.rbdel!==undefined){ e.target.closest(".rbcond").remove(); rbPreview(); }
+  if(e.target.id==="rbAnd"){ const n=document.querySelectorAll("#rbConds .rbcond").length; if(n>=3) return; $("rbConds").insertAdjacentHTML("beforeend",rbCondHtml(n)); rbSync($("rbConds").lastElementChild); rbPreview(); } });
+$("rbSave").addEventListener("click",()=>{ if(role!=="admin") return; const r=rbRule(); if(r.err){ rbPreview(); return; }
+  const {draft,pub}=W(), used=[...(draft.customRules||[]),...(pub.customRules||[])].map(x=>+String(x.id).slice(1)||0);
+  const id="C"+(Math.max(0,...used)+1); draft.customRules=(draft.customRules||[]).concat([{id,src:"Rule builder",custom:true,...r}]); draft.rules[id]=true;
+  $("rb").hidden=true; $("rbOpen").hidden=false; buildRules(); updateAdmin(); });
+$("ruleRows").addEventListener("click",e=>{ const id=e.target.dataset.delrule; if(!id||role!=="admin") return; const {draft}=W();
+  draft.customRules=draft.customRules.filter(r=>r.id!==id); delete draft.rules[id]; buildRules(); updateAdmin(); });
+$("csvFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ importCsv(String(rd.result)); e.target.value=""; }; rd.readAsText(f); });
+$("catFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ importCatalog(String(rd.result),f.name); e.target.value=""; }; rd.readAsText(f); });
+$("catSel").addEventListener("change",e=>switchCatalog(e.target.value));
+$("catShow").addEventListener("click",()=>{ const p=$("catJson"), open=p.hidden; p.hidden=!open; $("catShow").textContent=open?"Hide catalog file":"Show catalog file"; $("catShow").setAttribute("aria-expanded",open); });
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["scope","rules","output","guide"].forEach(t=>$("p-"+t).hidden=t!==b.dataset.tab);
+  try{ localStorage.setItem("sw-tab",b.dataset.tab); }catch(e){}
+  ensureTs();
+}));
+function setMode(m){ mode=m; $("modeSeller").setAttribute("aria-pressed",m==="seller"); $("modeBuyer").setAttribute("aria-pressed",m==="buyer");
+  $("qTitle").textContent=m==="buyer"?"Tell us about your project":"Discovery questions";
+  $("qSub").textContent=m==="buyer"?"About two minutes. Tap i on any question for more detail.":"Answer what you learned on the call. Tap i for what to dig into.";
+  $("presets").hidden=m==="buyer"; buildForm(); render(); }
+$("modeSeller").onclick=()=>setMode("seller"); $("modeBuyer").onclick=()=>setMode("buyer");
+document.querySelectorAll("#audPick input").forEach(i=>{ i.checked=i.value===aud; i.addEventListener("change",()=>{ aud=i.value; render(); }); });
+document.querySelectorAll("[data-send]").forEach(b=>b.addEventListener("click",()=>{ $("toast-"+b.dataset.send).hidden=false; }));
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const id=b.dataset.copy, txt=$(id).textContent, done=()=>{ const t=$("t-"+id); t.hidden=false; setTimeout(()=>t.hidden=true,1600); };
+  const sel=()=>{ const el=$(id); if(el.hidden) return; const r=document.createRange(); r.selectNodeContents(el); const g=getSelection(); g.removeAllRanges(); g.addRange(r); };
+  try{ navigator.clipboard.writeText(txt).then(done,sel); }catch(e){ sel(); }
+}));
+function goto(id){ $("tab-guide").click(); const el=$(id); if(el){ el.scrollIntoView({block:"start"}); if(el.tagName==="DIV"){ el.style.outline="2px solid var(--accent)"; el.style.outlineOffset="4px"; setTimeout(()=>{ el.style.outline=""; },1600); } } }
+function setHelpText(k){ return `${esc(settingInfo(k)[1])} <a data-goto="gs-${esc(k)}">More in the guide</a>`; }
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-goto]"); if(g){ e.preventDefault(); goto(g.dataset.goto); return; }
+  const sb=e.target.closest(".info[data-set]");
+  if(sb){ const box=$(sb.getAttribute("aria-controls")); const open=sb.getAttribute("aria-expanded")!=="true"; sb.setAttribute("aria-expanded",open); box.hidden=!open; (box.querySelector(".help")||box).innerHTML=setHelpText(sb.dataset.set); return; }
+  const pk=e.target.closest(".info[data-pk]");
+  if(pk){ const box=$("pkHelp"), same=!box.hidden&&box.dataset.k===pk.dataset.pk;
+    document.querySelectorAll(".info[data-pk]").forEach(b=>b.setAttribute("aria-expanded","false"));
+    if(same){ box.hidden=true; return; }
+    box.dataset.k=pk.dataset.pk; box.innerHTML=`${esc(colHelp(pk.dataset.pk))} <a data-goto="gs-pk-${esc(pk.dataset.pk)}">More in the guide</a>`; box.hidden=false; pk.setAttribute("aria-expanded","true"); }
+});
+
+/* ---------- Email: preview always, real sending when the site is connected to the mailer ---------- */
+const CFG=Object.assign({mailerUrl:"",turnstileSiteKey:"",logoUrl:"",pageUrl:"https://www.davidcreason.com/scopeout/"},window.SCOPEOUT_CONFIG||{});
+const LOGO_DATA="data:image/png;base64,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";
+const live=()=>!!(CFG.mailerUrl&&CFG.turnstileSiteKey);
+const plain=html=>{ const d=document.createElement("div"); d.innerHTML=html; return d.textContent.replace(/\s+/g," ").trim(); };
+const EMAIL_OK=/^[^\s@<>()\[\],;:"]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/;
+function emailData(kind){
+  const r=compute(), {def,s}=W(), env=r.env, D=r.D, view=kind==="seller"?"seller":aud;
+  let investment="", investmentNote="";
+  if(kind==="seller"){ if(D.priced){ if(D.max>0&&D.quotable){ investment=money(D.net)+" / yr"; investmentNote=`List ${money(D.list)}, with a ${pct(D.blended)} discount.`; } else { investment=money(D.list)+" / yr"; investmentNote="List price for this scope."; } } }
+  else { const pr=visiblePrice(view,D.list,D.priced); env.priceText=pr.text;
+    if(pr.kind==="range"){ investment=pr.text; investmentNote=`Indicative range (±${W().pub.rangePct}%). Your solutions engineer confirms the final figure.`; }
+    else if(pr.kind==="list"){ investment=pr.text; investmentNote="List price, before any agreed discounts."; } }
+  env.priceText=env.priceText||"";
+  const stats=def.verdict.filter(v=>!(view==="exec"&&v.notExec)).slice(0,3).map(v=>({label:v.label,value:safeTpl(v.value,env,false),sub:v.sub?safeTpl(v.sub,env,false):""}));
+  const highlights=view==="exec"?(def.glance||[]).filter(g=>!/\{priceText\}/.test(g.text)).map(g=>({label:g.label,text:safeTpl(g.text,env,false)})):[];
+  const lines=view==="exec"?[]:r.lines.map(l=>({name:l.name,detail:l.detail,qty:fmt(l.qty)}));
+  const notes=r.flags.filter(f=>(view==="exec"?f.show==="all":f.show==="all"||f.show==="lead")&&!["Clear","Rule error","Discount","Missing"].includes(f.tag)).map(f=>({tag:f.tag,msg:plain(f.msg)}));
+  return {company:(s.company||"").trim(),product:def.name,plan:r.P.name,stats,highlights,lines,reasons:r.reasons,investment,investmentNote,notes,demoFooter:def.guide?.emailFooter||""};
+}
+const MF={buyer:{name:"mbName",email:"mbEmail",status:"mbStatus",web:"mbWeb",btn:"mbSend",ts:"tsBuyer"},seller:{name:"msName",email:"msEmail",status:"msStatus",web:"msWeb",btn:"msSend",ts:"tsSeller"}};
+function mailInput(kind){ const f=MF[kind];
+  return {kind,name:$(f.name).value.trim(),to:$(f.email).value.trim(),consent:kind==="buyer"?$("mbConsent").checked:true,wantsCall:kind==="buyer"&&$("mbCall").checked,note:kind==="seller"?$("msNote").value.trim():"",web:$(f.web).value}; }
+function openPreview(kind,note){
+  const m=mailInput(kind), data={...emailData(kind),mode:kind,recipientName:m.name,wantsCall:m.wantsCall,note:m.note,pageUrl:CFG.pageUrl};
+  const mail=ScopeOutEmail.render(data,{logoUrl:CFG.logoUrl||LOGO_DATA});
+  $("mmMeta").textContent=`To: ${m.name?m.name+" ":""}${m.to?`<${m.to}>`:"(no address yet)"} · Subject: ${mail.subject}`;
+  $("mmNote").textContent=note||""; $("mmNote").hidden=!note;
+  const body=mail.html.slice(mail.html.indexOf("<body"),mail.html.lastIndexOf("</body>")); $("mmBody").innerHTML=body.slice(body.indexOf(">")+1);
+  $("mailModal").hidden=false; $("mmClose").focus();
+}
+function closePreview(){ $("mailModal").hidden=true; }
+const tsIds={}; let tsLoading=false;
+function ensureTs(){
+  if(!live()) return;
+  if(!window.turnstile){ if(!tsLoading){ tsLoading=true; window.__soTs=ensureTs; const sc=document.createElement("script"); sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__soTs"; sc.async=true; document.head.appendChild(sc); } return; }
+  ["buyer","seller"].forEach(k=>{ const el=$(MF[k].ts); if(tsIds[k]!==undefined||!el||el.offsetParent===null) return;
+    tsIds[k]=turnstile.render(el,{sitekey:CFG.turnstileSiteKey,appearance:"interaction-only",theme:"auto"}); });
+}
+async function sendEmail(kind){
+  const f=MF[kind], m=mailInput(kind), st=$(f.status), say=(t,bad)=>{ st.textContent=t; st.classList.toggle("bad",!!bad); };
+  if(!EMAIL_OK.test(m.to)) return say("Enter a valid email address.",true);
+  if(kind==="buyer"&&!m.consent) return say("Tick the box so we can email you this scope.",true);
+  if(!live()){ say("Demo mode: this copy isn't connected to an email service, so here's exactly what would be sent."); openPreview(kind,"Demo mode: nothing was sent. This is exactly what the email looks like."); return; }
+  const token=window.turnstile&&tsIds[kind]!==undefined?turnstile.getResponse(tsIds[kind]):"";
+  if(!token){ ensureTs(); return say("One moment: confirming you're a person. Try again in a few seconds.",true); }
+  const btn=$(f.btn); btn.disabled=true; say("Sending…");
+  try{
+    const res=await fetch(CFG.mailerUrl,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({mode:kind,to:m.to,name:m.name,consent:m.consent,website:m.web,token,scope:{...emailData(kind),wantsCall:m.wantsCall,note:m.note}})});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j.ok){ say(`Sent to ${m.to}. It should arrive within a minute; the first one may land in spam.`); if(kind==="seller") logEvent(ROLES[role],`emailed the scope to ${m.to}.`); }
+    else say((j.error||"That didn't send.")+" You can still preview it.",true);
+  }catch(e){ say("Couldn't reach the email service. Check your connection, or preview the email instead.",true); }
+  finally{ btn.disabled=false; if(window.turnstile&&tsIds[kind]!==undefined) turnstile.reset(tsIds[kind]); }
+}
+$("mbForm").addEventListener("submit",e=>{ e.preventDefault(); sendEmail("buyer"); });
+$("msForm").addEventListener("submit",e=>{ e.preventDefault(); sendEmail("seller"); });
+document.querySelectorAll("[data-preview]").forEach(b=>b.addEventListener("click",()=>openPreview(b.dataset.preview,live()?"Preview only. Nothing has been sent.":"Demo mode: this copy isn't connected to an email service. This is exactly what the email looks like.")));
+$("mmClose").addEventListener("click",closePreview);
+$("mailModal").addEventListener("click",e=>{ if(e.target===$("mailModal")) closePreview(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("mailModal").hidden) closePreview(); });
+function mailCopy(){ const exec=aud==="exec";
+  $("mbSub").textContent=exec?"Get this summary in your inbox. A solutions architect can walk your team through fit, security and time to value.":"Get the leadership package in your inbox, ready to forward to your approvers.";
+  $("mbCallLbl").textContent=exec?"I'd like a 30-minute overview call":"I'd like a solutions engineer to review this with me";
+  $("msHint").textContent=live()?"Sends the buyer-safe version: no internal flags, and a discount only once it's approved. In this demo, rep emails go to approved inboxes only.":"Sends the buyer-safe version: no internal flags, and a discount only once it's approved. This copy isn't connected to email, so Send shows the preview.";
+  $("liveTag").textContent=live()?"Live email":"Preview mode"; }
+
+/* ---------- Start ---------- */
+BUILTIN.forEach(d=>WS[d.id]=makeWS(d));
+active=BUILTIN[0].id; buildCatSel(); switchCatalog(active);
+try{ const t=localStorage.getItem("sw-tab"); if(t) document.querySelector(`[data-tab="${t}"]`)?.click(); }catch(e){}
+
+</script>
+</body>
+</html>
