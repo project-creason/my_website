@@ -4,7 +4,7 @@
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.ScopeOutEmail = factory();
 })(typeof self !== "undefined" ? self : this, function () {
-  const C = { bg: "#F3F5F1", card: "#FFFFFF", ink: "#16201B", muted: "#56635B", line: "#D5DCD4", accent: "#1E6B57", soft: "#DCEDE6", prod: "#2C4A7A", warnBg: "#FBEEDA", warn: "#8A4B00" };
+  const C = { bg: "#F4F6FA", card: "#FFFFFF", ink: "#141B2D", muted: "#566079", line: "#DCE2EC", accent: "#1E4ECF", soft: "#E6ECFB", prod: "#0E9AA7", warnBg: "#FBEEDA", warn: "#8A4B00" };
   const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
   const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const str = (v, max) => String(v == null ? "" : v).replace(/<[^>]*>/g, "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
