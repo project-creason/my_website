@@ -17,7 +17,7 @@
       "csv": "integrations",
       "type": "intU",
       "term": "integrations",
-      "help": "How many destination tools (CRM, warehouse, messaging) the plan can sync to. Enterprise is unlimited, so a long tool list can push a scope up a tier."
+      "help": "How many destination tools, such as a CRM, data warehouse or messaging tool, the plan can sync to. Enterprise is unlimited, so a long tool list can push a scope up a tier."
     },
     {
       "key": "history",
