@@ -77,7 +77,7 @@ ${stats}${highlights}${lines}${reasons}${invest}${notes}
 <tr><td style="padding:26px 32px 28px"><div style="background:${C.bg};border-radius:8px;padding:14px 16px;font:15px/1.5 ${FONT};color:${C.ink}"><strong>Questions?</strong> Just reply to this email and it goes straight to your solutions engineer.</div></td></tr>
 </table>
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px"><tr><td style="padding:16px 32px;font:12px/1.5 ${FONT};color:${C.muted}" align="center">
-${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · guided deal scoping<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
+${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · Scope it right the first time.<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
 </td></tr></table>
 </td></tr></table></body></html>`;
 
@@ -91,7 +91,7 @@ ${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span styl
     if (d.reasons.length) { t.push("", `WHY ${(d.plan || "this plan").toUpperCase()}`); d.reasons.forEach(r => t.push(`- ${r}`)); }
     if (d.investment) { t.push("", "INVESTMENT", d.investment + (d.investmentNote ? ` (${d.investmentNote})` : "")); }
     if (d.notes.length) { t.push("", "WORTH KNOWING"); d.notes.forEach(n => t.push(`- ${n.tag ? n.tag + ": " : ""}${n.msg}`)); }
-    t.push("", "Questions? Just reply to this email.", "", "Sent with ScopeOut, guided deal scoping.", d.demoFooter);
+    t.push("", "Questions? Just reply to this email.", "", "Sent with ScopeOut. Scope it right the first time.", d.demoFooter);
     return { subject, html, text: t.join("\n"), data: d };
   }
   return { render, clean };
