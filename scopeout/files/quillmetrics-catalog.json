@@ -838,6 +838,12 @@
       "launch": 4
     }
   },
+  "presetNotes": {
+    "Series B, growing fast": "250k users expected to double this year, 6 tools to connect and SSO. Shows the growth buffer, Scale chosen for integrations and SSO, and a true-up clause suggestion.",
+    "Healthcare app": "A patient-facing app with 80k users that needs HIPAA, 24/7 support and 2 years of history. Shows compliance alone pushing a small deal to Enterprise.",
+    "Early-stage startup": "15k users, two tools and email support. Shows the smallest plan with no exceptions.",
+    "Global retailer": "3M users, EU data residency and 5 integrations to launch in 4 weeks. Shows SE review, an EU workspace added to the bill and a timeline risk."
+  },
   "terms": [
     [
       "Monthly tracked user (MTU)",
