@@ -459,7 +459,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
     <div class="guide">
       <nav class="gnav" aria-label="Guide sections">
         <a data-goto="g-start">Getting started</a><a data-goto="g-terms">Key terms</a><a data-goto="g-rules">How the plan is chosen</a>
-        <a data-goto="g-views">Seller and buyer views</a><a data-goto="g-roles">Roles and access</a><a data-goto="g-fields">Question reference</a><a data-goto="g-settings">Settings reference</a><a data-goto="g-faq">FAQ</a>
+        <a data-goto="g-views">Seller and buyer views</a><a data-goto="g-roles">Roles and access</a><a data-goto="g-fields">Question reference</a><a data-goto="g-settings">Settings reference</a><a data-goto="g-faq">Common questions</a>
       </nav>
       <div class="gbody">
         <section class="panel" id="g-start"><h2>Getting started</h2>
@@ -511,7 +511,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
           <p class="sub">These live on the Admin tab. Changes apply to every new scope immediately.</p>
           <dl class="ref" id="gSettings"></dl>
         </section>
-        <section class="panel faq" id="g-faq"><h2>FAQ</h2>
+        <section class="panel faq" id="g-faq"><h2>Common questions</h2>
           <div id="faqList"></div>
         </section>
       </div>
@@ -1269,6 +1269,27 @@ function buildGuide(){
     +`<details><summary>Can I add my own rules?</summary><p>Yes. RevOps admins use <strong>Add a rule</strong> on the Admin tab to raise the plan or add a flag from simple conditions. New rules go into the draft and reach reps when published. Calculated rules live in the catalog file.</p></details>`
     +(def.faq||[]).map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${rich(a)}</p></details>`).join("");
   $("gCatalogs").textContent=`ScopeOut is running the ${def.name} catalog. Every question, rule, plan and output on these tabs comes from that one file.`;
+  expandAcronyms($("p-guide"));
+}
+
+/* ---------- Guide: every acronym is written out the first time it appears in each entry ---------- */
+const ACRONYMS={DXU:"DX Unit",PS:"Professional Services",SE:"solutions engineer",HA:"high availability",CRM:"customer relationship management system",
+  RevOps:"Revenue Operations",SSO:"single sign-on",SAML:"Security Assertion Markup Language",HIPAA:"Health Insurance Portability and Accountability Act",
+  BAA:"Business Associate Agreement",GDPR:"General Data Protection Regulation",PCI:"Payment Card Industry security standard","SOC 2":"System and Organization Controls 2",
+  EU:"European Union",MTU:"monthly tracked user",TAM:"technical account manager",QA:"quality assurance",AWS:"Amazon Web Services",S3:"Amazon Simple Storage Service",
+  CSV:"comma-separated values",SSIS:"SQL Server Integration Services",AD:"Active Directory",IT:"information technology"};
+const ACR_RE=Object.keys(ACRONYMS).map(a=>[a,new RegExp(`(^|[^A-Za-z0-9])(${a.replace(" ","\\s")})(?![A-Za-z0-9])`)]);
+function expandAcronyms(root){
+  root.querySelectorAll("p, li, dt, dd > span, dd > div, td, summary, h2").forEach(block=>{
+    if(block.closest(".gnav")) return;
+    const seen=new Set(), full=block.textContent.toLowerCase();
+    const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{ if(n.parentElement.closest("code, .assume")) return; let t=n.nodeValue;
+      ACR_RE.forEach(([a,re])=>{ if(seen.has(a)) return; const exp=ACRONYMS[a];
+        if(full.includes(exp.toLowerCase())||full.includes(`${a.toLowerCase()} (`)){ seen.add(a); return; }
+        const m=t.match(re); if(m){ const i=m.index+m[1].length; t=t.slice(0,i+m[2].length)+` (${exp})`+t.slice(i+m[2].length); seen.add(a); } });
+      if(t!==n.nodeValue) n.nodeValue=t; });
+  });
 }
 
 /* ---------- Catalog switching ---------- */
