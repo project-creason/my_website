@@ -101,6 +101,8 @@ input[type=number]{width:84px;font-variant-numeric:tabular-nums}
 .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 pre{font-family:var(--f-mono);font-size:12.5px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:12px;overflow:auto;max-height:440px;margin:0;white-space:pre}
 pre.wrapped{white-space:pre-wrap}
+pre.json{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;tab-size:2}
+pre.json .jl{display:block} pre.json .jk{color:#1E4ECF} pre.json .js{color:#0B7A55} pre.json .jn{color:#B4540A} pre.json .jb{color:#8A3FB8;font-weight:600}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 @media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
 .rule{display:grid;grid-template-columns:auto 46px minmax(0,1fr);gap:10px;align-items:baseline;padding-block:8px;border-top:1px solid var(--line);font-size:14px}
@@ -173,7 +175,7 @@ th .info{width:18px;height:18px;font-size:10px;vertical-align:middle;margin-left
 .catalog select{font:500 12px var(--f-mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 4px;max-width:100%}
 .cathead{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-start;justify-content:space-between}
 .cathead > div{min-width:0}
-#catJson{margin-top:12px;max-height:360px}
+#catJson{margin-top:12px;max-height:560px}
 .tot td{border-bottom:0;padding-block:5px}
 input.disc{width:68px;padding:3px 6px;font-size:14px;text-align:right}
 #discBar{display:grid;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
@@ -353,7 +355,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
       </div>
       <p class="note" style="margin-top:8px">A catalog file defines one product: its questions, plans, rules and outputs. Import a new file and ScopeOut reconfigures, with no code changes. Files are checked before anything loads.</p>
       <ul class="msgs" id="catMsgs" hidden></ul>
-      <pre id="catJson" hidden></pre>
+      <pre id="catJson" class="json" hidden></pre>
     </div>
     <div class="two">
       <div class="panel">
@@ -438,7 +440,7 @@ footer{font-size:12px;color:var(--muted);padding-block:0 32px}
       <div class="panel">
         <h2>CRM payload</h2>
         <p class="sub">Deal properties and line items, typed for the CRM. No re-keying.</p>
-        <pre id="payload"></pre>
+        <pre id="payload" class="json"></pre>
         <div class="row" style="margin-top:10px"><button class="btn ghost" data-copy="payload">Copy JSON</button><span class="toast" id="t-payload" hidden>Copied</span></div>
       </div>
     </div>
@@ -635,6 +637,15 @@ ${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span styl
 const $=id=>document.getElementById(id);
 const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
 const clone=o=>JSON.parse(JSON.stringify(o));
+/* Pretty JSON: indented text with keys, strings, numbers and true/false/null colored. Copy still uses plain text. */
+function jsonHtml(s){ const e=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); let out="", last=0;
+  s.replace(/"(?:\\.|[^"\\])*"(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,(m,colon,i)=>{ out+=e(s.slice(last,i));
+    const cls=m[0]==='"'?(colon?"jk":"js"):/^[tfn]/.test(m)?"jb":"jn";
+    out+=colon?`<span class="jk">${e(m.slice(0,m.lastIndexOf(":")))}</span>${e(m.slice(m.lastIndexOf(":")))}`:`<span class="${cls}">${e(m)}</span>`; last=i+m.length; return m; });
+  out+=e(s.slice(last));
+  /* One block per line, so a long value wraps under its own key instead of at the left edge. */
+  return out.split("\n").map(l=>{ const n=l.match(/^ */)[0].length+4; return `<span class="jl" style="padding-left:${n}ch;text-indent:-${n}ch">${l||" "}</span>`; }).join(""); }
+function setJson(id,s){ const el=$(id); el.dataset.raw=s; el.innerHTML=jsonHtml(s); }
 const fmt=n=>(+n).toLocaleString("en-US");
 const money=n=>"$"+Math.round(n).toLocaleString("en-US");
 
@@ -975,7 +986,7 @@ function renderOutput(r){
   payload.scope_rules_fired=r.trace.map(t=>t[0]).filter(x=>x!=="—");
   if(D.priced){ payload.scope_list_total=Math.round(D.list); payload.scope_discount_pct=Math.round(D.blended*10)/10; payload.scope_net_total=Math.round(D.quotable?D.net:D.list); payload.scope_discount_status=D.status; }
   payload.line_items=r.lines.map(({name,detail,qty,price,disc,net,addedBy})=>{ const o=D.priced?{name,quantity:qty,detail,list_price:price,discount_pct:disc||0,net_price:price==null?null:Math.round(D.quotable?net:price)}:{name,quantity:qty,detail}; if(addedBy) o.added_by=addedBy; return o; });
-  $("payload").textContent=JSON.stringify(payload,null,2);
+  setJson("payload",JSON.stringify(payload,null,2));
 }
 
 /* ---------- Scope form, built from the catalog's questions ---------- */
@@ -1320,7 +1331,7 @@ function expandAcronyms(root){
 
 /* ---------- Catalog switching ---------- */
 function buildCatSel(){ $("catSel").innerHTML=Object.values(WS).map(w=>`<option value="${esc(w.def.id)}">${esc(w.def.label||w.def.name)}</option>`).join(""); $("catSel").value=active; }
-function catStats(){ const d=W().def; $("catTitle").textContent=d.label||d.name; $("catStats").textContent=`${d.questions.length} questions · ${d.plans.length} plans · ${d.rules.length} rules · priced per ${d.unit||"unit"}`; $("catJson").textContent=exportCatalog(); }
+function catStats(){ const d=W().def; $("catTitle").textContent=d.label||d.name; $("catStats").textContent=`${d.questions.length} questions · ${d.plans.length} plans · ${d.rules.length} rules · priced per ${d.unit||"unit"}`; setJson("catJson",exportCatalog()); }
 function switchCatalog(id){
   active=id; $("catSel").value=id;
   $("footNote").textContent=W().def.guide?.footer||"";
@@ -1452,7 +1463,7 @@ $("modeSeller").onclick=()=>setMode("seller"); $("modeBuyer").onclick=()=>setMod
 document.querySelectorAll("#audPick input").forEach(i=>{ i.checked=i.value===aud; i.addEventListener("change",()=>{ aud=i.value; render(); }); });
 document.querySelectorAll("[data-send]").forEach(b=>b.addEventListener("click",()=>{ $("toast-"+b.dataset.send).hidden=false; }));
 document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
-  const id=b.dataset.copy, txt=$(id).textContent, done=()=>{ const t=$("t-"+id); t.hidden=false; setTimeout(()=>t.hidden=true,1600); };
+  const id=b.dataset.copy, txt=$(id).dataset.raw??$(id).textContent, done=()=>{ const t=$("t-"+id); t.hidden=false; setTimeout(()=>t.hidden=true,1600); };
   const sel=()=>{ const el=$(id); if(el.hidden) return; const r=document.createRange(); r.selectNodeContents(el); const g=getSelection(); g.removeAllRanges(); g.addRange(r); };
   try{ navigator.clipboard.writeText(txt).then(done,sel); }catch(e){ sel(); }
 }));
