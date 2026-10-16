@@ -1113,11 +1113,18 @@ function renderCsv(){
 const shownV=v=>v===""||v==null?"blank":v;
 function diffs(){
   const {def,pub,draft}=W(), out=[];
-  const cv=(c,v)=>v===""||v==null?"blank":c.type==="intU"&&+v>=999?"unlimited":c.type==="price"?money(+v):v;
-  draft.plans.forEach((pl,i)=>def.planColumns.forEach(c=>{ const a=pub.plans[i]?.[c.key], b=pl[c.key]; if(String(a)!==String(b)) out.push(`${pl.name} ${c.diff||c.term||c.label}: ${cv(c,a)} → ${cv(c,b)}`); }));
-  def.params.forEach(p=>{ const a=pub.params[p.key], b=draft.params[p.key]; if(String(a)!==String(b)){ const t=p.term||p.label; out.push(`${t[0].toUpperCase()+t.slice(1)}: ${shownV(a)} → ${shownV(b)}`); } });
+  const isBlank=v=>v===""||v==null;
+  /* Prices: a blank price counts as $0. */
+  const cv=(c,v)=>c.type==="price"?money(isBlank(v)?0:+v):isBlank(v)?"blank":c.type==="intU"&&+v>=999?"unlimited":v;
+  const pv=(p,v)=>p.allowBlank?money(isBlank(v)?0:+v):shownV(v);
+  /* A price book change is one line; the prices it sets aren't listed again. */
+  const bookChanged=pub.priceBook!==draft.priceBook, book=(def.priceBooks||[]).find(b=>b.name===draft.priceBook), cleared=bookChanged&&!book;
+  const fromBook=(c,pl,b)=>bookChanged&&c.type==="price"&&(book?book.prices[pl.name]!=null&&String(book.prices[pl.name])===String(b):isBlank(b));
+  const paramFromBook=(p,b)=>bookChanged&&(book?book.params&&p.key in book.params&&String(book.params[p.key])===String(b):p.allowBlank&&isBlank(b));
+  if(bookChanged) out.push(book?`Loading price book: ${book.name}`:`Removing price book: ${pub.priceBook} (prices cleared)`);
+  draft.plans.forEach((pl,i)=>def.planColumns.forEach(c=>{ const a=pub.plans[i]?.[c.key], b=pl[c.key]; if(String(a)!==String(b)&&!fromBook(c,pl,b)) out.push(`${pl.name} ${c.diff||c.term||c.label}: ${cv(c,a)} → ${cv(c,b)}`); }));
+  def.params.forEach(p=>{ const a=pub.params[p.key], b=draft.params[p.key]; if(String(a)!==String(b)&&!paramFromBook(p,b)){ const t=p.term||p.label; out.push(`${t[0].toUpperCase()+t.slice(1)}: ${pv(p,a)} → ${pv(p,b)}`); } });
   if(String(pub.rangePct)!==String(draft.rangePct)) out.push(`Range width: ${shownV(pub.rangePct)} → ${shownV(draft.rangePct)}`);
-  if(pub.priceBook!==draft.priceBook) out.push(`Price book: ${pub.priceBook} → ${draft.priceBook}`);
   if(String(pub.discount.repMax)!==String(draft.discount.repMax)) out.push(`Rep discount limit: ${pub.discount.repMax}% → ${draft.discount.repMax}%`);
   if(String(pub.discount.approvalMax)!==String(draft.discount.approvalMax)) out.push(`Approval ceiling: ${pub.discount.approvalMax}% → ${draft.discount.approvalMax}%`);
   const pIds=new Set((pub.customRules||[]).map(r=>r.id)), dIds=new Set((draft.customRules||[]).map(r=>r.id));
