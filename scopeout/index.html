@@ -95,6 +95,8 @@ input[type=number]{width:84px;font-variant-numeric:tabular-nums}
 .trace{display:grid;gap:4px;margin:0;padding:0;list-style:none;font-size:13px}
 .trace li{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px}
 .trace code{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.trace li.sets strong{font-weight:700;color:var(--ink)}
+.trace .setsTag{display:inline-block;margin-left:6px;font:600 10.5px var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft,#E8EEFC);border-radius:999px;padding:1px 7px;vertical-align:1px}
 .muted{color:var(--muted)}
 .cta{border:1px dashed var(--accent);border-radius:8px;padding:16px;display:grid;gap:8px}
 .btn{font:600 14px var(--f-body);background:var(--accent);color:var(--on-accent);border:0;border-radius:6px;padding:9px 14px;cursor:pointer;justify-self:start}
@@ -789,7 +791,7 @@ function compute(){
   const trace=[],flags=[],reasons=[],errors=[];
   const safe=(what,f,d)=>{ try{ return f(); }catch(e){ errors.push(`${what}: ${e.message}`); return d; } };
   (def.metrics||[]).filter(m=>!m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
-  const raise=(lvl,r,why)=>{ trace.push([r.id,esc(why)+` → at least ${esc(names[lvl])}`]); reasons.push(why); if(lvl>idx) idx=lvl; };
+  const raise=(lvl,r,why)=>{ trace.push([r.id,esc(why)+` → at least ${esc(names[lvl])}`,lvl]); reasons.push(why); if(lvl>idx) idx=lvl; };
   allRules(cfg).forEach(r=>{
     if(!cfg.rules[r.id]) return;
     if(r.kind==="info") safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.trace,env,true)]));
@@ -800,9 +802,11 @@ function compute(){
       else if(r.ok) trace.push([r.id,tpl(r.ok,env,true)]);
     }
   });
+  /* The rules that reached the final plan are the ones that decided it. */
+  trace.forEach(t=>{ t[2]=idx>0&&t[2]===idx; });
   const P=plans[idx]; env.P=P; env.plan=P.name;
   (def.metrics||[]).filter(m=>m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
-  if(idx===0) trace.push(["—",`No rule raised the plan; ${esc(names[0])} fits`]);
+  if(idx===0) trace.push(["—",`No rule raised the plan; ${esc(names[0])} fits`,true]);
   const flag=(f,where)=>safe(where,()=>flags.push({id:f.id||"",level:f.level,tag:f.tag,msg:tpl(f.msg,env,true),show:f.show||"seller"}));
   (def.checks||[]).filter(c=>c.at==="start").forEach((c,i)=>{ if(safe(`Check ${i+1}`,()=>ev(c.when,env),false)) flag(c,`Check ${i+1}`); });
   allRules(cfg).forEach(r=>{
@@ -899,7 +903,7 @@ function render(){
   renderDiscBar(D,showD); renderDiscAlert(D,showD);
   $("priceNote").textContent=mode==="buyer"?"":(any?"Prices come from the published price book on the Admin tab.":"No price book loaded. A RevOps admin can add prices on the Admin tab.");
   $("priceNote").hidden=mode==="buyer";
-  $("trace").innerHTML=r.trace.map(([id,t])=>`<li><code>${esc(id)}</code><span>${t}</span></li>`).join("");
+  $("trace").innerHTML=r.trace.map(([id,t,sets])=>sets?`<li class="sets"><code>${esc(id)}</code><span><strong>${t}</strong> <span class="setsTag">Sets the plan</span></span></li>`:`<li><code>${esc(id)}</code><span>${t}</span></li>`).join("");
   const price=visiblePrice(view,total,any); env.priceText=price.text;
   if(view==="exec") $("glance").innerHTML=(def.glance||[]).map(g=>`<li><span>${esc(g.label)}</span><span>${safeTpl(g.text,env,true)}</span></li>`).join("");
   if(view==="lead"){
