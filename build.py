@@ -84,6 +84,18 @@ PROJECTS = [
         ],
     },
     {
+        "slug": "property-etl-bench",
+        "title": "Property ETL Bench",
+        "status": "active",
+        "badge": "In use · built for a REIT",
+        "year": "2026",
+        "summary": "A browser-based ETL tool that turns raw property spreadsheets into Yardi Voyager import files, setting up about 30 properties in a few minutes instead of 5+ hours by hand.",
+        "tags": ["JavaScript", "HTML", "CSS", "ETL", "Yardi Voyager", "Batch processing", "AI-assisted development"],
+        "image": "/assets/projects/property-etl-bench.jpg",
+        "image_alt": "The four stages of the tool: parse, validate, map and generate, review",
+        "links": [("Read the case study", "/projects/property-etl-bench/", True)],
+    },
+    {
         "slug": "louisville-crime",
         "title": "Louisville Crime, 2024",
         "status": "past",
@@ -769,6 +781,113 @@ detail_page(by["jobber-import-etl"],
           </ul>
         </section>
       </div>""")
+
+detail_page(by["property-etl-bench"],
+  "Every time a property joined the portfolio, its details arrived as a spreadsheet that someone reshaped by hand into the import files Yardi Voyager expects. I built a browser tool that does the whole batch in one pass.",
+  """      <style>
+        .flow-fig { margin: 32px 0 8px; padding: 20px 12px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+        .flow-fig svg { width: 100%; height: auto; display: block; }
+        .flow-fig .n rect { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
+        .flow-fig .n.out rect { stroke: var(--accent); }
+        .flow-fig .n.ext rect { fill: none; stroke: var(--ink-soft); stroke-dasharray: 6 4; }
+        .flow-fig .n text { fill: var(--ink); font: 600 14px var(--head); text-anchor: middle; }
+        .flow-fig .n .s { fill: var(--ink-soft); font: 400 12px var(--head); }
+        .flow-fig .e { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; }
+        .flow-fig .dash { stroke-dasharray: 5 4; }
+        .flow-fig .loop { stroke: var(--accent); stroke-dasharray: 5 4; }
+        .flow-fig .lbl { fill: var(--accent); font: 600 12px var(--head); text-anchor: middle; }
+        .flow-fig .arrow { fill: var(--ink-soft); }
+        .flow-fig .mobile { display: none; }
+        @media (max-width: 600px) { .flow-fig .desktop { display: none; } .flow-fig .mobile { display: block; } }
+      </style>
+      <figure class="shot-fig">
+        <div class="flow-fig">
+          <svg class="desktop" viewBox="0 0 820 290" role="img" aria-label="Data flow: a property spreadsheet is parsed, then validated and mapped. Errors loop back for correction. Clean data becomes Yardi import CSVs, with room for more target systems, then is reviewed and exported.">
+            <defs><marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+            <g class="n"><rect x="10" y="105" width="130" height="70" rx="10"/><text x="75" y="136">Source</text><text class="s" x="75" y="155">property spreadsheet</text></g>
+            <g class="n"><rect x="175" y="105" width="140" height="70" rx="10"/><text x="245" y="136">Parse &amp; normalize</text><text class="s" x="245" y="155">clean headers, types</text></g>
+            <g class="n"><rect x="350" y="105" width="140" height="70" rx="10"/><text x="420" y="136">Validate &amp; map</text><text class="s" x="420" y="155">rules → target fields</text></g>
+            <g class="n out"><rect x="530" y="35" width="140" height="70" rx="10"/><text x="600" y="66">Yardi import CSVs</text><text class="s" x="600" y="85">whole batch at once</text></g>
+            <g class="n ext"><rect x="530" y="175" width="140" height="70" rx="10"/><text x="600" y="206">Other systems</text><text class="s" x="600" y="225">add new outputs</text></g>
+            <g class="n"><rect x="700" y="105" width="110" height="70" rx="10"/><text x="755" y="136">Review</text><text class="s" x="755" y="155">&amp; export</text></g>
+            <path class="e" marker-end="url(#pa)" d="M140 140 H172"/>
+            <path class="e" marker-end="url(#pa)" d="M315 140 H347"/>
+            <path class="e" marker-end="url(#pa)" d="M490 130 C510 115, 505 75, 527 72"/>
+            <path class="e dash" marker-end="url(#pa)" d="M490 150 C510 165, 505 205, 527 208"/>
+            <path class="e" marker-end="url(#pa)" d="M670 72 C690 75, 685 115, 698 127"/>
+            <path class="e dash" marker-end="url(#pa)" d="M670 208 C690 205, 685 165, 698 153"/>
+            <path class="e loop" marker-end="url(#pa)" d="M420 177 C420 265, 75 265, 75 178"/>
+            <text class="lbl" x="248" y="257">errors flagged for correction</text>
+          </svg>
+          <svg class="mobile" viewBox="0 0 320 540" role="img" aria-label="The same data flow, stacked vertically.">
+            <defs><marker id="pm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+            <g class="n"><rect x="60" y="10" width="200" height="60" rx="10"/><text x="160" y="37">Source</text><text class="s" x="160" y="55">property spreadsheet</text></g>
+            <g class="n"><rect x="60" y="110" width="200" height="60" rx="10"/><text x="160" y="137">Parse &amp; normalize</text><text class="s" x="160" y="155">clean headers, types</text></g>
+            <g class="n"><rect x="60" y="210" width="200" height="60" rx="10"/><text x="160" y="237">Validate &amp; map</text><text class="s" x="160" y="255">rules → target fields</text></g>
+            <g class="n out"><rect x="10" y="320" width="140" height="60" rx="10"/><text x="80" y="347">Yardi CSVs</text><text class="s" x="80" y="365">whole batch</text></g>
+            <g class="n ext"><rect x="170" y="320" width="140" height="60" rx="10"/><text x="240" y="347">Other systems</text><text class="s" x="240" y="365">add new outputs</text></g>
+            <g class="n"><rect x="60" y="430" width="200" height="60" rx="10"/><text x="160" y="457">Review &amp; export</text><text class="s" x="160" y="475">download files</text></g>
+            <path class="e" marker-end="url(#pm)" d="M160 70 V107"/>
+            <path class="e" marker-end="url(#pm)" d="M160 170 V207"/>
+            <path class="e" marker-end="url(#pm)" d="M130 270 L90 317"/>
+            <path class="e dash" marker-end="url(#pm)" d="M190 270 L230 317"/>
+            <path class="e" marker-end="url(#pm)" d="M80 380 L130 427"/>
+            <path class="e dash" marker-end="url(#pm)" d="M240 380 L190 427"/>
+            <path class="e loop" marker-end="url(#pm)" d="M260 240 C305 240, 305 140, 263 140"/>
+            <text class="lbl" x="160" y="525">Errors loop back for correction</text>
+          </svg>
+        </div>
+        <figcaption>How data moves through the tool (simplified). Dashed paths show where new target systems plug in.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>The problem</h2>
+          <ul>
+            <li>New property details arrived as spreadsheets, but Yardi Voyager only accepts its own import layouts.</li>
+            <li>Each property took 10 to 15 minutes of repetitive, careful reshaping by hand.</li>
+            <li>A mistyped code or a missed column usually didn't surface until the import failed, or until bad data was already in the system.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The approach</h2>
+          <ul>
+            <li><strong>Parse &amp; normalize:</strong> reads the spreadsheet, standardizes headers, and trims and types every value.</li>
+            <li><strong>Validate &amp; map:</strong> checks required fields and formats, then maps source columns to the target import layout. Problems are flagged inline before anything is generated.</li>
+            <li><strong>Generate:</strong> writes the Yardi import CSVs for every property in the batch at once.</li>
+            <li><strong>Review &amp; export:</strong> the user previews every output before downloading, so a person stays in the loop.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">Results</h2>
+      <ul class="stats">
+        <li><strong>10–15 min</strong><span>per property, done by hand before</span></li>
+        <li><strong>~30</strong><span>properties set up in the most recent run</span></li>
+        <li><strong>Minutes</strong><span>for the entire batch, versus 5+ hours by hand</span></li>
+      </ul>
+      <p>Catching bad data at the validation step also means import errors get fixed in seconds by the person who has the context, instead of being discovered later in Yardi.</p>
+
+      <div class="cols" style="margin-top:44px">
+        <section>
+          <h2>Built to extend</h2>
+          <ul>
+            <li>Parsing and validation are separate from output generation, so supporting another target system means adding a new mapping and output step. The front half stays the same.</li>
+            <li>The pattern fits any organization that loads records from spreadsheets into one or more systems of record, well beyond real estate.</li>
+            <li>Plain JavaScript, HTML, and CSS in a single page: no server to stand up or secure, and the data never leaves the user's computer.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>What I'd highlight</h2>
+          <ul>
+            <li><strong>Business analysis first.</strong> The hard part was understanding the target system's import rules well enough to encode them, not writing the transformation.</li>
+            <li><strong>AI-assisted development.</strong> I built it with an AI coding assistant, moving quickly from requirements to working software while I owned the design, the data rules, and the testing.</li>
+            <li><strong>Designed for the operator.</strong> Inline validation and a review step make it safe for someone who isn't an engineer to run.</li>
+          </ul>
+        </section>
+      </div>
+
+      <p class="small" style="margin-top:44px">This tool was built for an employer, so the source code and real data aren't published here. The diagram and descriptions are simplified and contain no proprietary mappings or business rules.</p>""")
 
 page("/404/", "Page not found", "Page not found.", "", """  <main id="main">
     <div class="wrap">
