@@ -76,8 +76,8 @@ PROJECTS = [
         "year": "2019–2026",
         "summary": "A config-driven Python pipeline that turns any manufacturer's price sheet into a clean, validated Jobber product import, with every rejected row explained.",
         "tags": ["Python", "pandas", "ETL", "Data quality", "Jobber"],
-        "image": "/assets/projects/jobber-etl.jpg",
-        "image_alt": "The four pipeline stages: extract, transform, validate, load",
+        "image": "/assets/projects/cards/jobber-import-etl.jpg",
+        "image_alt": "Price sheets, clean, Jobber: every rejected row explained",
         "links": [
             ("Launch the demo", "https://project-creason.github.io/jobber_import_etl/", True),
             ("Source on GitHub", "https://github.com/project-creason/jobber_import_etl", False),
@@ -91,8 +91,8 @@ PROJECTS = [
         "year": "2026",
         "summary": "A browser-based ETL tool that turns raw property spreadsheets into Yardi Voyager import files, setting up about 30 properties in a few minutes instead of 5+ hours by hand.",
         "tags": ["JavaScript", "HTML", "CSS", "ETL", "Yardi Voyager", "Batch processing", "AI-assisted development"],
-        "image": "/assets/projects/property-etl-bench.jpg",
-        "image_alt": "The four stages of the tool: parse, validate, map and generate, review",
+        "image": "/assets/projects/cards/property-etl-bench.jpg",
+        "image_alt": "Spreadsheet, validate, Yardi: about 30 properties in minutes",
         "links": [("Read the case study", "/projects/property-etl-bench/", True)],
     },
     {
@@ -127,8 +127,8 @@ PROJECTS = [
         "year": "2011",
         "summary": "Team capstone for my M.S. at Bellarmine: analyzed a local meal-delivery company's operations and delivered a working system for customers, orders, meal plans, allergies, and delivery scheduling, with process models and a user's guide.",
         "tags": ["Systems analysis & design", "BPMN process modeling", "Database application", "Technical documentation"],
-        "image": "/assets/projects/capstone-cms.jpg",
-        "image_alt": "A swim-lane business process model for creating a menu",
+        "image": "/assets/projects/cards/meal-delivery-cms.jpg",
+        "image_alt": "Analyze, model, build: from process models to a working system",
         "links": [("Read more", "/projects/meal-delivery-cms/", True)],
     },
     {
@@ -139,8 +139,8 @@ PROJECTS = [
         "year": "2011",
         "summary": "For my M.S. ITIL course, I assessed two fictional companies, a global resort operator and a mobile music service, and wrote recommendations to IT leadership on service portfolios, SLAs, supplier contracts, continuity, and change management.",
         "tags": ["ITIL service lifecycle", "Service level management", "IT service continuity", "Supplier management"],
-        "image": "/assets/projects/itil-assessments.jpg",
-        "image_alt": "Recovery tiers assigned to each IT service by business impact",
+        "image": "/assets/projects/cards/itil-service-management.jpg",
+        "image_alt": "Assess, prioritize, recommend: recovery tiers by business impact",
         "links": [("Read more", "/projects/itil-service-management/", True)],
     },
 ]
