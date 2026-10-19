@@ -57,18 +57,6 @@ PROJECTS = [
         ],
     },
     {
-        "slug": "scopeout",
-        "title": "ScopeOut: Guided Deal Scoping",
-        "status": "active",
-        "badge": "Live demo",
-        "year": "2026",
-        "summary": "A rules-based configurator that turns discovery answers into a validated software deal scope, with editable rules, price books, discount approvals, and branded email summaries. Any product runs from one catalog file.",
-        "tags": ["Rules engine", "Catalog-driven", "Approval workflow", "Vercel serverless", "Vanilla JS"],
-        "image": "/assets/projects/scopeout.jpg",
-        "image_alt": "ScopeOut showing a recommended plan, its allocation squares and the discovery questions",
-        "links": [("Open ScopeOut", "/scopeout/", True)],
-    },
-    {
         "slug": "resume-assistant",
         "title": "AI Resume Assistant",
         "status": "active",
@@ -506,30 +494,6 @@ detail_page(by["chimney-planner"],
       <p class="note">A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.</p>""")
 
 # Resume assistant detail
-detail_page(by["scopeout"],
-  "Scoping a software deal usually means applying packaging rules from memory or a spreadsheet. ScopeOut turns those rules into a guided flow: a rep answers discovery questions and gets a validated scope, the reasons behind it, and a record ready for the CRM. It runs on the same rules engine as my chimney planner.",
-  """      <div class="cols">
-        <section>
-          <h2>How it works</h2>
-          <ul>
-            <li>Each product is one catalog file: its questions, plans, rules and outputs. Import a new file and the whole tool reconfigures, with no code changes.</li>
-            <li>Rules can only raise the requirement, so the strictest one sets the plan, and every decision is shown with its reason.</li>
-            <li>RevOps edits packaging, price books, discount limits and simple rules in a draft, then publishes to every rep at once, with a change log.</li>
-            <li>Discounts above a rep&rsquo;s limit need a sales manager&rsquo;s approval, and buyers never see one that hasn&rsquo;t been approved.</li>
-            <li>Buyers get a branded email summary, sent by a small serverless function protected by a CAPTCHA and rate limits.</li>
-          </ul>
-        </section>
-        <section>
-          <h2>What to try</h2>
-          <ul>
-            <li>Load an example scenario and watch the plan and the allocation squares change as you edit answers.</li>
-            <li>Switch to <strong>Buyer</strong> to see the self-serve versions for executives and project leads.</li>
-            <li>On the <strong>Admin</strong> tab, choose the RevOps admin role, change a rule, and publish it.</li>
-            <li>Use the <strong>Catalog</strong> menu to switch to a second, completely different product.</li>
-            <li>The demo ships with two catalogs: one modeled on a data-integration vendor&rsquo;s public packaging, and a fictional analytics product. All prices are illustrative.</li>
-          </ul>
-        </section>
-      </div>""")
 
 detail_page(by["resume-assistant"],
   "Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience and get an immediate answer.",
