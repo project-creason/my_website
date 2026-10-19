@@ -140,7 +140,7 @@ PROJECTS = [
         "summary": "For my M.S. ITIL course, I assessed two fictional companies, a global resort operator and a mobile music service, and wrote recommendations to IT leadership on service portfolios, SLAs, supplier contracts, continuity, and change management.",
         "tags": ["ITIL service lifecycle", "Service level management", "IT service continuity", "Supplier management"],
         "image": "/assets/projects/cards/itil-service-management.jpg",
-        "image_alt": "Assess, prioritize, recommend: recovery tiers by business impact",
+        "image_alt": "Assess, prioritize, advise: recovery tiers by business impact",
         "links": [("Read more", "/projects/itil-service-management/", True)],
     },
 ]
