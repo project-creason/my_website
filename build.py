@@ -899,13 +899,52 @@ os.replace(os.path.join(ROOT, "404/index.html"), os.path.join(ROOT, "404.html"))
 os.rmdir(os.path.join(ROOT, "404"))
 print("Built", len(PROJECTS), "projects.")
 
+
+# ---- Plain-text project notes for the AI assistant ----
+# The resume-bot on Vercel reads /assets/projects.txt (alongside resume.txt), so the
+# assistant always knows exactly what the project pages say. Edit the pages, not this.
+def _page_text(path):
+    raw = open(os.path.join(ROOT, path.strip("/"), "index.html"), encoding="utf-8").read()
+    m = re.search(r'<main id="main">(.*?)</main>', raw, re.S)
+    t = m.group(1) if m else ""
+    t = re.sub(r"<(style|script|svg|noscript|object|figure)\b.*?</\1>", " ", t, flags=re.S)
+    # Drop what the header block below already states, and the live chat widget.
+    t = re.sub(r'<nav class="breadcrumb">.*?</nav>', " ", t, flags=re.S)
+    t = re.sub(r'<p class="meta">.*?</p>|<h1 class="page-title">.*?</h1>|<ul class="tags">.*?</ul>'
+               r'|<div class="actions">.*?</div>', " ", t, flags=re.S)
+    t = re.sub(r'<div id="chat-container".*?id="send-btn">.*?</button>\s*</div>\s*</div>', " ", t, flags=re.S)
+    t = re.sub(r"<li[^>]*>", "\n- ", t)
+    t = re.sub(r"<h[1-3][^>]*>", "\n\n", t)
+    t = re.sub(r"</(h[1-3]|p|li|tr|section|div|ul|table)>", "\n", t)
+    t = re.sub(r"<t[hd][^>]*>", " | ", t)
+    t = html.unescape(re.sub(r"<[^>]+>", " ", t))
+    lines = [re.sub(r"[ \t]+", " ", ln).strip() for ln in t.splitlines()]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
+_notes = ["DAVID CREASON'S PROJECTS (generated from davidcreason.com/projects; the project pages are the source of truth)\n"]
+for _p in PROJECTS:
+    _url = f"https://www.davidcreason.com/projects/{_p['slug']}/"
+    _links = "; ".join(f"{label}: {href if ext(href) else 'https://www.davidcreason.com' + href}"
+                       for label, href, _ in _p["links"])
+    _notes.append(
+        f"=== {_p['title']} ===\n"
+        f"Status: {'Active / current' if _p['status'] == 'active' else 'Past'} ({_p['badge']}), {_p['year']}\n"
+        f"Project page: {_url}\n"
+        f"Links: {_links}\n"
+        f"Tags: {', '.join(_p['tags'])}\n"
+        f"Summary: {_p['summary']}\n\n"
+        f"{_page_text('/projects/' + _p['slug'] + '/')}\n"
+    )
+write("assets/projects.txt", "\n".join(_notes))
+
 # ---- Final safety check: no phone number or email address in any published page ----
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 for _dir, _, _files in os.walk(ROOT):
     if "/.git" in _dir:
         continue
     for _f in _files:
-        if _f.endswith(".html"):
+        if _f.endswith((".html", ".txt")):
             _txt = open(os.path.join(_dir, _f)).read()
             assert not PHONE.search(_txt), f"Phone number found in {_f}; refusing to publish."
             assert not EMAIL_RE.search(_txt), f"Email address found in {_f}; refusing to publish."
