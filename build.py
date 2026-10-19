@@ -64,8 +64,8 @@ PROJECTS = [
         "year": "2025",
         "summary": "A chat assistant grounded in my resume and project pages that answers visitors' questions about my experience, skills, education, and projects, with streamed responses from a serverless API.",
         "tags": ["LLM", "Vercel serverless", "Streaming", "Vanilla JS"],
-        "image": "/assets/projects/resume-assistant.jpg",
-        "image_alt": "The Portfolio AI Assistant chat window",
+        "image": "/assets/projects/cards/resume-assistant.jpg",
+        "image_alt": "Ask, answer, link: answers about my work, any time",
         "links": [("Try it", "/#ask", True)],
     },
     {
