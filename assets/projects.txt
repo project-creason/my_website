@@ -51,18 +51,20 @@ Coming next
 
 A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.
 
-=== AI Resume Assistant ===
+=== Portfolio AI Assistant ===
 Status: Active / current (Live), 2025
 Project page: https://www.davidcreason.com/projects/resume-assistant/
 Links: Try it: https://www.davidcreason.com/#ask
 Tags: LLM, Vercel serverless, Streaming, Vanilla JS
-Summary: A chat assistant grounded in my work history that answers recruiters' questions about my experience, skills, and education, with streamed responses from a serverless API.
+Summary: A chat assistant grounded in my resume and project pages that answers visitors' questions about my experience, skills, education, and projects, with streamed responses from a serverless API.
 
-Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience and get an immediate answer.
+Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience or projects and get an immediate answer.
 
 How it works
 
-- A serverless function on Vercel holds my professional background and calls a large language model.
+- A serverless function on Vercel calls a large language model, grounded in my resume and project pages.
+
+- The site build publishes plain-text copies of both, so the assistant updates itself whenever I add a project or a new resume.
 
 - Answers stream back word by word, so there’s no waiting on a full response.
 

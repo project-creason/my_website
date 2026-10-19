@@ -58,14 +58,14 @@ PROJECTS = [
     },
     {
         "slug": "resume-assistant",
-        "title": "AI Resume Assistant",
+        "title": "Portfolio AI Assistant",
         "status": "active",
         "badge": "Live",
         "year": "2025",
-        "summary": "A chat assistant grounded in my work history that answers recruiters' questions about my experience, skills, and education, with streamed responses from a serverless API.",
+        "summary": "A chat assistant grounded in my resume and project pages that answers visitors' questions about my experience, skills, education, and projects, with streamed responses from a serverless API.",
         "tags": ["LLM", "Vercel serverless", "Streaming", "Vanilla JS"],
         "image": "/assets/projects/resume-assistant.jpg",
-        "image_alt": "The AI resume assistant chat window",
+        "image_alt": "The Portfolio AI Assistant chat window",
         "links": [("Try it", "/#ask", True)],
     },
     {
@@ -349,7 +349,7 @@ def detail_page(p, lede, sections, extra_foot=""):
   </main>""", extra_foot)
 
 
-CHAT = """      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience">
+CHAT = """      <div id="chat-container" aria-label="Chat with an AI assistant about David's experience and projects">
         <div id="chips-wrapper">
           <button class="chip" data-q="What is David's core skill set?">Core Skills</button>
           <button class="chip" data-q="What roles is David targeting?">Target Roles</button>
@@ -357,7 +357,7 @@ CHAT = """      <div id="chat-container" aria-label="Chat with an AI assistant a
           <button class="chip" data-q="What is David's education background?">Education &amp; Certs</button>
         </div>
         <div id="chat-box" aria-live="polite">
-          <div class="msg bot">Hi! I&rsquo;m an AI assistant trained on David Creason&rsquo;s professional experience. Ask me anything or select a topic above!</div>
+          <div class="msg bot">Hi! I&rsquo;m David Creason&rsquo;s Portfolio AI Assistant. Ask me about his experience, skills, or projects, or pick a topic above!</div>
         </div>
         <div id="input-area">
           <input type="text" id="user-input" placeholder="Ask a question..." aria-label="Your question">
@@ -372,7 +372,7 @@ by = {p["slug"]: p for p in PROJECTS}
 
 # Home
 edu = "".join(f"<li>{e(x)}</li>" for x in EDUCATION)
-page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visualizations, and an AI assistant that answers questions about my experience.", "Home", f"""  <section class="hero">
+page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visualizations, and an AI assistant that answers questions about my experience and projects.", "Home", f"""  <section class="hero">
     <div class="wrap hero-grid">
       <div>
         <p class="role">{e(PROFILE['role'])}</p>
@@ -402,8 +402,8 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
       <div class="wrap grid-2">
         <div>
           <p class="eyebrow">Ask me anything</p>
-          <h2>Talk to my AI resume assistant</h2>
-          <p>Curious about my experience, leadership, or technical skills? This assistant is trained on my professional background and can answer in seconds, any time of day.</p>
+          <h2>Talk to my Portfolio AI Assistant</h2>
+          <p>Curious about my experience, technical skills, or projects? This assistant knows my resume and every project on this site, and can answer in seconds, any time of day.</p>
           <p>Prefer a person? <a href="/contact/">Reach out directly</a>.</p>
           <div class="facts">
             <div><h3>Today</h3><p>{e(PROFILE['current'])}</p></div>
@@ -505,15 +505,16 @@ detail_page(by["chimney-planner"],
       </div>
       <p class="note">A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.</p>""")
 
-# Resume assistant detail
+# Portfolio AI Assistant detail
 
 detail_page(by["resume-assistant"],
-  "Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience and get an immediate answer.",
+  "Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience or projects and get an immediate answer.",
   f"""      <div class="cols">
         <section>
           <h2>How it works</h2>
           <ul>
-            <li>A serverless function on Vercel holds my professional background and calls a large language model.</li>
+            <li>A serverless function on Vercel calls a large language model, grounded in my resume and project pages.</li>
+            <li>The site build publishes plain-text copies of both, so the assistant updates itself whenever I add a project or a new resume.</li>
             <li>Answers stream back word by word, so there&rsquo;s no waiting on a full response.</li>
             <li>The chat window is about 100 lines of dependency-free JavaScript that drops into any page.</li>
             <li>Quick-question chips cover what people ask most.</li>
@@ -901,7 +902,7 @@ print("Built", len(PROJECTS), "projects.")
 
 
 # ---- Plain-text project notes for the AI assistant ----
-# The resume-bot on Vercel reads /assets/projects.txt (alongside resume.txt), so the
+# The Portfolio AI Assistant (resume-bot on Vercel) reads /assets/projects.txt (alongside resume.txt), so the
 # assistant always knows exactly what the project pages say. Edit the pages, not this.
 def _page_text(path):
     raw = open(os.path.join(ROOT, path.strip("/"), "index.html"), encoding="utf-8").read()

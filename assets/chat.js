@@ -1,4 +1,4 @@
-// Resume chatbot — talks to the existing Vercel endpoint.
+// Portfolio AI Assistant chat widget — talks to the resume-bot Vercel endpoint.
 // NOTE: the Vercel API must allow CORS from https://www.davidcreason.com
 // (and https://davidcreason.com). See README.md.
 (function () {

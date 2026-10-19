@@ -91,7 +91,7 @@ assert "@" not in _html, "An email address made it into the resume page; refusin
 
 page("/resume/", "Resume", (RESUME["summary"] or RESUME["headline"])[:155], "Resume", _html)
 
-# ---- Plain-text copy for the AI resume assistant (resume-bot reads this) ----
+# ---- Plain-text copy for the Portfolio AI Assistant (resume-bot reads this) ----
 def _txt_jobs(items):
     out = []
     for j in items:
