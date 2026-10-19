@@ -42,7 +42,7 @@ PROFILE = {
 
 # Cloudflare Turnstile on the contact form. Leave empty to keep it off. To turn it on, paste the
 # widget's public site key here, push, and only then add TURNSTILE_SECRET_KEY in Vercel (see README).
-TURNSTILE_SITE_KEY = ""
+TURNSTILE_SITE_KEY = "0x4AAAAAAFcITuj8hmNc4RBF"
 
 # status: "active" or "past". Order here is display order within each group.
 PROJECTS = [
