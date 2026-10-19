@@ -21,6 +21,11 @@
       show("Please add your name, a valid email, and a message of at least 10 characters.", "error");
       return;
     }
+    // When Cloudflare Turnstile is on, its widget adds a hidden "cf-turnstile-response" field to the form.
+    if (form.querySelector(".cf-turnstile") && !data["cf-turnstile-response"]) {
+      show("Please complete the quick verification above the Send button.", "error");
+      return;
+    }
 
     button.disabled = true;
     show("Sending…");
@@ -38,6 +43,8 @@
       show(err.message || "Something went wrong. Please try again.", "error");
     } finally {
       button.disabled = false;
+      // A Turnstile token works once; get a fresh one for any next attempt.
+      if (window.turnstile && form.querySelector(".cf-turnstile")) window.turnstile.reset(form.querySelector(".cf-turnstile"));
     }
   });
 })();

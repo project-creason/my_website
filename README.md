@@ -84,6 +84,21 @@ add these to its allowed origins (the `Access-Control-Allow-Origin` header and t
 Checked 2026-10-09: a request from `https://www.davidcreason.com` passed CORS, so it should work as-is.
 If the bare `davidcreason.com` ever serves the page directly, confirm that origin too.
 
+## Contact form spam protection
+
+The form already has a hidden honeypot field, a 3-second minimum fill time, and a 5-per-hour limit per visitor.
+Cloudflare Turnstile is wired in but **off** until you add keys. To turn it on, in this order:
+
+1. In the Cloudflare dashboard, open **Turnstile → Add widget**. Hostnames: `davidcreason.com` and
+   `www.davidcreason.com`. Mode: **Managed**. Copy the **site key** and **secret key**.
+2. Paste the site key into `TURNSTILE_SITE_KEY` near the top of `build.py`, run `python3 build.py`, commit, push.
+   Wait until the widget shows on `/contact/`.
+3. In Vercel → resume-bot → **Settings → Environment Variables**, add `TURNSTILE_SECRET_KEY` with the secret key,
+   then redeploy.
+
+Do step 3 last: once the secret is set, the endpoint rejects any message without a valid Turnstile token.
+To turn it off, remove the Vercel variable first, then clear the site key.
+
 ## Editing
 
 Edit the HTML directly and push; Pages redeploys in about a minute. Shared header/footer are repeated in each page,

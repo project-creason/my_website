@@ -40,6 +40,10 @@ PROFILE = {
     "resume": "/assets/David_Creason_Resume.pdf",
 }
 
+# Cloudflare Turnstile on the contact form. Leave empty to keep it off. To turn it on, paste the
+# widget's public site key here, push, and only then add TURNSTILE_SECRET_KEY in Vercel (see README).
+TURNSTILE_SITE_KEY = ""
+
 # status: "active" or "past". Order here is display order within each group.
 PROJECTS = [
     {
@@ -173,6 +177,21 @@ for _rx, _fmt, _label in STAT_RULES:
 
 _DEGREE = re.compile(r"\b(master|bachelor|associate|doctor|mba|m\.?s\.?|b\.?s\.?|ph\.?d)\b", re.I)
 CERTS = [(deg, school) for deg, school in RESUME["education"] if not _DEGREE.search(deg)]
+
+
+def _short_degree(deg):
+    # "Master of Science (MS) in Applied Information Technology" -> "M.S., Applied Information Technology"
+    m = re.match(r"Master of [\w ]+?\((\w+)\)\s+in\s+(.+)", deg)
+    if not m:
+        return deg
+    abbr = m.group(1) if len(m.group(1)) > 2 else ".".join(m.group(1)) + "."
+    return f"{abbr}, {m.group(2)}"
+
+
+# Homepage "Credentials" row: completed master's degrees, then certifications.
+# An in-progress degree stays in the full education list until the resume shows it finished.
+CREDENTIALS = [(_short_degree(deg), school) for deg, school in RESUME["education"]
+               if re.search(r"\bmaster\b", deg, re.I) and "progress" not in f"{deg} {school}".lower()] + CERTS
 
 # Facts from the resume used in project copy
 _chh = next((j for j in RESUME["experience"] if "Crestwood Home" in j["org"]), None)
@@ -395,7 +414,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
       <div class="wrap">
         <ul class="stats">
 {"".join(f'          <li><strong>{e(v)}</strong><span>{e(l)}</span></li>\n' for v, l in STATS)}        </ul>
-        {f'<p class="certs"><span class="certs-label">Certified</span>' + "".join(f'<span class="cert">{e(d)}<small>{e(sc)}</small></span>' for d, sc in CERTS) + '</p>' if CERTS else ''}
+        {f'<p class="certs"><span class="certs-label">Credentials</span>' + "".join(f'<span class="cert">{e(d)}<small>{e(sc)}</small></span>' for d, sc in CREDENTIALS) + '</p>' if CREDENTIALS else ''}
       </div>
     </section>
     <section class="band" id="ask">
@@ -678,7 +697,7 @@ page("/contact/", "Contact", "Get in touch with David Creason: technical solutio
         <p class="eyebrow">Contact</p>
         <h1 class="page-title">Get in Touch</h1>
         <p>I&rsquo;m David Creason, a results-driven professional with a background in technical solutions, data analysis, and operational leadership. Throughout my career, I&rsquo;ve worked across various industries, helping businesses optimize workflows, implement strategic solutions, and improve customer experiences.</p>
-        <p>Whether you&rsquo;re looking to collaborate, discuss a potential opportunity, or just connect, I&rsquo;d love to hear from you. Feel free to reach out with any questions about my experience, skills, or how I can contribute to your team.</p>
+        <p>Whether you&rsquo;re hiring, looking to collaborate, or just want to connect, I&rsquo;d love to hear from you. If one of my <a href="/projects/">projects</a> caught your eye, like the chimney planner, my ETL tools, or the Portfolio AI Assistant, I&rsquo;m always glad to talk through how it was built and what I&rsquo;d do next.</p>
         <div class="actions">
           <a class="btn ghost" href="/resume/">View my resume</a>
           <a class="btn ghost" href="{PROFILE['linkedin']}" rel="noopener" target="_blank">LinkedIn</a>
@@ -693,6 +712,7 @@ page("/contact/", "Contact", "Get in touch with David Creason: technical solutio
           <label><span>Subject <span class="opt">(optional)</span></span><input name="subject" maxlength="150"></label>
           <label>Message<textarea name="message" rows="6" maxlength="5000" required></textarea></label>
           <div class="hp" aria-hidden="true"><label>Company<input name="company" tabindex="-1" autocomplete="off"></label></div>
+          {f'<div class="cf-turnstile" data-sitekey="{e(TURNSTILE_SITE_KEY)}" data-theme="auto" data-size="flexible"></div>' if TURNSTILE_SITE_KEY else ''}
           <div class="form-foot">
             <button class="btn" type="submit">Send message</button>
             <p class="form-status" role="status" aria-live="polite"></p>
@@ -700,7 +720,8 @@ page("/contact/", "Contact", "Get in touch with David Creason: technical solutio
         </form>
       </div>
     </div>
-  </main>""", extra_foot='\n  <script src="/assets/contact.js"></script>')
+  </main>""", extra_foot=('\n  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>' if TURNSTILE_SITE_KEY else '')
+    + '\n  <script src="/assets/contact.js"></script>')
 
 # Old URLs (Google Sites + first rebuild) keep working
 redirect("/home/", "/")
