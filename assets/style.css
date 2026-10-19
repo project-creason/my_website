@@ -299,10 +299,18 @@ button.btn { cursor: pointer; font-family: var(--head); }
 .stats li { display: grid; gap: 6px; }
 .stats strong { font: 700 clamp(1.9rem, 3.6vw, 2.5rem)/1 var(--head); color: var(--accent); letter-spacing: -0.02em; }
 .stats span { font-size: .95rem; line-height: 1.4; color: var(--ink-soft); }
-.certs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--line); }
-.certs-label { font: 700 .75rem var(--head); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-soft); margin-right: 6px; }
-.cert { display: inline-flex; align-items: baseline; gap: 8px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font: 600 .85rem var(--head); }
-.cert small { font: 400 .8rem var(--body); color: var(--ink-soft); }
+.certs { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--line); position: relative; z-index: 1; }
+.certs-label { margin: 0; font: 700 .75rem var(--head); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-soft); }
+.cert-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+@media (min-width: 900px) { .cert-list { flex-wrap: nowrap; } }
+.cert { position: relative; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font: 600 .85rem var(--head); white-space: nowrap; cursor: help; }
+.cert:hover, .cert:focus { border-color: var(--accent); outline: none; z-index: 2; }
+.cert:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Issuer shows on hover, keyboard focus, or tap */
+.cert-tip { position: absolute; left: 50%; top: calc(100% + 9px); transform: translateX(-50%); padding: 5px 10px; border-radius: 6px; background: var(--ink); color: var(--paper); font: 500 .78rem var(--head); white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .15s, visibility .15s; }
+.cert-tip::before { content: ""; position: absolute; left: 50%; top: -5px; transform: translateX(-50%) rotate(45deg); width: 10px; height: 10px; background: inherit; }
+.cert:hover .cert-tip, .cert:focus .cert-tip { opacity: 1; visibility: visible; }
+@media (hover: none) { .cert { cursor: pointer; } } /* lets iOS treat a tap as hover */
 .stats { grid-template-columns: repeat(2, 1fr); align-items: start; }
 @media (min-width: 640px) { .stats { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1000px) { .stats { grid-template-columns: repeat(6, 1fr); } }

@@ -414,7 +414,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
       <div class="wrap">
         <ul class="stats">
 {"".join(f'          <li><strong>{e(v)}</strong><span>{e(l)}</span></li>\n' for v, l in STATS)}        </ul>
-        {f'<p class="certs"><span class="certs-label">Credentials</span>' + "".join(f'<span class="cert">{e(d)}<small>{e(sc)}</small></span>' for d, sc in CREDENTIALS) + '</p>' if CREDENTIALS else ''}
+        {f'<div class="certs"><p class="certs-label">Credentials</p><ul class="cert-list">' + "".join(f'<li class="cert" tabindex="0">{e(d)}<span class="cert-tip">{e(sc)}</span></li>' for d, sc in CREDENTIALS) + '</ul></div>' if CREDENTIALS else ''}
       </div>
     </section>
     <section class="band" id="ask">
