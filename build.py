@@ -61,6 +61,21 @@ PROJECTS = [
         ],
     },
     {
+        "slug": "scopeout",
+        "title": "ScopeOut: Guided Deal Scoping",
+        "status": "active",
+        "badge": "Live demo · sales demo project",
+        "year": "2026",
+        "summary": "A rules-based configurator that turns discovery answers into a validated software deal scope, built and sold in a live discovery-and-demo call. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.",
+        "tags": ["Sales engineering", "Rules engine", "Catalog-driven", "Approval workflow", "Vercel serverless", "Vanilla JS"],
+        "image": "/assets/projects/cards/scopeout.jpg",
+        "image_alt": "Discovery, rules, scope: scope it right the first time",
+        "links": [
+            ("Read the case study", "/projects/scopeout/", True),
+            ("Try the live demo", "/scopeout/", False),
+        ],
+    },
+    {
         "slug": "resume-assistant",
         "title": "Portfolio AI Assistant",
         "status": "active",
@@ -525,6 +540,97 @@ detail_page(by["chimney-planner"],
       <p class="note">A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.</p>""")
 
 # Portfolio AI Assistant detail
+
+detail_page(by["scopeout"],
+  "Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, then sold it the way a solutions engineer would: in a live discovery-and-demo call.",
+  """      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/scopeout.jpg" alt="ScopeOut in seller view: discovery questions on the left, the recommended plan, usage squares and checks on the right">
+        <figcaption>Seller view. Every answer updates the plan, the bill of scope, and the reasons behind them as you go.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>The problem</h2>
+          <ul>
+            <li>Packaging rules live in a rep&rsquo;s head or a pricing spreadsheet, so two reps can scope the same customer two different ways.</li>
+            <li>Discovery answers rarely make it into the CRM in a usable form, so the reasoning behind a deal is lost by the time it reaches deal desk or delivery.</li>
+            <li>Changing packaging means retraining every rep, and old rules linger for months.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The approach</h2>
+          <ul>
+            <li><strong>Discovery first:</strong> the rep answers plain-language questions from the call, and the scope builds itself as they go.</li>
+            <li><strong>Rules, not guesses:</strong> rules can only raise the requirement, so the strictest one sets the plan, and every decision is shown with its reason.</li>
+            <li><strong>One catalog file per product:</strong> questions, plans, rules, price books and outputs all live in data. Import a new file and the tool reconfigures with no code changes.</li>
+            <li><strong>Built on a proven engine:</strong> the same rules engine runs my <a href="/projects/chimney-planner/">chimney planner</a>, which shows it isn&rsquo;t tied to one industry.</li>
+          </ul>
+        </section>
+      </div>
+
+      <figure class="shot-fig" style="margin-top:44px">
+        <img class="hero-shot" src="/assets/projects/scopeout-buyer.jpg" alt="ScopeOut in buyer view, white-labeled as Quillmetrics with a Powered by ScopeOut badge">
+        <figcaption>Buyer view, white-labeled for a fictional analytics vendor. Buyers see the vendor&rsquo;s brand and a self-serve version of the same questions.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>For the sales team</h2>
+          <ul>
+            <li>Example scenarios load a realistic customer in one click, for training or for a live call.</li>
+            <li>A bill of scope, a plain-language summary, and a CRM-ready record come out of every session.</li>
+            <li>Discounts above a rep&rsquo;s limit need a manager&rsquo;s approval, and buyers never see a price that hasn&rsquo;t been approved.</li>
+            <li>Buyers can get a branded email summary, sent by a small serverless function protected by a CAPTCHA and rate limits.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>For RevOps</h2>
+          <ul>
+            <li>Packaging, price books, discount limits and simple rules are edited in a draft, then published to every rep at once.</li>
+            <li>A change log shows exactly what moved between versions, price by price.</li>
+            <li>Catalog imports are validated line by line, so a broken rule or a typo in a formula is caught before it reaches a rep.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">Selling it</h2>
+      <p>I built ScopeOut for a sales-engineering exercise: pick a product, find a real buyer for it, and run a 45-minute discovery-and-demo call with a panel playing the prospect. I chose to build rather than reuse an old product because the ones I&rsquo;ve sold before are retired or on platforms I can no longer reach.</p>
+      <ul class="stats">
+        <li><strong>45 min</strong><span>live discovery and demo call</span></li>
+        <li><strong>2</strong><span>industries on one engine: software deals and chimney systems</span></li>
+        <li><strong>3</strong><span>roles: rep, sales manager, RevOps admin</span></li>
+      </ul>
+
+      <div class="cols" style="margin-top:44px">
+        <section>
+          <h2>How I ran the call</h2>
+          <ul>
+            <li>Opened with discovery, not a feature tour, and let the prospect&rsquo;s answers decide which parts of the tool to show.</li>
+            <li>Loaded a scenario that matched their situation, so they watched their own deal get scoped.</li>
+            <li>Switched to the buyer view to show what their customers would see, then into Admin to show a rule change going live.</li>
+            <li>Handled the &ldquo;who else uses this?&rdquo; question honestly and proposed a design-partner pilot as the next step.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>What I&rsquo;d highlight</h2>
+          <ul>
+            <li><strong>Solutions engineering end to end.</strong> Researching a buyer, scoping their problem, building the demo, and running the call.</li>
+            <li><strong>Configuration as data.</strong> Moving business rules out of code means the people who own the rules can change them.</li>
+            <li><strong>AI-assisted development.</strong> Built quickly with an AI coding assistant, while I owned the product decisions, the rules, and the testing.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">Try it yourself</h2>
+      <ul>
+        <li>Load an example scenario and watch the plan and the usage squares change as you edit answers.</li>
+        <li>Switch to <strong>Buyer</strong> to see the self-serve versions for executives and project leads.</li>
+        <li>On the <strong>Admin</strong> tab, choose the RevOps admin role, change a rule, and publish it.</li>
+        <li>Import a catalog on the Admin tab: try the <a href="/scopeout/files/quillmetrics-catalog.json" download>clean catalog</a>, then the <a href="/scopeout/files/quillmetrics-catalog-with-errors.json" download>one with planted errors</a> to see validation catch them.</li>
+      </ul>
+      <div class="actions" style="margin-top:20px"><a class="btn" href="/scopeout/">Try the live demo</a></div>
+
+      <p class="small" style="margin-top:44px">Quillmetrics is a fictional company, and all products, customers and prices in the demo are illustrative.</p>""")
 
 detail_page(by["resume-assistant"],
   "Recruiters ask the same questions about every candidate. I built an assistant that answers them about me, so anyone visiting this site can ask about my experience or projects and get an immediate answer.",

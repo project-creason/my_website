@@ -51,6 +51,93 @@ Coming next
 
 A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.
 
+=== ScopeOut: Guided Deal Scoping ===
+Status: Active / current (Live demo · sales demo project), 2026
+Project page: https://www.davidcreason.com/projects/scopeout/
+Links: Read the case study: https://www.davidcreason.com/projects/scopeout/; Try the live demo: https://www.davidcreason.com/scopeout/
+Tags: Sales engineering, Rules engine, Catalog-driven, Approval workflow, Vercel serverless, Vanilla JS
+Summary: A rules-based configurator that turns discovery answers into a validated software deal scope, built and sold in a live discovery-and-demo call. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.
+
+Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, then sold it the way a solutions engineer would: in a live discovery-and-demo call.
+
+The problem
+
+- Packaging rules live in a rep’s head or a pricing spreadsheet, so two reps can scope the same customer two different ways.
+
+- Discovery answers rarely make it into the CRM in a usable form, so the reasoning behind a deal is lost by the time it reaches deal desk or delivery.
+
+- Changing packaging means retraining every rep, and old rules linger for months.
+
+The approach
+
+- Discovery first: the rep answers plain-language questions from the call, and the scope builds itself as they go.
+
+- Rules, not guesses: rules can only raise the requirement, so the strictest one sets the plan, and every decision is shown with its reason.
+
+- One catalog file per product: questions, plans, rules, price books and outputs all live in data. Import a new file and the tool reconfigures with no code changes.
+
+- Built on a proven engine: the same rules engine runs my chimney planner , which shows it isn’t tied to one industry.
+
+For the sales team
+
+- Example scenarios load a realistic customer in one click, for training or for a live call.
+
+- A bill of scope, a plain-language summary, and a CRM-ready record come out of every session.
+
+- Discounts above a rep’s limit need a manager’s approval, and buyers never see a price that hasn’t been approved.
+
+- Buyers can get a branded email summary, sent by a small serverless function protected by a CAPTCHA and rate limits.
+
+For RevOps
+
+- Packaging, price books, discount limits and simple rules are edited in a draft, then published to every rep at once.
+
+- A change log shows exactly what moved between versions, price by price.
+
+- Catalog imports are validated line by line, so a broken rule or a typo in a formula is caught before it reaches a rep.
+
+Selling it
+
+I built ScopeOut for a sales-engineering exercise: pick a product, find a real buyer for it, and run a 45-minute discovery-and-demo call with a panel playing the prospect. I chose to build rather than reuse an old product because the ones I’ve sold before are retired or on platforms I can no longer reach.
+
+- 45 min live discovery and demo call
+
+- 2 industries on one engine: software deals and chimney systems
+
+- 3 roles: rep, sales manager, RevOps admin
+
+How I ran the call
+
+- Opened with discovery, not a feature tour, and let the prospect’s answers decide which parts of the tool to show.
+
+- Loaded a scenario that matched their situation, so they watched their own deal get scoped.
+
+- Switched to the buyer view to show what their customers would see, then into Admin to show a rule change going live.
+
+- Handled the “who else uses this?” question honestly and proposed a design-partner pilot as the next step.
+
+What I’d highlight
+
+- Solutions engineering end to end. Researching a buyer, scoping their problem, building the demo, and running the call.
+
+- Configuration as data. Moving business rules out of code means the people who own the rules can change them.
+
+- AI-assisted development. Built quickly with an AI coding assistant, while I owned the product decisions, the rules, and the testing.
+
+Try it yourself
+
+- Load an example scenario and watch the plan and the usage squares change as you edit answers.
+
+- Switch to Buyer to see the self-serve versions for executives and project leads.
+
+- On the Admin tab, choose the RevOps admin role, change a rule, and publish it.
+
+- Import a catalog on the Admin tab: try the clean catalog , then the one with planted errors to see validation catch them.
+
+Try the live demo
+
+Quillmetrics is a fictional company, and all products, customers and prices in the demo are illustrative.
+
 === Portfolio AI Assistant ===
 Status: Active / current (Live), 2025
 Project page: https://www.davidcreason.com/projects/resume-assistant/
