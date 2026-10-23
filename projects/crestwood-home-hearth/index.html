@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Crestwood Home &amp; Hearth · David Creason</title>
-  <meta name="description" content="Mapped the zip codes and counties served by Crestwood Home &amp; Hearth, the field service business I founded and ran from 2018 to 2021.">
+  <title>Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study &middot; David Creason</title>
+  <meta name="description" content="Applied enterprise systems engineering, a 4,533-SKU vendor ETL pipeline, custom JavaScript/AJAX automation, 3D CAD modeling, and parametric quoting calculators to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey exit to a major local HVAC company.">
   <link rel="canonical" href="https://www.davidcreason.com/projects/crestwood-home-hearth/">
-  <meta property="og:title" content="Crestwood Home &amp; Hearth · David Creason">
-  <meta property="og:description" content="Mapped the zip codes and counties served by Crestwood Home &amp; Hearth, the field service business I founded and ran from 2018 to 2021.">
+  <meta property="og:title" content="Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study &middot; David Creason">
+  <meta property="og:description" content="Applied enterprise systems engineering, a 4,533-SKU vendor ETL pipeline, custom JavaScript/AJAX automation, 3D CAD modeling, and parametric quoting calculators to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey exit to a major local HVAC company.">
   <meta property="og:url" content="https://www.davidcreason.com/projects/crestwood-home-hearth/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://www.davidcreason.com/assets/og-card.jpg">
@@ -33,15 +33,401 @@
   <main id="main">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
-      <p class="meta"><span class="badge past">Completed</span><span>2025</span></p>
-      <h1 class="page-title">Crestwood Home &amp; Hearth</h1>
-      <p class="lede">Zip codes and counties where Crestwood Home &amp; Hearth did business.</p>
-      <ul class="tags"><li>Tableau</li><li>Geographic analysis</li><li>Small business</li></ul>
+      <p class="meta"><span class="badge past">Founded &middot; acquired</span><span>2018&ndash;2022</span></p>
+      <h1 class="page-title">Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study</h1>
+      <p class="lede">How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.</p>
+      <ul class="tags"><li>Systems architecture</li><li>Quote-to-cash</li><li>ETL &amp; automation</li><li>Unit economics</li><li>3D CAD &amp; IoT</li><li>Tableau</li><li>M&amp;A exit</li></ul>
       
-      <div style="margin-top:32px"></div>
-      <div class="viz-frame">
+      <style>
+        .chh-stats { margin: 28px 0 36px; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+        .chh-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 20px; }
+        .chh-tab {
+          background: var(--card); color: var(--ink-soft); border: 1px solid var(--line);
+          border-radius: 8px; padding: 9px 16px; font: 600 .84rem var(--head); cursor: pointer;
+          transition: all .15s ease;
+        }
+        .chh-tab:hover { border-color: var(--accent); color: var(--ink); }
+        .chh-tab.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+        .chh-panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; margin-bottom: 32px; }
+        .chh-grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: start; }
+        @media (max-width: 860px) { .chh-grid-2 { grid-template-columns: 1fr; } }
+        .chh-bars {
+          display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: end;
+          height: 230px; padding: 20px 12px 12px; border-bottom: 1px solid var(--line);
+        }
+        .chh-bar-col {
+          display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+          height: 100%; cursor: pointer; text-align: center;
+        }
+        .chh-bar-col .val { font: 700 .88rem var(--head); color: var(--ink); }
+        .chh-bar-col .sub { font: 600 .72rem var(--head); color: var(--accent); margin-bottom: 6px; }
+        .chh-bar-wrap {
+          width: 100%; max-width: 68px; background: color-mix(in srgb, var(--line) 65%, var(--paper));
+          border: 1px solid var(--line); border-radius: 8px 8px 0 0; overflow: hidden;
+          display: flex; flex-direction: column; justify-content: flex-end; transition: transform .15s ease, border-color .15s ease;
+        }
+        .chh-bar-col:hover .chh-bar-wrap, .chh-bar-col.active .chh-bar-wrap {
+          border-color: var(--accent); transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+        .chh-bar-gp { width: 100%; background: var(--accent); transition: height .2s ease; }
+        .chh-bar-yr { font: 700 .82rem var(--head); margin-top: 8px; color: var(--ink); }
+        .chh-legend { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font: 600 .75rem var(--head); color: var(--ink-soft); margin-top: 10px; }
+        .chh-swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+        .chh-detail-box { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 18px 20px; margin-top: 18px; }
+        .chh-detail-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+        .chh-detail-head strong { font: 700 .98rem var(--head); color: var(--ink); }
+        .chh-detail-metrics { display: flex; flex-wrap: wrap; gap: 14px; font: 600 .8rem var(--head); color: var(--ink-soft); }
+        .chh-detail-metrics b { color: var(--ink); }
+        .chh-arch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 20px; }
+        .chh-node {
+          text-align: left; background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+          padding: 16px; cursor: pointer; transition: all .15s ease; font-family: inherit; color: inherit;
+        }
+        .chh-node:hover { border-color: var(--accent); }
+        .chh-node.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); background: var(--card); }
+        .chh-node .step { font: 700 .72rem var(--head); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+        .chh-node h3 { font-size: 1.02rem; margin: 4px 0 6px; color: var(--ink); }
+        .chh-node p { margin: 0; font-size: .9rem; color: var(--ink-soft); line-height: 1.45; }
+        .chh-sim-controls { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: grid; gap: 14px; }
+        .chh-sim-row label { display: flex; justify-content: space-between; font: 600 .82rem var(--head); color: var(--ink); margin-bottom: 4px; }
+        .chh-sim-row input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+        .chh-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+        .chh-kpi { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+        .chh-kpi.highlight { border-left: 3px solid var(--accent); background: var(--card); }
+        .chh-kpi .k-lbl { font: 600 .72rem var(--head); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+        .chh-kpi .k-val { font: 700 1.15rem var(--head); color: var(--ink); margin-top: 4px; }
+        .chh-code {
+          background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+          padding: 16px; overflow-x: auto; font: .84rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          color: var(--ink); margin: 14px 0;
+        }
+        /* CAD & 3D Viewer styles */
+        .chh-cad-canvas-wrap {
+          position: relative; background: #0f172a; border: 1px solid var(--line); border-radius: 8px;
+          overflow: hidden; height: 340px; cursor: grab; user-select: none;
+        }
+        .chh-cad-canvas-wrap:active { cursor: grabbing; }
+        .chh-cad-badge {
+          position: absolute; top: 10px; left: 12px; background: rgba(15,23,42,.82); color: #e2e8f0;
+          border: 1px solid rgba(255,255,255,.15); border-radius: 6px; padding: 5px 10px;
+          font: 600 .72rem var(--head); pointer-events: none;
+        }
+        .chh-cad-telemetry {
+          position: absolute; bottom: 10px; left: 12px; right: 12px; display: flex; flex-wrap: wrap;
+          justify-content: space-between; gap: 8px; background: rgba(15,23,42,.82); color: #cbd5e1;
+          border: 1px solid rgba(255,255,255,.14); border-radius: 6px; padding: 6px 10px;
+          font: 600 .72rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; pointer-events: none;
+        }
+        .chh-cad-shot-wrap {
+          background: var(--paper); border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+          position: relative;
+        }
+        .chh-cad-shot-wrap img {
+          width: 100%; height: 300px; object-fit: contain; background: #e5e7eb; display: block; cursor: zoom-in;
+        }
+        .chh-cad-thumbs {
+          display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px;
+        }
+        @media (max-width: 600px) { .chh-cad-thumbs { grid-template-columns: repeat(3, 1fr); } }
+        .chh-cad-thumb {
+          border: 2px solid var(--line); border-radius: 6px; overflow: hidden; padding: 0;
+          background: #e5e7eb; cursor: pointer; height: 54px; transition: border-color .15s ease;
+        }
+        .chh-cad-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .chh-cad-thumb.active, .chh-cad-thumb:hover { border-color: var(--accent); }
+        .chh-lightbox {
+          position: fixed; inset: 0; background: rgba(15,23,42,.88); z-index: 9999;
+          display: none; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;
+        }
+        .chh-lightbox.open { display: flex; }
+        .chh-lightbox img { max-width: 94vw; max-height: 88vh; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,.5); background: #fff; }
+      </style>
+
+      <!-- KEY NUMBERS BAND (PERCENTAGE-DRIVEN) -->
+      <div class="chh-stats" aria-label="Crestwood Home and Hearth key metrics">
+        <ul class="stats">
+          <li><strong>+740%</strong><span>annualized revenue expansion from Year 1 baseline to exit (8.4x)</span></li>
+          <li><strong>+310%</strong><span>peak year-over-year revenue growth via counter-seasonal CAD expansion</span></li>
+          <li><strong>54&ndash;64%</strong><span>gross profit margin across field services &amp; custom installations</span></li>
+          <li><strong>+419%</strong><span>customer base expansion (1,215+ accounts &middot; +171% avg. ticket growth)</span></li>
+          <li><strong>4,533</strong><span>manufacturer SKUs normalized across 15+ vendors via custom ETL</span></li>
+          <li><strong>Acquired</strong><span>turnkey asset sale to a major local HVAC company</span></li>
+        </ul>
+      </div>
+
+      <div class="cols">
+        <section>
+          <h2>The engineering approach to a trade business</h2>
+          <p>After a decade in enterprise IT engineering (Neustar and Tealium), I founded Crestwood Home &amp; Hearth in 2018 and treated it as a systems architecture problem: standardize multi-vendor data, automate quote-to-cash, instrument field diagnostics, and engineer unit economics before scaling headcount.</p>
+        </section>
+        <section>
+          <h2>Counter-seasonal product &amp; margin design</h2>
+          <p>Traditional hearth businesses face steep warm-weather revenue drops. In Spring 2020, I expanded into 3D CAD-modeled automated pergolas, motorized smart screens, outdoor kitchens, and high-margin ceramic flue restoration&mdash;driving <strong>+310% year-over-year revenue growth</strong>, expanding average ticket size by <strong>+171%</strong>, and lifting peak gross margin to <strong>63.6%</strong>.</p>
+        </section>
+      </div>
+
+      <!-- INTERACTIVE SECTION 1: PERCENTAGE GROWTH & MARGIN TELEMETRY -->
+      <h2 style="margin-top:44px">1. Indexed revenue growth &amp; margin telemetry (2019&ndash;2022)</h2>
+      <p>Click any year bar or button below to inspect the accrual-basis margin percentages, indexed growth multiples (<code>2019 Base = 100</code>), and technical milestones behind each phase.</p>
+
+      <div class="chh-panel">
+        <div class="chh-tabs" style="margin-top:0">
+          <button type="button" class="chh-tab yr-tab" onclick="chhSelectYear(0)">2019 (Base = 100)</button>
+          <button type="button" class="chh-tab yr-tab active" onclick="chhSelectYear(1)">2020 (+310% YoY)</button>
+          <button type="button" class="chh-tab yr-tab" onclick="chhSelectYear(2)">2021 (+590% vs. Y1)</button>
+          <button type="button" class="chh-tab yr-tab" onclick="chhSelectYear(3)">2022 (+740% Exit Run-Rate)</button>
+        </div>
+
+        <div class="chh-bars" role="region" aria-label="Annual indexed revenue and gross margin chart">
+          <div class="chh-bar-col" onclick="chhSelectYear(0)">
+            <span class="val">1.0x Base</span>
+            <span class="sub">61.3% GM</span>
+            <div class="chh-bar-wrap" style="height: 18%;">
+              <div class="chh-bar-gp" style="height: 61.3%;" title="Gross Margin: 61.3%"></div>
+            </div>
+            <span class="chh-bar-yr">2019</span>
+          </div>
+          <div class="chh-bar-col active" onclick="chhSelectYear(1)">
+            <span class="val">+310% YoY</span>
+            <span class="sub">63.6% GM</span>
+            <div class="chh-bar-wrap" style="height: 54%;">
+              <div class="chh-bar-gp" style="height: 63.6%;" title="Gross Margin: 63.6% | Net Operating Margin: 24.7%"></div>
+            </div>
+            <span class="chh-bar-yr">2020 (4.1x)</span>
+          </div>
+          <div class="chh-bar-col" onclick="chhSelectYear(2)">
+            <span class="val">+68% YoY</span>
+            <span class="sub">53.6% GM</span>
+            <div class="chh-bar-wrap" style="height: 84%;">
+              <div class="chh-bar-gp" style="height: 53.6%;" title="Gross Margin: 53.6% | +590% vs. Year 1"></div>
+            </div>
+            <span class="chh-bar-yr">2021 (6.9x)</span>
+          </div>
+          <div class="chh-bar-col" onclick="chhSelectYear(3)">
+            <span class="val">+740% vs. Y1*</span>
+            <span class="sub">54.0% GM</span>
+            <div class="chh-bar-wrap" style="height: 98%; border-style: dashed;">
+              <div class="chh-bar-gp" style="height: 54.0%;" title="Gross Margin: 54.0% | 8.4x Year 1 Baseline"></div>
+            </div>
+            <span class="chh-bar-yr">2022* (8.4x)</span>
+          </div>
+        </div>
+
+        <div class="chh-legend">
+          <div>
+            <span><i class="chh-swatch" style="background:var(--accent)"></i>Gross Profit Margin (% of Revenue)</span>
+            <span style="margin-left:16px"><i class="chh-swatch" style="background:color-mix(in srgb, var(--line) 80%, var(--paper));border:1px solid var(--line)"></i>Direct Materials, Freight &amp; Subcontractor COGS (%)</span>
+          </div>
+          <span>*Annualized run-rate index at time of 2022 asset acquisition (2019 Base = 100 / 1.0x)</span>
+        </div>
+
+        <div id="chh-year-detail" class="chh-detail-box" aria-live="polite"></div>
+      </div>
+
+      <!-- INTERACTIVE SECTION 2: 3D CAD & SPATIAL ENGINEERING VIEWER -->
+      <h2 style="margin-top:44px">2. Interactive 3D CAD &amp; spatial engineering viewer</h2>
+      <p>Every custom motorized louvered pergola and architectural screen project was modeled in 3D SketchUp prior to factory extrusion to verify structural beam spans, louver rotation clearances, fan beam chases, and gutter downspout math. Interact with the live 3D parametric rig on the left or inspect the anonymized production CAD blueprints on the right.</p>
+
+      <div class="chh-panel">
+        <div class="chh-grid-2">
+          <!-- LEFT: LIVE INTERACTIVE 3D CANVAS RIG -->
+          <div>
+            <p class="eyebrow">Live 3D Parametric Rig (Drag to Orbit 360&deg;)</p>
+            <h3 style="margin:0 0 8px">Motorized Dual-Bay Pergola &amp; Smart Screen Simulator</h3>
+            <div class="chh-cad-canvas-wrap" id="chh-cad-wrap">
+              <canvas id="chh-cad-canvas" width="540" height="340" style="width:100%;height:100%;display:block"></canvas>
+              <div class="chh-cad-badge">3D Isometric CAD &middot; 21&apos;4&quot; &times; 19&apos;9&quot; Dual-Bay Rig</div>
+              <div class="chh-cad-telemetry" id="chh-cad-telemetry">
+                <span>Louver Pitch: 45&deg;</span>
+                <span>Solar Shade: 71%</span>
+                <span>ZIP Screens: 35% Deployed</span>
+              </div>
+            </div>
+            <div class="chh-sim-controls" style="margin-top:12px">
+              <div class="chh-sim-row">
+                <label for="chh-louver-ang"><span>Somfy RTS Motorized Louver Pitch (0&deg;&ndash;135&deg;)</span><span id="chh-louver-lbl">45&deg; (71% Shade)</span></label>
+                <input type="range" id="chh-louver-ang" min="0" max="135" value="45" oninput="chhUpdateCadRig()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-screen-dep"><span>Hammerhead Motorized ZIP Screen Drop (0%&ndash;100%)</span><span id="chh-screen-lbl">35% Deployed</span></label>
+                <input type="range" id="chh-screen-dep" min="0" max="100" value="35" oninput="chhUpdateCadRig()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-cam-yaw"><span>3D Camera Orbit Angle (or drag model directly)</span><span id="chh-yaw-lbl">-38&deg; Azimuth</span></label>
+                <input type="range" id="chh-cam-yaw" min="-180" max="180" value="-38" oninput="chhUpdateCadRig()">
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: ACTUAL SKETCHUP CAD BLUEPRINT & RENDER VIEWER -->
+          <div>
+            <p class="eyebrow">Production SketchUp (.skp) Engineering Exports</p>
+            <h3 style="margin:0 0 8px" id="chh-bp-title">3D Perspective &mdash; Dual-Bay Louver &amp; Screen Assembly</h3>
+            <div class="chh-cad-shot-wrap">
+              <img id="chh-bp-img" src="/assets/cad/pergola-3d-perspective-1.jpg" alt="3D SketchUp CAD rendering of dual-bay motorized louvered pergola" onclick="chhOpenLightbox(this.src, this.alt)">
+            </div>
+            <div class="chh-cad-thumbs" role="tablist" aria-label="CAD blueprint sheets">
+              <button type="button" class="chh-cad-thumb active" onclick="chhSelectBlueprint(0)" title="3D Perspective: Structural Gutter & Sidewall"><img src="/assets/cad/pergola-3d-perspective-1.jpg" alt="Thumbnail 1"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(1)" title="3D Perspective: 6x6 Posts & Motorized Screen Bay"><img src="/assets/cad/pergola-3d-perspective-2.jpg" alt="Thumbnail 2"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(2)" title="3D Overhead: Closed Interlocking Louver Deck"><img src="/assets/cad/pergola-3d-overhead-closed.jpg" alt="Thumbnail 3"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(3)" title="CAD Plan: 21'4 x 19'9 Dual-Bay & Fan Beam Clearances"><img src="/assets/cad/pergola-cad-overhead-plan.jpg" alt="Thumbnail 4"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(4)" title="CAD Engineering: 7.5-in Structural Gutter & Louver Math"><img src="/assets/cad/pergola-cad-gutter-math.jpg" alt="Thumbnail 5"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(5)" title="CAD Plan: 40-ft Multi-Zone Brick-Attached Beam Layout"><img src="/assets/cad/pergola-cad-40ft-span.jpg" alt="Thumbnail 6"></button>
+            </div>
+            <div id="chh-bp-desc" class="chh-detail-box" style="margin-top:12px;padding:12px 16px;font-size:.9rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="chh-lightbox" class="chh-lightbox" onclick="chhCloseLightbox()" role="dialog" aria-label="Expanded CAD blueprint view">
+        <img id="chh-lightbox-img" src="" alt="">
+      </div>
+
+      <!-- INTERACTIVE SECTION 3: SYSTEMS & DATA ARCHITECTURE -->
+      <h2 style="margin-top:44px">3. Enterprise IT &amp; quote-to-cash architecture</h2>
+      <p>Click any component in the stack below to see the engineering problem, how it was built, and its operational impact.</p>
+
+      <div class="chh-arch-grid" role="tablist" aria-label="System architecture components">
+        <button type="button" class="chh-node active" onclick="chhSelectNode(0)">
+          <span class="step">01 &middot; Data Ingestion &amp; ETL</span>
+          <h3>Multi-Vendor SKU ETL Pipeline</h3>
+          <p>Normalized 4,533 SKUs across 15+ manufacturers into Jobber CRM, QuickBooks Online, and Wix.</p>
+        </button>
+        <button type="button" class="chh-node" onclick="chhSelectNode(1)">
+          <span class="step">02 &middot; Field CRM &amp; API Automation</span>
+          <h3>Jobber Cloud + Custom JS/AJAX</h3>
+          <p>Mobile dispatch, quote-to-cash automation, and custom DOM/REST scripts to bypass UI limits.</p>
+        </button>
+        <button type="button" class="chh-node" onclick="chhSelectNode(2)">
+          <span class="step">03 &middot; Spatial CAD &amp; Smart IoT</span>
+          <h3>3D SketchUp + Somfy/Wi-Fi IoT</h3>
+          <p>3D architectural patio modeling and multi-zone RF/Wi-Fi motor &amp; weather-sensor commissioning.</p>
+        </button>
+        <button type="button" class="chh-node" onclick="chhSelectNode(3)">
+          <span class="step">04 &middot; Algorithmic Quoting</span>
+          <h3>Parametric Margin Calculators</h3>
+          <p>Matrix pricing models enforcing target gross margin % and net operating yield after commission.</p>
+        </button>
+        <button type="button" class="chh-node" onclick="chhSelectNode(4)">
+          <span class="step">05 &middot; Telemetry &amp; Diagnostics</span>
+          <h3>Quantitative Field Protocols</h3>
+          <p>33-point NFPA 211 checklists, Magnehelic pressure gauges, and millivolt ohmmeter SOPs.</p>
+        </button>
+        <button type="button" class="chh-node" onclick="chhSelectNode(5)">
+          <span class="step">06 &middot; M&amp;A Data Room &amp; Exit</span>
+          <h3>Turnkey Acquisition Packaging</h3>
+          <p>Accrual financial telemetry, catalog exports, and operational runbooks for the acquiring company.</p>
+        </button>
+      </div>
+
+      <div id="chh-node-detail" class="chh-panel" style="margin-top:0" aria-live="polite"></div>
+
+      <!-- INTERACTIVE SECTION 4: PARAMETRIC PRICING & PERCENTAGE UNIT ECONOMICS -->
+      <h2 style="margin-top:44px">4. Interactive pricing &amp; margin-percentage engine</h2>
+      <p>Complex custom installations fail when field quotes miss freight, extrusion waste, labor hours, or sales commissions. Try the live calculator below (modeled directly on the production <code>Fixed Screen Calculator</code> and <code>Commission &amp; Profit Calculator</code> workbooks) to see how every quote was decomposed into exact cost, labor/commission, and net profit percentages.</p>
+
+      <div class="chh-panel">
+        <div class="chh-grid-2">
+          <div>
+            <p class="eyebrow">Live Margin Simulator</p>
+            <h3 style="margin:0 0 8px">Custom Screen &amp; Commission Margin Allocation (%)</h3>
+            <p class="small" style="margin:0 0 16px;color:var(--ink-soft)">Adjust project dimensions, openings, and commission tier to inspect how the parametric model protects gross and net margin percentages.</p>
+
+            <div class="chh-sim-controls">
+              <div class="chh-sim-row">
+                <label for="chh-openings"><span>Number of Openings (Fixed Freight Amortization)</span><span id="chh-openings-lbl">4 openings</span></label>
+                <input type="range" id="chh-openings" min="1" max="10" value="4" oninput="chhUpdateSim()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-width"><span>Opening Width (inches)</span><span id="chh-width-lbl">72&quot;</span></label>
+                <input type="range" id="chh-width" min="36" max="192" step="6" value="72" oninput="chhUpdateSim()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-height"><span>Opening Height (inches)</span><span id="chh-height-lbl">99&quot;</span></label>
+                <input type="range" id="chh-height" min="48" max="144" step="3" value="99" oninput="chhUpdateSim()">
+              </div>
+              <div>
+                <div style="font:600 .82rem var(--head);margin-bottom:6px">Product Tier</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" id="chh-tier-mot" class="chh-tab active" onclick="chhSetTier('motorized')">Motorized Smart Screen (Somfy/Alutech)</button>
+                  <button type="button" id="chh-tier-fix" class="chh-tab" onclick="chhSetTier('fixed')">Fixed Architectural Extrusion</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="chh-sim-kpis" class="chh-kpis"></div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <div>
+                <p class="eyebrow">Standardized Labor Allocation</p>
+                <h3 style="margin:0 0 8px">Service Catalog Margin &amp; Yield Index</h3>
+              </div>
+              <select id="chh-svc-filter" onchange="chhRenderServices()" aria-label="Filter service lines" style="font:600 .78rem var(--head);padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">
+                <option value="all">All Featured Services (12)</option>
+                <option value="high">High Hourly Yield (2.0x+ Base)</option>
+                <option value="restoration">Technical Restoration &amp; Installs</option>
+                <option value="diagnostics">Inspections &amp; Diagnostics</option>
+              </select>
+            </div>
+            <p class="small" style="margin:0 0 12px;color:var(--ink-soft)">Every service line was benchmarked by estimated man-hours, target gross margin %, and hourly revenue yield index (<code>1.0x = baseline installation hour</code>) to optimize crew scheduling.</p>
+
+            <div class="table-wrap" style="margin-top:0;max-height:380px;overflow-y:auto">
+              <table class="tiers">
+                <thead>
+                  <tr>
+                    <th scope="col">Service Line</th>
+                    <th scope="col" style="text-align:right">Est. Hrs</th>
+                    <th scope="col" style="text-align:right">Target GM %</th>
+                    <th scope="col" style="text-align:right">Hourly Yield Index</th>
+                  </tr>
+                </thead>
+                <tbody id="chh-svc-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: CUSTOM AUTOMATION & HARDWARE DIAGNOSTICS -->
+      <h2 style="margin-top:44px">5. Custom DOM/AJAX automation &amp; quantitative diagnostics</h2>
+      <div class="cols">
+        <section>
+          <h3>Bypassing SaaS UI limits with JavaScript</h3>
+          <p>When supplier pricebooks updated, hundreds of obsolete SKUs in Jobber needed to be purged before importing the new catalog. Because Jobber&rsquo;s web interface lacked bulk deletion by vendor prefix, I wrote a browser-console jQuery/AJAX script (<code>jobber_quick_product_delete.js</code>) to scrape the internal item IDs from the DOM and fire asynchronous <code>DELETE</code> requests directly against Jobber&rsquo;s endpoint:</p>
+          <pre class="chh-code"><code>// Production utility: Product Imports/jobber_quick_product_delete.js
+var icc = $('a:contains("ICC")');
+for (var i = 0; i &lt; icc.length; i++) {
+  var item = icc[i].href.split('/')[4];
+  $.ajax({
+    url: 'https://secure.getjobber.com/work_items/' + item,
+    type: 'DELETE',
+    success: function() { console.log('Removed', item); }
+  });
+}</code></pre>
+          <p class="small">This early catalog work directly inspired two standalone tools on this site: the <a href="/projects/jobber-import-etl/">Vendor Price Sheet &rarr; Jobber Import ETL</a> pipeline and the <a href="/projects/chimney-planner/">DuraTech Chimney Planner</a>.</p>
+        </section>
+
+        <section>
+          <h3>Instrument-driven field diagnostics &amp; SOPs</h3>
+          <ul>
+            <li><strong>Millivolt gas valve ohmmeter testing:</strong> Authored technician training decks standardizing multimeter resistance checks across Robertshaw &amp; SIT Electromagnet Power Units (<code>0&ndash;13 &Omega;</code> specification between EPU lead and TP terminal) and preventative pilot/spill-switch replacement rules to eliminate repeat callbacks.</li>
+            <li><strong>Magnehelic differential pressure &amp; airflow telemetry:</strong> Built CDET dryer exhaust evaluation forms recording pre- and post-cleaning backpressure (<code>&le; 0.6&quot; Water Column</code>) and anemometer airflow velocity (<code>MPH</code>) at the appliance and exterior termination.</li>
+            <li><strong>Time-critical chemical &amp; refractory SOPs:</strong> Documented step-by-step field runbooks for ChamberGuard and FireGuard ceramic resurfacing equipment, including a strict 2-minute pump-blockage recovery decision tree before refractory material cures in the line.</li>
+            <li><strong>M&amp;A transition to a major local HVAC company:</strong> In 2022, packaged the 1,215-customer book (+419% growth), brand assets, inventory/tooling assessments, and operational playbooks into a clean asset sale and 3-year management integration agreement with a major local HVAC company.</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- SECTION 6: PRESERVED TABLEAU GEOGRAPHIC STORY -->
+      <h2 style="margin-top:48px">6. Geographic customer reach (Tableau analysis)</h2>
+      <p>Zip codes and counties across the Greater Louisville and Oldham County region where Crestwood Home &amp; Hearth sold, serviced, and installed.</p>
+      <div style="margin-top:20px"></div>
+      <div class="tableau-wrap">
         <div class="tableauPlaceholder" id="viz-chh" style="position: relative">
-          <noscript><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory"><img alt="Crestwood Home &amp; Hearth Customers" src="https://public.tableau.com/static/images/Cr/CrestwoodHomeHearth/CHHStory/1.png" style="border:none"></a></noscript>
+          <noscript><a href="#"><img alt="Crestwood Home &amp; Hearth Customers" src="https://public.tableau.com/static/images/Cr/CrestwoodHomeHearth/CHHStory/1_rss.png" style="border: none"></a></noscript>
           <object class="tableauViz" style="display:none;">
             <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F">
             <param name="embed_code_version" value="3">
@@ -58,32 +444,561 @@
             <param name="language" value="en-US">
           </object>
         </div>
+        <p class="viz-caption"><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory?:showVizHome=no" target="_blank" rel="noopener">Open full screen on Tableau Public &rarr;</a></p>
       </div>
-      <p class="small"><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory" rel="noopener" target="_blank">Open full screen on Tableau Public &rarr;</a></p>
     </div>
   </main>
   <footer class="site-footer">
     <div class="wrap">
-      <span>&copy; <span id="yr"></span> David Creason</span>
-      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
+      <div><strong>David Creason</strong> &middot; Louisville, KY</div>
+      <div class="links"><a href="https://www.linkedin.com/in/davidcreason" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/project-creason" target="_blank" rel="noopener">GitHub</a><a href="/resume/">Resume</a><a href="/contact/">Contact</a></div>
+      <div>&copy; 2026 David Creason</div>
     </div>
   </footer>
-  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script src="/assets/chat-widget.js" defer></script>
   <script>
     (function () {
-      var div = document.getElementById("viz-chh");
-      var viz = div.getElementsByTagName("object")[0];
-      function size() {
-        var w = div.offsetWidth;
-        viz.style.width = "100%";
-        viz.style.height = (w > 800 ? Math.round(w * 0.75) : w > 500 ? Math.round(w * 0.9) : 900) + "px";
+      var yearData = [
+        {
+          title: "2019 &middot; Foundation &amp; Credentialed Market Entry (Base Index = 100)",
+          rev: "100 Index (1.0x Base)",
+          gp: "61.3% Gross Margin",
+          net: "12.8% Marketing Reinvestment",
+          bullets: [
+            "Entered the market as the county's only CSIA Certified Chimney Sweep and CDET Certified Dryer Exhaust Technician, establishing an immediate technical credential moat.",
+            "Deployed the core cloud SaaS stack (Jobber CRM for field dispatch/quoting, QuickBooks Online for accrual accounting, Wix for web intake) and 33-point NFPA 211 digital inspection templates.",
+            "Maintained a 61.3% gross profit margin (38.7% direct COGS) in Year 1 while reinvesting 100% of operating cash flow (including 12.8% of top-line revenue into digital customer acquisition)."
+          ]
+        },
+        {
+          title: "2020 &middot; +310% YoY Hyper-Growth &amp; Counter-Seasonal CAD Pivot",
+          rev: "410 Index (+310% YoY / 4.1x)",
+          gp: "63.6% Gross Margin (+230 bps)",
+          net: "24.7% Net Operating Margin",
+          bullets: [
+            "Quadrupled top-line revenue (+310% YoY) while expanding gross profit margin by +230 bps to 63.6% and delivering a 24.7% audited net operating margin.",
+            "Engineered a counter-seasonal product expansion in Spring 2020: onboarded StruXure automated louvered pergolas (3D SketchUp CAD workflows), motorized smart screens, and outdoor kitchens.",
+            "Expanded active customer accounts by +238% YoY, normalized 4,533 SKUs across 15+ manufacturers, and onboarded the first W-2 field technician in Q4 2020."
+          ]
+        },
+        {
+          title: "2021 &middot; +68% YoY Scale-Up &amp; Multi-Crew Operations (+590% vs. Y1)",
+          rev: "690 Index (+68% YoY / 6.9x)",
+          gp: "53.6% Gross Margin",
+          net: "20.3% Combined Owner SDE Margin",
+          bullets: [
+            "Scaled revenue to 6.9x Year 1 baseline (+590% cumulative 3-year growth; +68% YoY on top of 2020's 4.1x surge), with 87.6% driven by technical field services and 12.4% by direct hardware sales.",
+            "Allocated 15.8% of revenue to W-2 technician payroll and 1099 contractors, funding national academy certifications and launching high-yield FireGuard ceramic flue resurfacing (2.25x hourly yield index).",
+            "Expanded cumulative customer base past 1,200 accounts while increasing trailing 12-month average ticket value by +171% vs. Year 1."
+          ]
+        },
+        {
+          title: "2022 &middot; +740% Exit Run-Rate (8.4x) &amp; Turnkey Acquisition",
+          rev: "840 Index (+740% vs. Y1 / 8.4x)",
+          gp: "54.0% Gross Margin",
+          net: "100% Turnkey Asset Transfer",
+          bullets: [
+            "Reached an 8.4x annualized revenue run-rate (+740% over Year 1 baseline) across 1,215 active customer accounts (+419% expansion) and 2,160+ historical digital invoices.",
+            "Packaged accrual financial telemetry, margin-percentage rate cards, inventory/tooling schedules, and supplier onboarding runbooks into a formal M&A data room.",
+            "Executed a turnkey asset sale and 3-year management integration agreement with a major local HVAC company."
+          ]
+        }
+      ];
+
+      window.chhSelectYear = function (idx) {
+        var d = yearData[idx];
+        var tabs = document.querySelectorAll(".yr-tab");
+        var cols = document.querySelectorAll(".chh-bar-col");
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.toggle("active", i === idx);
+          if (cols[i]) cols[i].classList.toggle("active", i === idx);
+        }
+        var box = document.getElementById("chh-year-detail");
+        if (!box) return;
+        var lis = d.bullets.map(function (b) { return "<li>" + b + "</li>"; }).join("");
+        box.innerHTML =
+          '<div class="chh-detail-head">' +
+            '<strong>' + d.title + '</strong>' +
+            '<div class="chh-detail-metrics">' +
+              '<span>Growth Index: <b>' + d.rev + '</b></span>' +
+              '<span>Gross Margin: <b>' + d.gp + '</b></span>' +
+              '<span>Operating Metric: <b>' + d.net + '</b></span>' +
+            '</div>' +
+          '</div>' +
+          '<ul style="margin:0;padding-left:20px;font-size:.96rem">' + lis + '</ul>';
+      };
+
+      /* --- 3D CAD BLUEPRINT GALLERY --- */
+      var blueprints = [
+        {
+          title: "3D Perspective (SW) &mdash; Dual-Bay Louver &amp; Structural Gutter Integration",
+          src: "/assets/cad/pergola-3d-perspective-1.jpg",
+          desc: "<strong>Engineering Callout:</strong> 3D SketchUp model validating a <code>21&apos;4&quot; &times; 19&apos;9&quot;</code> dual-zone motorized louvered pergola tied into an existing <code>18&apos;</code> roofline via full-perimeter structural gutters, double outer beams, and <code>6&quot;&times;6&quot;</code> aluminum posts."
+        },
+        {
+          title: "3D Perspective (NW) &mdash; Motorized ZIP Screen &amp; Outdoor Kitchen Clearances",
+          src: "/assets/cad/pergola-3d-perspective-2.jpg",
+          desc: "<strong>Engineering Callout:</strong> Verifies <code>10&apos;0&quot;</code> post height, <code>8&apos;10.5&quot;</code> &amp; <code>9&apos;8&quot;</code> column spacing around the outdoor kitchen island, and recessed track clearances for Somfy/Alutech motorized solar screens."
+        },
+        {
+          title: "3D Overhead Render &mdash; Interlocking Louver Deck &amp; Center Mullion Beam",
+          src: "/assets/cad/pergola-3d-overhead-closed.jpg",
+          desc: "<strong>Engineering Callout:</strong> Top-down solar &amp; watershed simulation showing closed interlocking louvers pitching rainwater into the integrated <code>7.5&quot;</code> structural gutter channel."
+        },
+        {
+          title: "CAD Plan View &mdash; Dual-Bay Louver Span &amp; Integrated Fan Beams",
+          src: "/assets/cad/pergola-cad-overhead-plan.jpg",
+          desc: "<strong>Engineering Callout:</strong> Shop fabrication layout specifying centered fan beams in both bays, double carrier beams per structural span request, and sidewalk/masonry tie-in tolerances."
+        },
+        {
+          title: "CAD Drainage &amp; Louver Math &mdash; 20&apos; &times; 20&apos; Four-Quad Structural Plan",
+          src: "/assets/cad/pergola-cad-gutter-math.jpg",
+          desc: "<strong>Engineering Callout:</strong> Exact louver pitch spacing (<em>&ldquo;Good Louver Math&rdquo;</em> verification), dual <code>10&apos;</code> bay splits, <code>7.5&quot;</code> structural gutter sizing, and designated corner downspout discharges."
+        },
+        {
+          title: "CAD Multi-Zone Elevation &mdash; 40&apos; &times; 12&apos; Brick-Attached Span",
+          src: "/assets/cad/pergola-cad-40ft-span.jpg",
+          desc: "<strong>Engineering Callout:</strong> Large-span <code>40&apos; &times; 12&apos;</code> commercial/residential ledger attachment to masonry brick, specifying intermediate post loads, double front beam, dual fan beams, and louver orientation."
+        }
+      ];
+
+      window.chhSelectBlueprint = function (idx) {
+        var b = blueprints[idx];
+        var img = document.getElementById("chh-bp-img");
+        var title = document.getElementById("chh-bp-title");
+        var desc = document.getElementById("chh-bp-desc");
+        var thumbs = document.querySelectorAll(".chh-cad-thumb");
+        for (var i = 0; i < thumbs.length; i++) {
+          thumbs[i].classList.toggle("active", i === idx);
+        }
+        if (img) { img.src = b.src; img.alt = b.title.replace(/&[^;]+;/g, ""); }
+        if (title) title.innerHTML = b.title;
+        if (desc) desc.innerHTML = b.desc;
+      };
+
+      window.chhOpenLightbox = function (src, alt) {
+        var lb = document.getElementById("chh-lightbox");
+        var img = document.getElementById("chh-lightbox-img");
+        if (lb && img) {
+          img.src = src;
+          img.alt = alt || "Expanded CAD Blueprint";
+          lb.classList.add("open");
+        }
+      };
+
+      window.chhCloseLightbox = function () {
+        var lb = document.getElementById("chh-lightbox");
+        if (lb) lb.classList.remove("open");
+      };
+
+      /* --- INTERACTIVE 3D PARAMETRIC PERGOLA & SCREEN CANVAS RIG --- */
+      var camPitch = 26;
+      var isDragging = false;
+      var lastX = 0, lastY = 0;
+
+      function project3D(x, y, z, yawDeg, pitchDeg, w, h) {
+        var yaw = yawDeg * Math.PI / 180;
+        var pitch = pitchDeg * Math.PI / 180;
+        var x1 = x * Math.cos(yaw) - z * Math.sin(yaw);
+        var z1 = x * Math.sin(yaw) + z * Math.cos(yaw);
+        var y2 = y * Math.cos(pitch) - z1 * Math.sin(pitch);
+        var z2 = y * Math.sin(pitch) + z1 * Math.cos(pitch);
+        var scale = 420 / (420 + z2 + 60);
+        return { x: (w / 2) + x1 * scale, y: (h * 0.56) - y2 * scale, s: scale };
       }
-      size(); window.addEventListener("resize", size);
-      var s = document.createElement("script");
-      s.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
-      viz.parentNode.insertBefore(s, viz);
+
+      function drawLine3D(ctx, p1, p2, color, width) {
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width || 1.5;
+        ctx.stroke();
+      }
+
+      function drawPoly3D(ctx, pts, fill, stroke, width) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.closePath();
+        if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+        if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = width || 1; ctx.stroke(); }
+      }
+
+      window.chhUpdateCadRig = function () {
+        var canvas = document.getElementById("chh-cad-canvas");
+        if (!canvas) return;
+        var ctx = canvas.getContext("2d");
+        var w = canvas.width, h = canvas.height;
+
+        var louverEl = document.getElementById("chh-louver-ang");
+        var screenEl = document.getElementById("chh-screen-dep");
+        var yawEl = document.getElementById("chh-cam-yaw");
+
+        var louverAng = louverEl ? parseInt(louverEl.value, 10) : 45;
+        var screenDep = screenEl ? parseInt(screenEl.value, 10) : 35;
+        var yawDeg = yawEl ? parseInt(yawEl.value, 10) : -38;
+
+        var shadePct = Math.round(Math.abs(Math.cos(louverAng * Math.PI / 180)) * 100);
+        if (louverAng <= 5) shadePct = 100;
+
+        document.getElementById("chh-louver-lbl").textContent = louverAng + "\u00b0 (" + shadePct + "% Shade)";
+        document.getElementById("chh-screen-lbl").textContent = screenDep + "% Deployed";
+        document.getElementById("chh-yaw-lbl").textContent = yawDeg + "\u00b0 Azimuth";
+        document.getElementById("chh-cad-telemetry").innerHTML =
+          "<span>Louver Pitch: " + louverAng + "\u00b0</span>" +
+          "<span>Solar Shade: " + shadePct + "%</span>" +
+          "<span>ZIP Screens: " + screenDep + "% Deployed</span>";
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Background blueprint grid
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.12)";
+        ctx.lineWidth = 1;
+        for (var gx = -160; gx <= 160; gx += 40) {
+          var g1 = project3D(gx, -70, -140, yawDeg, camPitch, w, h);
+          var g2 = project3D(gx, -70, 140, yawDeg, camPitch, w, h);
+          drawLine3D(ctx, g1, g2, "rgba(148,163,184,0.14)", 1);
+        }
+        for (var gz = -140; gz <= 140; gz += 40) {
+          var g3 = project3D(-160, -70, gz, yawDeg, camPitch, w, h);
+          var g4 = project3D(160, -70, gz, yawDeg, camPitch, w, h);
+          drawLine3D(ctx, g3, g4, "rgba(148,163,184,0.14)", 1);
+        }
+
+        // Patio slab
+        var slab = [
+          project3D(-130, -70, -110, yawDeg, camPitch, w, h),
+          project3D(130, -70, -110, yawDeg, camPitch, w, h),
+          project3D(130, -70, 110, yawDeg, camPitch, w, h),
+          project3D(-130, -70, 110, yawDeg, camPitch, w, h)
+        ];
+        drawPoly3D(ctx, slab, "rgba(30, 41, 59, 0.75)", "rgba(100, 116, 139, 0.5)", 1.5);
+
+        // Existing house L-wall (tan/warm sandstone like SketchUp render)
+        var backWall = [
+          project3D(-130, -70, -110, yawDeg, camPitch, w, h),
+          project3D(130, -70, -110, yawDeg, camPitch, w, h),
+          project3D(130, 82, -110, yawDeg, camPitch, w, h),
+          project3D(-130, 82, -110, yawDeg, camPitch, w, h)
+        ];
+        drawPoly3D(ctx, backWall, "rgba(214, 180, 138, 0.28)", "rgba(234, 179, 8, 0.65)", 1.5);
+
+        var sideWall = [
+          project3D(-130, -70, -110, yawDeg, camPitch, w, h),
+          project3D(-130, -70, 40, yawDeg, camPitch, w, h),
+          project3D(-130, 82, 40, yawDeg, camPitch, w, h),
+          project3D(-130, 82, -110, yawDeg, camPitch, w, h)
+        ];
+        drawPoly3D(ctx, sideWall, "rgba(194, 155, 112, 0.32)", "rgba(234, 179, 8, 0.65)", 1.5);
+
+        // Motorized ZIP screens (front & right sides)
+        if (screenDep > 0) {
+          var dropY = 68 - (138 * (screenDep / 100));
+          // Front Bay 1 screen
+          var scrF1 = [
+            project3D(-125, 68, 105, yawDeg, camPitch, w, h),
+            project3D(0, 68, 105, yawDeg, camPitch, w, h),
+            project3D(0, dropY, 105, yawDeg, camPitch, w, h),
+            project3D(-125, dropY, 105, yawDeg, camPitch, w, h)
+          ];
+          drawPoly3D(ctx, scrF1, "rgba(56, 189, 248, 0.18)", "rgba(56, 189, 248, 0.75)", 1.2);
+          // Front Bay 2 screen
+          var scrF2 = [
+            project3D(0, 68, 105, yawDeg, camPitch, w, h),
+            project3D(125, 68, 105, yawDeg, camPitch, w, h),
+            project3D(125, dropY, 105, yawDeg, camPitch, w, h),
+            project3D(0, dropY, 105, yawDeg, camPitch, w, h)
+          ];
+          drawPoly3D(ctx, scrF2, "rgba(56, 189, 248, 0.18)", "rgba(56, 189, 248, 0.75)", 1.2);
+          // Right side screen
+          var scrR = [
+            project3D(125, 68, -105, yawDeg, camPitch, w, h),
+            project3D(125, 68, 105, yawDeg, camPitch, w, h),
+            project3D(125, dropY, 105, yawDeg, camPitch, w, h),
+            project3D(125, dropY, -105, yawDeg, camPitch, w, h)
+          ];
+          drawPoly3D(ctx, scrR, "rgba(56, 189, 248, 0.22)", "rgba(56, 189, 248, 0.85)", 1.2);
+        }
+
+        // 6x6 Aluminum Posts
+        var posts = [
+          [-125, 105], [0, 105], [125, 105], [125, -105]
+        ];
+        for (var pi = 0; pi < posts.length; pi++) {
+          var px = posts[pi][0], pz = posts[pi][1];
+          var pTop = project3D(px, 72, pz, yawDeg, camPitch, w, h);
+          var pBot = project3D(px, -70, pz, yawDeg, camPitch, w, h);
+          drawLine3D(ctx, pTop, pBot, "#94a3b8", 4.5);
+        }
+
+        // Dual-bay Motorized Louvers
+        var rad = louverAng * Math.PI / 180;
+        var lHalf = 7.5;
+        var dy = Math.sin(rad) * lHalf;
+        var dz = Math.cos(rad) * lHalf;
+
+        for (var z = -92; z <= 92; z += 16) {
+          for (var bay = 0; bay < 2; bay++) {
+            var xStart = bay === 0 ? -122 : 3;
+            var xEnd = bay === 0 ? -3 : 122;
+            var lPts = [
+              project3D(xStart, 72 + dy, z - dz, yawDeg, camPitch, w, h),
+              project3D(xEnd, 72 + dy, z - dz, yawDeg, camPitch, w, h),
+              project3D(xEnd, 72 - dy, z + dz, yawDeg, camPitch, w, h),
+              project3D(xStart, 72 - dy, z + dz, yawDeg, camPitch, w, h)
+            ];
+            drawPoly3D(ctx, lPts, "rgba(226, 232, 240, 0.55)", "#475569", 1);
+          }
+        }
+
+        // Perimeter Double Beams & Center Mullion Beam
+        var frameCorners = [
+          [-125, -105], [125, -105], [125, 105], [-125, 105]
+        ];
+        for (var fi = 0; fi < 4; fi++) {
+          var c1 = frameCorners[fi];
+          var c2 = frameCorners[(fi + 1) % 4];
+          drawLine3D(
+            ctx,
+            project3D(c1[0], 72, c1[1], yawDeg, camPitch, w, h),
+            project3D(c2[0], 72, c2[1], yawDeg, camPitch, w, h),
+            "#f8fafc",
+            3.5
+          );
+        }
+        // Center mullion beam
+        drawLine3D(
+          ctx,
+          project3D(0, 72, -105, yawDeg, camPitch, w, h),
+          project3D(0, 72, 105, yawDeg, camPitch, w, h),
+          "#38bdf8",
+          3.2
+        );
+        // Dimension callout lines in red (matching SketchUp CAD style)
+        var d1 = project3D(-125, -70, 118, yawDeg, camPitch, w, h);
+        var d2 = project3D(125, -70, 118, yawDeg, camPitch, w, h);
+        drawLine3D(ctx, d1, d2, "#ef4444", 1.5);
+        ctx.fillStyle = "#f87171";
+        ctx.font = "600 11px sans-serif";
+        ctx.fillText("21' 4\" Double Beam Span", (d1.x + d2.x) / 2 - 55, (d1.y + d2.y) / 2 + 14);
+      };
+
+      var cadWrap = document.getElementById("chh-cad-wrap");
+      if (cadWrap) {
+        cadWrap.addEventListener("mousedown", function (e) {
+          isDragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+        });
+        window.addEventListener("mousemove", function (e) {
+          if (!isDragging) return;
+          var dx = e.clientX - lastX;
+          var dy = e.clientY - lastY;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          var yawEl = document.getElementById("chh-cam-yaw");
+          if (yawEl) {
+            var nextYaw = parseInt(yawEl.value, 10) + Math.round(dx * 0.6);
+            if (nextYaw > 180) nextYaw -= 360;
+            if (nextYaw < -180) nextYaw += 360;
+            yawEl.value = nextYaw;
+          }
+          camPitch = Math.max(8, Math.min(60, camPitch + dy * 0.3));
+          window.chhUpdateCadRig();
+        });
+        window.addEventListener("mouseup", function () { isDragging = false; });
+      }
+
+      var nodeData = [
+        {
+          title: "01 &middot; Multi-Vendor SKU ETL Pipeline (4,533 SKUs)",
+          stack: "Excel Power Query &middot; CSV Schema Mapping &middot; Jobber &middot; QuickBooks Online &middot; Wix",
+          challenge: "15+ hearth, venting, skylight, and outdoor living manufacturers supplied unstructured dealer pricebooks with inconsistent part numbering, tiered dealer discounts (0.50x to 0.65x), and freight rules.",
+          solution: "Engineered standardized import templates transforming raw vendor catalogs (1,969 RH Peterson SKUs, 1,218 ICC venting SKUs, 614 Majestic/HHT SKUs, 438 Archgard SKUs, 146 Bromic SKUs, 130 Velux SKUs) into clean Jobber and QuickBooks schemas.",
+          impact: "Allowed technicians to build accurate multi-part quotes on an iPad in the field during an inspection, contributing to a +171% increase in average ticket value."
+        },
+        {
+          title: "02 &middot; Field Service CRM &amp; Custom JS/AJAX Automation",
+          stack: "Jobber Cloud CRM &middot; jQuery AJAX &middot; REST Endpoints &middot; Automated Client Comms",
+          challenge: "Jobber streamlined dispatch, mobile invoicing, and card payments, but lacked bulk catalog lifecycle tools when hundreds of vendor SKUs needed to be deprecated or repriced.",
+          solution: "Wrote custom client-side JavaScript (jobber_quick_product_delete.js) to query the authenticated DOM, extract internal work_item IDs, and fire asynchronous DELETE requests against Jobber's internal endpoint.",
+          impact: "Cut catalog maintenance time by 99% (from days of manual clicking to seconds), keeping field pricing synchronized with supplier cost updates."
+        },
+        {
+          title: "03 &middot; 3D Spatial CAD Modeling &amp; Smart-Home IoT Integration",
+          stack: "SketchUp 3D (.skp) &middot; StruXure Somfy RTS/OS &middot; Alutech Hammerhead Wi-Fi SmartHub",
+          challenge: "Custom motorized louvered pergolas and recessed patio screens required exact structural clearances, gutter drainage planning, and client visualization before custom factory extrusion.",
+          solution: "Integrated 3D SketchUp spatial modeling (perspective renders, structural gutter math, and beam/post layouts) into proposals, paired with multi-zone Somfy RF/Wi-Fi motor commissioning and rain/wind sensor automation.",
+          impact: "Unlocked counter-seasonal warm-weather revenue streams and propelled +310% year-over-year revenue growth in 2020."
+        },
+        {
+          title: "04 &middot; Parametric Quoting &amp; Margin-Percentage Calculators",
+          stack: "Multi-Zone Pricing Matrices &middot; Extrusion &amp; Spline Calculators &middot; Commission Models",
+          challenge: "Custom screens and multi-zone pergolas involve nonlinear cost variables (linear feet of beams, extrusion cuts, mesh square footage, crating/freight, and sales commissions) that easily erode margins if misquoted.",
+          solution: "Built parametric pricing workbooks (Pergola X Price Calculator 3.0, Fixed Screen Calculator, Commission &amp; Profit Calculator) that compute COGS %, freight amortization, labor hours, commission tiers, and net profit % before a quote is sent.",
+          impact: "Protected ~29.2% net operating profit after commission on custom screen projects and 1.0x&ndash;3.5x hourly yield indexes across 26 standardized service lines."
+        },
+        {
+          title: "05 &middot; Quantitative Field Diagnostics &amp; NFPA 211 Compliance",
+          stack: "Digital Ohmmeter &middot; Magnehelic Pressure Gauge &middot; Anemometer &middot; Bore-Scope Video",
+          challenge: "Residential service trades often rely on subjective technician opinions, leading to misdiagnosed gas valves, repeat callbacks, or unverifiable safety findings in real-estate transactions.",
+          solution: "Created hardware troubleshooting SOPs (0&ndash;13 Ohm EPU safety magnet testing for millivolt gas valves, 2-minute pump-blockage recovery protocols) and digital inspection forms recording Magnehelic pressure (&le; 0.6\" W.C.) and MPH airflow.",
+          impact: "Built high trust with homeowners and realtors while enabling structured onboarding for new technicians."
+        },
+        {
+          title: "06 &middot; M&amp;A Data Room &amp; Turnkey Exit Architecture",
+          stack: "QuickBooks Accrual Telemetry &middot; SDE Valuation Models &middot; Turnkey Onboarding Playbook",
+          challenge: "Most small trade businesses are difficult to sell because operational knowledge is undocumented and financial/customer data is fragmented.",
+          solution: "Maintained clean accrual-basis P&amp;L and Balance Sheet telemetry, documented all vendor accounts, inventory/tooling schedules, and service man-hour rates, and wrote a structured onboarding roadmap for the buyer.",
+          impact: "Enabled a smooth 2022 asset acquisition by a major local HVAC company, paired with a 3-year management role to scale the combined division."
+        }
+      ];
+
+      window.chhSelectNode = function (idx) {
+        var nodes = document.querySelectorAll(".chh-node");
+        for (var i = 0; i < nodes.length; i++) {
+          nodes[i].classList.toggle("active", i === idx);
+        }
+        var d = nodeData[idx];
+        var panel = document.getElementById("chh-node-detail");
+        if (!panel) return;
+        panel.innerHTML =
+          '<div class="chh-detail-head">' +
+            '<strong>' + d.title + '</strong>' +
+            '<span style="font:600 .76rem var(--head);color:var(--accent)">' + d.stack + '</span>' +
+          '</div>' +
+          '<div class="cols" style="margin-top:12px;gap:20px">' +
+            '<section><h3 style="font-size:.92rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)">Engineering Challenge</h3><p style="margin:0;font-size:.95rem">' + d.challenge + '</p></section>' +
+            '<section><h3 style="font-size:.92rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)">Technical Implementation</h3><p style="margin:0;font-size:.95rem">' + d.solution + '</p></section>' +
+            '<section><h3 style="font-size:.92rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)">Business Impact</h3><p style="margin:0;font-size:.95rem">' + d.impact + '</p></section>' +
+          '</div>';
+      };
+
+      var currentTier = "motorized";
+      window.chhSetTier = function (tier) {
+        currentTier = tier;
+        var bMot = document.getElementById("chh-tier-mot");
+        var bFix = document.getElementById("chh-tier-fix");
+        if (bMot && bFix) {
+          bMot.classList.toggle("active", tier === "motorized");
+          bFix.classList.toggle("active", tier === "fixed");
+        }
+        window.chhUpdateSim();
+      };
+
+      window.chhUpdateSim = function () {
+        var elO = document.getElementById("chh-openings");
+        var elW = document.getElementById("chh-width");
+        var elH = document.getElementById("chh-height");
+        if (!elO || !elW || !elH) return;
+        var openings = parseInt(elO.value, 10);
+        var width = parseInt(elW.value, 10);
+        var height = parseInt(elH.value, 10);
+
+        document.getElementById("chh-openings-lbl").textContent = openings + (openings === 1 ? " opening" : " openings");
+        document.getElementById("chh-width-lbl").textContent = width + '"';
+        document.getElementById("chh-height-lbl").textContent = height + '"';
+
+        var sqFt = (width * height) / 144;
+        var retail, cogs, laborHrs, laborCost, comm;
+        if (currentTier === "fixed") {
+          var extrusion = 76;
+          var laborPerOp = 100;
+          var mesh = sqFt * 0.30;
+          var spline = 45;
+          var shipping = 175;
+          var netPerOp = extrusion + laborPerOp + mesh;
+          var retailPerOp = netPerOp * 2.18;
+          retail = (retailPerOp * openings) + shipping;
+          cogs = ((extrusion + mesh) * openings) + spline + shipping;
+          laborHrs = openings * 2.5;
+          laborCost = laborPerOp * openings;
+          comm = retail * 0.08;
+        } else {
+          var unitCost = 1150 + (sqFt * 7.25);
+          cogs = (unitCost * openings) + 75;
+          retail = cogs * 1.986;
+          laborHrs = openings * 4;
+          laborCost = laborHrs * 30;
+          comm = retail * 0.0971;
+        }
+        var grossMarginPct = ((retail - cogs) / retail) * 100;
+        var cogsPct = (cogs / retail) * 100;
+        var laborCommPct = ((laborCost + comm) / retail) * 100;
+        var profit = retail - cogs - laborCost - comm;
+        var netMarginPct = (profit / retail) * 100;
+        var yieldIndex = (profit / laborHrs) / 100;
+
+        var kpis = document.getElementById("chh-sim-kpis");
+        if (kpis) {
+          kpis.innerHTML =
+            '<div class="chh-kpi"><div class="k-lbl">Gross Margin (%)</div><div class="k-val">' + grossMarginPct.toFixed(1) + '%</div></div>' +
+            '<div class="chh-kpi"><div class="k-lbl">Hardware &amp; Freight COGS</div><div class="k-val">' + cogsPct.toFixed(1) + '%</div></div>' +
+            '<div class="chh-kpi"><div class="k-lbl">Labor (' + laborHrs + 'h) + Comm.</div><div class="k-val">' + laborCommPct.toFixed(1) + '%</div></div>' +
+            '<div class="chh-kpi highlight"><div class="k-lbl">Net Profit Margin (%)</div><div class="k-val">' + netMarginPct.toFixed(1) + '%</div></div>' +
+            '<div class="chh-kpi highlight"><div class="k-lbl">Dealer Markup Ratio</div><div class="k-val">' + (retail / cogs).toFixed(2) + 'x</div></div>' +
+            '<div class="chh-kpi highlight"><div class="k-lbl">Hourly Yield Index</div><div class="k-val">' + yieldIndex.toFixed(2) + 'x Base</div></div>';
+        }
+      };
+
+      var services = [
+        { name: "FireGuard Ceramic Liner Resurfacing", cat: "restoration", hrs: 16.0, gmPct: 68.5, yieldIdx: 2.25 },
+        { name: "Direct Vent Fireplace Installation", cat: "restoration", hrs: 16.0, gmPct: 54.0, yieldIdx: 1.00 },
+        { name: "Pellet Stove &amp; Venting System Install", cat: "restoration", hrs: 10.0, gmPct: 58.0, yieldIdx: 1.60 },
+        { name: "Smoke Chamber Parging (ChamberGuard)", cat: "restoration", hrs: 10.0, gmPct: 64.0, yieldIdx: 1.30 },
+        { name: "Siloxane Masonry Waterproofing", cat: "restoration", hrs: 4.5, gmPct: 72.0, yieldIdx: 2.00 },
+        { name: "NFPA 211 Level 3 Invasive Inspection", cat: "diagnostics", hrs: 4.0, gmPct: 84.0, yieldIdx: 2.00 },
+        { name: "CrownGuard Elastomeric Membrane", cat: "restoration", hrs: 1.0, gmPct: 76.0, yieldIdx: 3.49 },
+        { name: "NFPA 211 Level 2 Real Estate Inspection", cat: "diagnostics", hrs: 1.5, gmPct: 88.0, yieldIdx: 2.00 },
+        { name: "Stainless Chase Cover Replacement", cat: "restoration", hrs: 1.5, gmPct: 56.0, yieldIdx: 1.99 },
+        { name: "Gas Fireplace Service &amp; Valve Diagnostic", cat: "diagnostics", hrs: 1.0, gmPct: 85.0, yieldIdx: 2.49 },
+        { name: "Sweep + NFPA Level 1 Digital Report", cat: "diagnostics", hrs: 1.0, gmPct: 86.0, yieldIdx: 2.25 },
+        { name: "Diagnostic &amp; System Evaluation Protocol", cat: "diagnostics", hrs: 0.5, gmPct: 90.0, yieldIdx: 3.50 }
+      ];
+
+      window.chhRenderServices = function () {
+        var f = document.getElementById("chh-svc-filter");
+        var val = f ? f.value : "all";
+        var rows = services.filter(function (s) {
+          if (val === "all") return true;
+          if (val === "high") return s.yieldIdx >= 1.99;
+          return s.cat === val;
+        }).map(function (s) {
+          return '<tr>' +
+            '<th scope="row" style="white-space:normal">' + s.name + '</th>' +
+            '<td style="text-align:right"><code>' + s.hrs + 'h</code></td>' +
+            '<td style="text-align:right"><code>' + s.gmPct.toFixed(1) + '%</code></td>' +
+            '<td style="text-align:right"><strong>' + s.yieldIdx.toFixed(2) + 'x</strong></td>' +
+          '</tr>';
+        }).join("");
+        var tbody = document.getElementById("chh-svc-tbody");
+        if (tbody) tbody.innerHTML = rows;
+      };
+
+      chhSelectYear(1);
+      chhSelectBlueprint(0);
+      chhUpdateCadRig();
+      chhSelectNode(0);
+      chhUpdateSim();
+      chhRenderServices();
     })();
   </script>
-  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script>
+    (function () {
+      var divElement = document.getElementById("viz-chh");
+      var vizElement = divElement.getElementsByTagName("object")[0];
+      function sizeViz() {
+        var w = divElement.offsetWidth;
+        vizElement.style.width = "100%";
+        vizElement.style.height = Math.max(560, Math.min(920, Math.round(w * 0.72))) + "px";
+      }
+      sizeViz();
+      window.addEventListener("resize", sizeViz);
+      var scriptElement = document.createElement("script");
+      scriptElement.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    })();
+  </script>
 </body>
 </html>

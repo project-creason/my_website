@@ -220,14 +220,22 @@ Key findings
 
 Open full screen on Tableau Public →
 
-=== Crestwood Home & Hearth ===
-Status: Past (Completed), 2025
+=== Crestwood Home & Hearth: Systems, Growth & Exit Case Study ===
+Status: Past (Founded · acquired), 2018–2022
 Project page: https://www.davidcreason.com/projects/crestwood-home-hearth/
-Links: View story: https://www.davidcreason.com/projects/crestwood-home-hearth/
-Tags: Tableau, Geographic analysis, Small business
-Summary: Mapped the zip codes and counties served by Crestwood Home & Hearth, the field service business I founded and ran from 2018 to 2021.
+Links: Read the case study: https://www.davidcreason.com/projects/crestwood-home-hearth/
+Tags: Systems architecture, Quote-to-cash, ETL & automation, Unit economics, 3D CAD & IoT, Tableau, M&A exit
+Summary: Applied enterprise systems engineering, a 4,533-SKU vendor ETL pipeline, custom JavaScript/AJAX automation, 3D CAD modeling, and parametric quoting calculators to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey exit to a major local HVAC company.
 
-Zip codes and counties where Crestwood Home & Hearth did business.
+How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.
+
+Key Growth & Percentage Highlights:
+- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.
+- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.
+- Customer & Ticket Velocity: +419% customer base expansion (1,215+ active accounts across 2,160+ digital invoices) and +171% expansion in trailing 12-month average ticket value.
+- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.
+- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.
+- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.
 
 Open full screen on Tableau Public →
 
