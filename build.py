@@ -391,7 +391,12 @@ by = {p["slug"]: p for p in PROJECTS}
 
 # Home
 edu = "".join(f"<li>{e(x)}</li>" for x in EDUCATION)
-page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visualizations, and an AI assistant that answers questions about my experience and projects.", "Home", f"""  <section class="hero">
+page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visualizations, and an AI assistant that answers questions about my experience and projects.", "Home", f"""  <section class="hero" data-hero-bg="neural-constellation">
+    <div class="hero-backdrop" aria-hidden="true">
+      <canvas class="hero-canvas"></canvas>
+      <div class="hero-spotlight"></div>
+      <div class="hero-scrim"></div>
+    </div>
     <div class="wrap hero-grid">
       <div>
         <p class="role">{e(PROFILE['role'])}</p>
@@ -461,7 +466,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
         <div class="actions center"><a class="btn" href="/contact/#form">Send me a message</a><a class="btn ghost" href="/resume/">View resume</a></div>
       </div>
     </section>
-  </main>""", extra_foot='\n  <script src="/assets/chat.js"></script>')
+  </main>""", extra_foot='\n  <script src="/assets/hero.js"></script>\n  <script src="/assets/chat.js"></script>')
 
 # Projects index
 page("/projects/", "Projects", "Active and past projects by David Creason: web tools, AI, and data visualization.", "Projects", f"""  <main id="main">
