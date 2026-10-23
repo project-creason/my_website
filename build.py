@@ -100,6 +100,21 @@ PROJECTS = [
         "links": [("Read the case study", "/projects/property-etl-bench/", True)],
     },
     {
+        "slug": "buffalo-trace-tracker",
+        "title": "Buffalo Trace Bourbon Availability Tracker",
+        "status": "active",
+        "badge": "Live · automated daily",
+        "year": "2026",
+        "summary": "Automated Python pipeline on GitHub Actions that polls Buffalo Trace Distillery during morning release hours, deduplicates lineup changes, sends instant mobile push and BCC email alerts, and streams live status to this site.",
+        "tags": ["Python", "GitHub Actions", "Web scraping", "State deduplication", "Mobile push (ntfy)", "Live JSON feed"],
+        "image": "/assets/projects/cards/buffalo-trace-tracker.svg",
+        "image_alt": "Buffalo Trace Bourbon Availability Tracker live dashboard preview",
+        "links": [
+            ("View live tracker", "/projects/buffalo-trace-tracker/", True),
+            ("Source on GitHub", "https://github.com/project-creason/buffalo-trace-tracker", False),
+        ],
+    },
+    {
         "slug": "louisville-crime",
         "title": "Louisville Crime, 2024",
         "status": "past",

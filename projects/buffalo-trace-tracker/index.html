@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Buffalo Trace Bourbon Availability Tracker · David Creason</title>
+  <meta name="description" content="Automated cloud pipeline that monitors Buffalo Trace Distillery Gift Shop availability during morning release hours, sends instant mobile push and BCC email alerts when allocated bottles drop, and publishes live status to this page.">
+  <link rel="canonical" href="https://www.davidcreason.com/projects/buffalo-trace-tracker/">
+  <meta property="og:title" content="Buffalo Trace Bourbon Availability Tracker · David Creason">
+  <meta property="og:description" content="Automated cloud pipeline that monitors Buffalo Trace Distillery Gift Shop availability during morning release hours, sends instant mobile push and BCC email alerts when allocated bottles drop, and publishes live status to this page.">
+  <meta property="og:url" content="https://www.davidcreason.com/projects/buffalo-trace-tracker/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.davidcreason.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="David Creason: Enterprise Applications &amp; Systems Integration Lead | Business Systems Architect">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">DavidCreason.com</a>
+      <nav class="nav" aria-label="Main"><a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/resume/">Resume</a><a href="/contact/">Contact</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
+      <p class="meta"><span class="badge active">Live · automated daily</span><span>2026</span></p>
+      <h1 class="page-title">Buffalo Trace Bourbon Availability Tracker</h1>
+      <p class="lede">Buffalo Trace Distillery rotates allocated bourbons (Blanton&rsquo;s, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard below.</p>
+      <ul class="tags"><li>Python</li><li>GitHub Actions</li><li>Web scraping</li><li>State deduplication</li><li>Mobile push (ntfy)</li><li>Live JSON feed</li></ul>
+      <div class="actions"><a class="btn" href="https://github.com/project-creason/buffalo-trace-tracker" rel="noopener" target="_blank">Source on GitHub</a><a class="btn ghost" href="https://www.buffalotracedistillery.com/visit-us/product-availability/" rel="noopener" target="_blank">Official Distillery Page</a></div>
+
+      <style>
+        .bt-board {
+          margin: 36px 0 40px;
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          padding: 24px;
+        }
+        .bt-header {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--line);
+          margin-bottom: 20px;
+        }
+        .bt-header h2 {
+          margin: 0;
+          font-size: 1.35rem;
+        }
+        .bt-status-bar {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 12px;
+          font: 600 0.82rem var(--head);
+          color: var(--ink-soft);
+        }
+        .bt-dot {
+          display: inline-block;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #16a34a;
+          margin-right: 6px;
+          box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+        }
+        .bt-refresh-btn {
+          background: var(--paper);
+          color: var(--ink);
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          padding: 6px 12px;
+          font: 600 0.78rem var(--head);
+          cursor: pointer;
+          transition: border-color 0.15s ease;
+        }
+        .bt-refresh-btn:hover {
+          border-color: var(--accent);
+          color: var(--accent);
+        }
+        .bt-cat-title {
+          font: 700 0.85rem var(--head);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--ink-soft);
+          margin: 22px 0 12px;
+        }
+        .bt-cat-title:first-of-type {
+          margin-top: 0;
+        }
+        .bt-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 14px;
+        }
+        .bt-card {
+          background: var(--paper);
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .bt-card.in-stock.allocated {
+          border-left: 4px solid #AB431D;
+        }
+        .bt-card.out-of-stock {
+          opacity: 0.72;
+        }
+        .bt-bottle-name {
+          font: 700 1rem var(--head);
+          color: var(--ink);
+          margin: 0;
+        }
+        .bt-badge-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 8px;
+        }
+        .bt-pill {
+          display: inline-block;
+          padding: 4px 10px;
+          border-radius: 999px;
+          font: 700 0.72rem var(--head);
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+        .bt-pill.avail {
+          background: #AB431D;
+          color: #FAF7ED;
+        }
+        .bt-pill.out {
+          background: #D4CCB6;
+          color: #183B35;
+        }
+        .bt-cat-tag {
+          font: 600 0.74rem var(--head);
+          color: var(--ink-soft);
+        }
+      </style>
+
+      <section class="bt-board" aria-label="Live Buffalo Trace Gift Shop availability">
+        <div class="bt-header">
+          <div>
+            <h2>Live Distillery Gift Shop Lineup</h2>
+            <p class="small" style="margin:4px 0 0">Automatically synced from <code>last_state.json</code> in the tracker repository.</p>
+          </div>
+          <div class="bt-status-bar">
+            <span><i class="bt-dot"></i><span id="bt-last-updated">Loading latest check&hellip;</span></span>
+            <button type="button" class="bt-refresh-btn" id="bt-refresh">Refresh</button>
+          </div>
+        </div>
+        <div id="bt-content" aria-live="polite">
+          <p>Fetching today&rsquo;s bourbon availability&hellip;</p>
+        </div>
+      </section>
+
+      <div class="cols">
+        <section>
+          <h2>How the pipeline works</h2>
+          <ul>
+            <li><strong>Dual-layer parser:</strong> Extracts structured <code>in_stock</code> booleans directly from Buffalo Trace&rsquo;s embedded Next.js React Server Components (RSC) payload, with an automatic fallback to rendered HTML and SVG badge inspection.</li>
+            <li><strong>Gift Shop window polling:</strong> Polls every 15 minutes during release hours (7:45&ndash;9:15 AM ET Monday&ndash;Saturday; 7:45&ndash;11:30 AM ET Sunday) with off-peak cron scheduling to avoid GitHub runner congestion.</li>
+            <li><strong>State-based deduplication:</strong> Compares the live bottle list against <code>last_state.json</code> so it alerts the exact minute the morning lineup flips without sending duplicate spam on subsequent 15-minute checks.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Multi-channel alerting &amp; live feed</h2>
+          <ul>
+            <li><strong>Instant lock-screen push:</strong> Dispatches high-priority mobile notifications via <code>ntfy.sh</code> (replacing retired carrier email-to-SMS gateways like AT&amp;T).</li>
+            <li><strong>BCC email digest:</strong> Sends a formatted HTML + plain-text availability table via Gmail SMTP with all subscriber addresses isolated in BCC.</li>
+            <li><strong>Zero-rebuild web integration:</strong> Commits the updated product snapshot to <code>last_state.json</code> on GitHub, which this page fetches client-side on load.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script>
+    (function () {
+      var FEED_URL = "https://raw.githubusercontent.com/project-creason/buffalo-trace-tracker/main/last_state.json";
+      var contentEl = document.getElementById("bt-content");
+      var updatedEl = document.getElementById("bt-last-updated");
+      var refreshBtn = document.getElementById("bt-refresh");
+
+      function esc(str) {
+        var d = document.createElement("div");
+        d.textContent = str || "";
+        return d.innerHTML;
+      }
+
+      function renderGroup(title, items, isAllocated) {
+        if (!items || !items.length) return "";
+        var cards = items.map(function (p) {
+          var cls = "bt-card " + (p.in_stock ? "in-stock" : "out-of-stock") + (isAllocated ? " allocated" : "");
+          var pill = p.in_stock
+            ? '<span class="bt-pill avail">Available</span>'
+            : '<span class="bt-pill out">Out of Stock</span>';
+          return (
+            '<div class="' + cls + '">' +
+              '<p class="bt-bottle-name">' + esc(p.name) + '</p>' +
+              '<div class="bt-badge-row">' +
+                '<span class="bt-cat-tag">' + esc(p.category) + '</span>' +
+                pill +
+              '</div>' +
+            '</div>'
+          );
+        }).join("");
+        return '<h3 class="bt-cat-title">' + esc(title) + '</h3><div class="bt-grid">' + cards + '</div>';
+      }
+
+      function loadFeed() {
+        updatedEl.textContent = "Checking live feed…";
+        fetch(FEED_URL + "?t=" + Date.now())
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            var stamp = data.last_checked_et || data.last_alert_timestamp_et || data.last_alert_date || "Recently";
+            updatedEl.textContent = "Last checked: " + stamp;
+
+            var products = data.products || [];
+            if (!products.length && data.all_available) {
+              products = data.all_available.map(function (name) {
+                return { name: name, in_stock: true, category: "Gift Shop Offerings" };
+              });
+            }
+
+            var rotating = products.filter(function (p) { return p.category === "Rotating Offerings"; });
+            var daily = products.filter(function (p) { return p.category === "Daily Offerings"; });
+            var other = products.filter(function (p) {
+              return p.category !== "Rotating Offerings" && p.category !== "Daily Offerings";
+            });
+
+            var html = "";
+            html += renderGroup("Rotating Allocated Offerings (1 Per Person)", rotating, true);
+            html += renderGroup("Daily Offerings", daily, false);
+            html += renderGroup("Additional Distillery Spirits", other, false);
+
+            contentEl.innerHTML = html || "<p>No availability data found in latest state snapshot.</p>";
+          })
+          .catch(function (err) {
+            updatedEl.textContent = "Feed unavailable";
+            contentEl.innerHTML = '<p>Could not load live availability feed (' + esc(err.message) + ').</p>';
+          });
+      }
+
+      refreshBtn.addEventListener("click", loadFeed);
+      loadFeed();
+    })();
+  </script>
+  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

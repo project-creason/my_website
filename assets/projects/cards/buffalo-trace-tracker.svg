@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Buffalo Trace Bourbon Availability Tracker card">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#183B35"/>
+      <stop offset="100%" stop-color="#0f2622"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect x="36" y="34" width="728" height="382" rx="16" fill="#FAF7ED" stroke="#D4CCB6" stroke-width="2"/>
+  
+  <!-- Header Banner -->
+  <rect x="64" y="60" width="210" height="30" rx="15" fill="#AB431D"/>
+  <circle cx="82" cy="75" r="7" fill="#FAF7ED"/>
+  <text x="98" y="80" fill="#FAF7ED" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="12" letter-spacing="1">LIVE GIFT SHOP FEED</text>
+  <text x="64" y="126" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="26">Buffalo Trace Allocated Bourbon Tracker</text>
+  <text x="64" y="152" fill="#555" font-family="Source Serif 4, Georgia, serif" font-size="16">Automated morning polling, state deduplication &amp; instant push/BCC alerts</text>
+
+  <!-- Bottle Status Cards -->
+  <g transform="translate(64, 178)">
+    <rect width="320" height="62" rx="10" fill="#ffffff" stroke="#D4CCB6" stroke-width="1.5"/>
+    <text x="18" y="27" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="15">E.H. Taylor Small Batch</text>
+    <text x="18" y="46" fill="#666" font-family="Montserrat, Arial, sans-serif" font-size="12">Rotating Allocated Offering</text>
+    <rect x="212" y="17" width="92" height="28" rx="14" fill="#AB431D"/>
+    <text x="258" y="35" text-anchor="middle" fill="#FAF7ED" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="11">AVAILABLE</text>
+  </g>
+
+  <g transform="translate(408, 178)">
+    <rect width="328" height="62" rx="10" fill="#ffffff" stroke="#D4CCB6" stroke-width="1.5"/>
+    <text x="18" y="27" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="15">Blanton&#x27;s Single Barrel</text>
+    <text x="18" y="46" fill="#666" font-family="Montserrat, Arial, sans-serif" font-size="12">Rotating Allocated Offering</text>
+    <rect x="220" y="17" width="92" height="28" rx="14" fill="#AB431D"/>
+    <text x="266" y="35" text-anchor="middle" fill="#FAF7ED" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="11">AVAILABLE</text>
+  </g>
+
+  <g transform="translate(64, 254)">
+    <rect width="320" height="62" rx="10" fill="#ffffff" stroke="#D4CCB6" stroke-width="1.5"/>
+    <text x="18" y="27" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="15">Weller Antique 107</text>
+    <text x="18" y="46" fill="#666" font-family="Montserrat, Arial, sans-serif" font-size="12">Rotating Allocated Offering</text>
+    <rect x="212" y="17" width="92" height="28" rx="14" fill="#AB431D"/>
+    <text x="258" y="35" text-anchor="middle" fill="#FAF7ED" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="11">AVAILABLE</text>
+  </g>
+
+  <g transform="translate(408, 254)">
+    <rect width="328" height="62" rx="10" fill="#ffffff" stroke="#D4CCB6" stroke-width="1.5"/>
+    <text x="18" y="27" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="15">Eagle Rare 10-Year</text>
+    <text x="18" y="46" fill="#666" font-family="Montserrat, Arial, sans-serif" font-size="12">Rotating Allocated Offering</text>
+    <rect x="210" y="17" width="102" height="28" rx="14" fill="#D4CCB6"/>
+    <text x="261" y="35" text-anchor="middle" fill="#183B35" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="11">OUT OF STOCK</text>
+  </g>
+
+  <!-- Footer Pipeline Strip -->
+  <rect x="64" y="338" width="672" height="48" rx="10" fill="#183B35"/>
+  <text x="400" y="367" text-anchor="middle" fill="#FAF7ED" font-family="Montserrat, Arial, sans-serif" font-weight="600" font-size="13" letter-spacing="0.5">GitHub Actions Cron  &#x2192;  Next.js RSC Parser  &#x2192;  State Diff  &#x2192;  ntfy Push + BCC Email + Live JSON</text>
+</svg>
