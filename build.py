@@ -751,67 +751,8 @@ CHH_SECTIONS = r'''      <style>
         <div id="chh-year-detail" class="chh-detail-box" aria-live="polite"></div>
       </div>
 
-      <!-- INTERACTIVE SECTION 2: 3D CAD & SPATIAL ENGINEERING VIEWER -->
-      <h2 style="margin-top:44px">2. Interactive 3D CAD &amp; spatial engineering viewer</h2>
-      <p>Every custom motorized louvered pergola and architectural screen project was modeled in 3D SketchUp prior to factory extrusion to verify structural beam spans, louver rotation clearances, fan beam chases, and gutter downspout math. Interact with the live 3D parametric rig on the left or inspect the anonymized production CAD blueprints on the right.</p>
-
-      <div class="chh-panel">
-        <div class="chh-grid-2">
-          <!-- LEFT: LIVE INTERACTIVE 3D CANVAS RIG -->
-          <div>
-            <p class="eyebrow">Live 3D Parametric Rig (Drag to Orbit 360&deg;)</p>
-            <h3 style="margin:0 0 8px">Motorized Dual-Bay Pergola &amp; Smart Screen Simulator</h3>
-            <div class="chh-cad-canvas-wrap" id="chh-cad-wrap">
-              <canvas id="chh-cad-canvas" width="540" height="340" style="width:100%;height:100%;display:block"></canvas>
-              <div class="chh-cad-badge">3D Isometric CAD &middot; 21&apos;4&quot; &times; 19&apos;9&quot; Dual-Bay Rig</div>
-              <div class="chh-cad-telemetry" id="chh-cad-telemetry">
-                <span>Louver Pitch: 45&deg;</span>
-                <span>Solar Shade: 71%</span>
-                <span>ZIP Screens: 35% Deployed</span>
-              </div>
-            </div>
-            <div class="chh-sim-controls" style="margin-top:12px">
-              <div class="chh-sim-row">
-                <label for="chh-louver-ang"><span>Somfy RTS Motorized Louver Pitch (0&deg;&ndash;135&deg;)</span><span id="chh-louver-lbl">45&deg; (71% Shade)</span></label>
-                <input type="range" id="chh-louver-ang" min="0" max="135" value="45" oninput="chhUpdateCadRig()">
-              </div>
-              <div class="chh-sim-row">
-                <label for="chh-screen-dep"><span>Hammerhead Motorized ZIP Screen Drop (0%&ndash;100%)</span><span id="chh-screen-lbl">35% Deployed</span></label>
-                <input type="range" id="chh-screen-dep" min="0" max="100" value="35" oninput="chhUpdateCadRig()">
-              </div>
-              <div class="chh-sim-row">
-                <label for="chh-cam-yaw"><span>3D Camera Orbit Angle (or drag model directly)</span><span id="chh-yaw-lbl">-38&deg; Azimuth</span></label>
-                <input type="range" id="chh-cam-yaw" min="-180" max="180" value="-38" oninput="chhUpdateCadRig()">
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT: ACTUAL SKETCHUP CAD BLUEPRINT & RENDER VIEWER -->
-          <div>
-            <p class="eyebrow">Production SketchUp (.skp) Engineering Exports</p>
-            <h3 style="margin:0 0 8px" id="chh-bp-title">3D Perspective &mdash; Dual-Bay Louver &amp; Screen Assembly</h3>
-            <div class="chh-cad-shot-wrap">
-              <img id="chh-bp-img" src="/assets/cad/pergola-3d-perspective-1.jpg" alt="3D SketchUp CAD rendering of dual-bay motorized louvered pergola" onclick="chhOpenLightbox(this.src, this.alt)">
-            </div>
-            <div class="chh-cad-thumbs" role="tablist" aria-label="CAD blueprint sheets">
-              <button type="button" class="chh-cad-thumb active" onclick="chhSelectBlueprint(0)" title="3D Perspective: Structural Gutter & Sidewall"><img src="/assets/cad/pergola-3d-perspective-1.jpg" alt="Thumbnail 1"></button>
-              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(1)" title="3D Perspective: 6x6 Posts & Motorized Screen Bay"><img src="/assets/cad/pergola-3d-perspective-2.jpg" alt="Thumbnail 2"></button>
-              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(2)" title="3D Overhead: Closed Interlocking Louver Deck"><img src="/assets/cad/pergola-3d-overhead-closed.jpg" alt="Thumbnail 3"></button>
-              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(3)" title="CAD Plan: 21'4 x 19'9 Dual-Bay & Fan Beam Clearances"><img src="/assets/cad/pergola-cad-overhead-plan.jpg" alt="Thumbnail 4"></button>
-              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(4)" title="CAD Engineering: 7.5-in Structural Gutter & Louver Math"><img src="/assets/cad/pergola-cad-gutter-math.jpg" alt="Thumbnail 5"></button>
-              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(5)" title="CAD Plan: 40-ft Multi-Zone Brick-Attached Beam Layout"><img src="/assets/cad/pergola-cad-40ft-span.jpg" alt="Thumbnail 6"></button>
-            </div>
-            <div id="chh-bp-desc" class="chh-detail-box" style="margin-top:12px;padding:12px 16px;font-size:.9rem"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="chh-lightbox" class="chh-lightbox" onclick="chhCloseLightbox()" role="dialog" aria-label="Expanded CAD blueprint view">
-        <img id="chh-lightbox-img" src="" alt="">
-      </div>
-
-      <!-- INTERACTIVE SECTION 3: SYSTEMS & DATA ARCHITECTURE -->
-      <h2 style="margin-top:44px">3. Enterprise IT &amp; quote-to-cash architecture</h2>
+      <!-- INTERACTIVE SECTION 2: SYSTEMS & DATA ARCHITECTURE -->
+      <h2 style="margin-top:44px">2. Enterprise IT &amp; quote-to-cash architecture</h2>
       <p>Click any component in the stack below to see the engineering problem, how it was built, and its operational impact.</p>
 
       <div class="chh-arch-grid" role="tablist" aria-label="System architecture components">
@@ -849,8 +790,8 @@ CHH_SECTIONS = r'''      <style>
 
       <div id="chh-node-detail" class="chh-panel" style="margin-top:0" aria-live="polite"></div>
 
-      <!-- INTERACTIVE SECTION 4: PARAMETRIC PRICING & PERCENTAGE UNIT ECONOMICS -->
-      <h2 style="margin-top:44px">4. Interactive pricing &amp; margin-percentage engine</h2>
+      <!-- INTERACTIVE SECTION 3: PARAMETRIC PRICING & PERCENTAGE UNIT ECONOMICS -->
+      <h2 style="margin-top:44px">3. Interactive pricing &amp; margin-percentage engine</h2>
       <p>Complex custom installations fail when field quotes miss freight, extrusion waste, labor hours, or sales commissions. Try the live calculator below (modeled directly on the production <code>Fixed Screen Calculator</code> and <code>Commission &amp; Profit Calculator</code> workbooks) to see how every quote was decomposed into exact cost, labor/commission, and net profit percentages.</p>
 
       <div class="chh-panel">
@@ -917,8 +858,8 @@ CHH_SECTIONS = r'''      <style>
         </div>
       </div>
 
-      <!-- SECTION 5: CUSTOM AUTOMATION & HARDWARE DIAGNOSTICS -->
-      <h2 style="margin-top:44px">5. Custom DOM/AJAX automation &amp; quantitative diagnostics</h2>
+      <!-- SECTION 4: CUSTOM AUTOMATION & HARDWARE DIAGNOSTICS -->
+      <h2 style="margin-top:44px">4. Custom DOM/AJAX automation &amp; quantitative diagnostics</h2>
       <div class="cols">
         <section>
           <h3>Bypassing SaaS UI limits with JavaScript</h3>
@@ -945,6 +886,65 @@ for (var i = 0; i &lt; icc.length; i++) {
             <li><strong>M&amp;A transition to a major local HVAC company:</strong> In 2022, packaged the 1,215-customer book (+419% growth), brand assets, inventory/tooling assessments, and operational playbooks into a clean asset sale and 3-year management integration agreement with a major local HVAC company.</li>
           </ul>
         </section>
+      </div>
+
+      <!-- INTERACTIVE SECTION 5: 3D CAD & SPATIAL ENGINEERING VIEWER -->
+      <h2 style="margin-top:44px">5. Interactive 3D CAD &amp; spatial engineering viewer</h2>
+      <p>Every custom motorized louvered pergola and architectural screen project was modeled in 3D SketchUp prior to factory extrusion to verify structural beam spans, louver rotation clearances, fan beam chases, and gutter downspout math. Interact with the live 3D parametric rig on the left or inspect the anonymized production CAD blueprints on the right.</p>
+
+      <div class="chh-panel">
+        <div class="chh-grid-2">
+          <!-- LEFT: LIVE INTERACTIVE 3D CANVAS RIG -->
+          <div>
+            <p class="eyebrow">Live 3D Parametric Rig (Drag to Orbit 360&deg;)</p>
+            <h3 style="margin:0 0 8px">Motorized Dual-Bay Pergola &amp; Smart Screen Simulator</h3>
+            <div class="chh-cad-canvas-wrap" id="chh-cad-wrap">
+              <canvas id="chh-cad-canvas" width="540" height="340" style="width:100%;height:100%;display:block"></canvas>
+              <div class="chh-cad-badge">3D Isometric CAD &middot; 21&apos;4&quot; &times; 19&apos;9&quot; Dual-Bay Rig</div>
+              <div class="chh-cad-telemetry" id="chh-cad-telemetry">
+                <span>Louver Pitch: 45&deg;</span>
+                <span>Solar Shade: 71%</span>
+                <span>ZIP Screens: 35% Deployed</span>
+              </div>
+            </div>
+            <div class="chh-sim-controls" style="margin-top:12px">
+              <div class="chh-sim-row">
+                <label for="chh-louver-ang"><span>Somfy RTS Motorized Louver Pitch (0&deg;&ndash;135&deg;)</span><span id="chh-louver-lbl">45&deg; (71% Shade)</span></label>
+                <input type="range" id="chh-louver-ang" min="0" max="135" value="45" oninput="chhUpdateCadRig()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-screen-dep"><span>Hammerhead Motorized ZIP Screen Drop (0%&ndash;100%)</span><span id="chh-screen-lbl">35% Deployed</span></label>
+                <input type="range" id="chh-screen-dep" min="0" max="100" value="35" oninput="chhUpdateCadRig()">
+              </div>
+              <div class="chh-sim-row">
+                <label for="chh-cam-yaw"><span>3D Camera Orbit Angle (or drag model directly)</span><span id="chh-yaw-lbl">-38&deg; Azimuth</span></label>
+                <input type="range" id="chh-cam-yaw" min="-180" max="180" value="-38" oninput="chhUpdateCadRig()">
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: ACTUAL SKETCHUP CAD BLUEPRINT & RENDER VIEWER -->
+          <div>
+            <p class="eyebrow">Production SketchUp (.skp) Engineering Exports</p>
+            <h3 style="margin:0 0 8px" id="chh-bp-title">3D Perspective &mdash; Dual-Bay Louver &amp; Screen Assembly</h3>
+            <div class="chh-cad-shot-wrap">
+              <img id="chh-bp-img" src="/assets/cad/pergola-3d-perspective-1.jpg" alt="3D SketchUp CAD rendering of dual-bay motorized louvered pergola" onclick="chhOpenLightbox(this.src, this.alt)">
+            </div>
+            <div class="chh-cad-thumbs" role="tablist" aria-label="CAD blueprint sheets">
+              <button type="button" class="chh-cad-thumb active" onclick="chhSelectBlueprint(0)" title="3D Perspective: Structural Gutter & Sidewall"><img src="/assets/cad/pergola-3d-perspective-1.jpg" alt="Thumbnail 1"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(1)" title="3D Perspective: 6x6 Posts & Motorized Screen Bay"><img src="/assets/cad/pergola-3d-perspective-2.jpg" alt="Thumbnail 2"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(2)" title="3D Overhead: Closed Interlocking Louver Deck"><img src="/assets/cad/pergola-3d-overhead-closed.jpg" alt="Thumbnail 3"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(3)" title="CAD Plan: 21'4 x 19'9 Dual-Bay & Fan Beam Clearances"><img src="/assets/cad/pergola-cad-overhead-plan.jpg" alt="Thumbnail 4"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(4)" title="CAD Engineering: 7.5-in Structural Gutter & Louver Math"><img src="/assets/cad/pergola-cad-gutter-math.jpg" alt="Thumbnail 5"></button>
+              <button type="button" class="chh-cad-thumb" onclick="chhSelectBlueprint(5)" title="CAD Plan: 40-ft Multi-Zone Brick-Attached Beam Layout"><img src="/assets/cad/pergola-cad-40ft-span.jpg" alt="Thumbnail 6"></button>
+            </div>
+            <div id="chh-bp-desc" class="chh-detail-box" style="margin-top:12px;padding:12px 16px;font-size:.9rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="chh-lightbox" class="chh-lightbox" onclick="chhCloseLightbox()" role="dialog" aria-label="Expanded CAD blueprint view">
+        <img id="chh-lightbox-img" src="" alt="">
       </div>
 
       <!-- SECTION 6: PRESERVED TABLEAU GEOGRAPHIC STORY -->
