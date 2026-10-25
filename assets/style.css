@@ -90,7 +90,7 @@ main { padding: 56px 0 72px; }
 @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; gap: 32px; } }
 
 .eyebrow { font: 700 .78rem var(--head); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); margin: 0 0 8px; }
-.lede { font-size: 1.12rem; color: var(--ink-soft); max-width: 65ch; }
+.lede { font-size: 1.12rem; color: var(--ink-soft); }
 .page-title { font-size: clamp(2rem, 4.5vw, 2.8rem); margin: 0 0 12px; }
 
 .btn {

@@ -672,65 +672,40 @@ detail_page(by["resume-assistant"],
       </div>""", extra_foot='\n  <script src="/assets/chat.js"></script>')
 
 # Louisville
-findings = [
-    ("Temperature vs. rain (consistent)", "Daily high temperature showed a nearly identical positive correlation in both years: r = 0.514 in 2024 (+0.73 offenses/°F) and r = 0.511 in 2025 (+0.76 offenses/°F). Rain alone barely moved daily totals (-0.8% on rainy days in 2024; -4.7% in 2025)."),
-    ("Lunar influence (consistent)", "Full moons still show no positive effect. The 12 full-moon days averaged 193.7/day vs. 190.8/day in 2024 (+1.5%), and 181.8/day vs. 193.1/day in 2025 (-5.9%)."),
-    ("Seasonality (consistent)", "Q3 (Jul–Sep) led both years (18,953 in 2024; 19,245 in 2025), with July as the peak month (6,534 and 6,631) and February as the lowest (5,094 and 4,814)."),
-    ("Geography (core held, edges shifted)", "West and central ZIPs 40203 (4,933 → 4,929) and 40211 (4,772 → 4,889) stayed #1 and #2, while Downtown 40202 fell 20.2% (4,078 → 3,256) and southwest/east areas like 40272 (+11.5%), 40216 (+7.1%), and 8th Division (+12.1%) rose."),
-    ("Offense mix (diverged sharply)", "Total volume was flat (+0.7%), but auto theft plunged 20.1% (5,769 → 4,608), homicide fell 26.1% (153 → 113), robbery fell 18.4% (971 → 792), and burglary fell 11.5% (3,517 → 3,113) — offset by surges in shoplifting (+28.5%), narcotics (+21.9%), and trespassing (+39.9%)."),
-    ("Venue shifts (parking down, retail up)", "Parking lot and garage offenses fell 11.9% (7,900 → 6,963) alongside the auto-theft drop, while grocery/supermarket incidents jumped 73.6% (818 → 1,420) and department/discount stores rose 19.6% (1,941 → 2,322)."),
-    ("Day of week (shifted to weekend)", "Mondays led 2024 (10,519 offenses), ahead of Saturday (10,376). In 2025, activity shifted to the weekend: Saturday (#1 at 10,446) and Friday (#2 at 10,398) overtook Monday (#4 at 9,984)."),
-    ("Holidays & severe weather (new low)", "Thanksgiving was the lowest day of 2024 (112) and dropped to 150 in 2025 (Christmas fell to 133). The quietest day across both years was Jan 6, 2025 (88 offenses) during a 7+ inch snow and ice storm."),
-    ("Peak days & 1st-of-month effect", "July 22 topped 2024 (269). In 2025, July 1 (276), Aug 1 (274), and June 1 (273) led raw counts, followed by May 30 (272) — driven by retroactive reports that default to the 1st of the month (13.0% reported >7 days later vs. 3.9% on other days)."),
-]
-items = "\n".join(f"        <li><strong>{h}</strong><span>{t}</span></li>" for h, t in findings)
-
 LOU_SECTIONS = f"""      <style>
         .lou-stats {{ margin: 28px 0 36px; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }}
-        .lou-tabs {{ display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 18px; }}
-        .lou-tab {{
-          background: var(--card); color: var(--ink-soft); border: 1px solid var(--line);
-          border-radius: 8px; padding: 9px 16px; font: 600 .84rem var(--head); cursor: pointer;
-          transition: all .15s ease;
-        }}
-        .lou-tab:hover {{ border-color: var(--accent); color: var(--ink); }}
-        .lou-tab.active {{ background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }}
-        .lou-panel {{ background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; margin-bottom: 36px; }}
-        .lou-pane {{ display: none; }}
-        .lou-pane.active {{ display: block; }}
-        .lou-legend {{ display: flex; flex-wrap: wrap; gap: 18px; font: 600 .78rem var(--head); color: var(--ink-soft); margin-bottom: 16px; }}
+        .lou-legend {{ display: flex; flex-wrap: wrap; gap: 18px; align-items: center; font: 600 .8rem var(--head); color: var(--ink-soft); margin: 12px 0 20px; }}
         .lou-swatch {{ display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }}
-        .lou-chart-12 {{
-          display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; align-items: end;
-          height: 220px; padding: 20px 6px 10px; border-bottom: 1px solid var(--line);
+        .lou-vgrid {{
+          display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin: 20px 0 44px;
         }}
-        .lou-chart-7 {{
-          display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; align-items: end;
-          height: 220px; padding: 20px 10px 10px; border-bottom: 1px solid var(--line);
+        @media (max-width: 820px) {{ .lou-vgrid {{ grid-template-columns: 1fr; }} }}
+        .lou-vcard {{
+          background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+          padding: 20px 22px 18px; display: flex; flex-direction: column; gap: 10px;
         }}
-        .lou-chart-5 {{
-          display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; align-items: end;
-          height: 220px; padding: 20px 10px 10px; border-bottom: 1px solid var(--line);
+        .lou-vcard-top {{ display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }}
+        .lou-vkicker {{ font: 700 .72rem var(--head); text-transform: uppercase; letter-spacing: .09em; color: var(--accent); }}
+        .lou-vpill {{ font: 700 .7rem var(--head); padding: 2px 8px; border-radius: 999px; }}
+        .lou-vpill.same {{ background: color-mix(in srgb, var(--line) 70%, transparent); color: var(--ink-soft); }}
+        .lou-vpill.shift {{ background: rgba(181,85,43,.14); color: var(--accent); }}
+        .lou-vpill.low {{ background: rgba(47,163,86,.15); color: #2fa356; }}
+        .lou-vcard h3 {{ font-size: 1.12rem; margin: 0; line-height: 1.25; }}
+        .lou-vsvg-wrap {{
+          background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+          padding: 12px 10px 8px; margin-top: 2px;
         }}
-        @media (max-width: 720px) {{
-          .lou-chart-12 {{ gap: 4px; height: 180px; }}
-          .lou-chart-7, .lou-chart-5 {{ gap: 8px; height: 190px; }}
-        }}
-        .lou-col {{ display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; text-align: center; }}
-        .lou-pair {{ display: flex; align-items: flex-end; justify-content: center; gap: 3px; width: 100%; height: 100%; }}
-        .lou-bar {{
-          flex: 1; max-width: 24px; border-radius: 4px 4px 0 0; position: relative;
-          transition: filter .15s ease;
-        }}
-        .lou-bar:hover {{ filter: brightness(1.1); }}
-        .lou-bar.y24 {{ background: color-mix(in srgb, var(--ink-soft) 55%, var(--paper)); border: 1px solid var(--line); }}
-        .lou-bar.y25 {{ background: var(--accent); }}
-        .lou-col-lbl {{ font: 700 .76rem var(--head); color: var(--ink); margin-top: 8px; }}
-        .lou-col-sub {{ font: 600 .68rem var(--head); color: var(--ink-soft); margin-top: 2px; }}
-        .lou-delta {{ font: 700 .76rem var(--head); padding: 2px 7px; border-radius: 999px; display: inline-block; }}
-        .lou-delta.up {{ background: rgba(181,85,43,.14); color: var(--accent); }}
-        .lou-delta.down {{ background: rgba(47,163,86,.14); color: #2fa356; }}
-        .lou-delta.flat {{ background: color-mix(in srgb, var(--line) 65%, transparent); color: var(--ink-soft); }}
+        .lou-vsvg {{ width: 100%; height: auto; display: block; overflow: visible; }}
+        .lou-vsvg text {{ font-family: var(--head); fill: var(--ink); }}
+        .lou-vsvg .muted {{ fill: var(--ink-soft); }}
+        .lou-vsvg .acc {{ fill: var(--accent); }}
+        .lou-vsvg .grn {{ fill: #2fa356; }}
+        .lou-vsvg .axis {{ stroke: var(--line); stroke-width: 1; }}
+        .lou-vsvg .dash-base {{ stroke: var(--ink-soft); stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .65; }}
+        .lou-vsvg .b24 {{ fill: color-mix(in srgb, var(--ink-soft) 48%, var(--paper)); stroke: var(--line); stroke-width: 1; }}
+        .lou-vsvg .b25 {{ fill: var(--accent); }}
+        .lou-vsvg .bgrn {{ fill: #2fa356; }}
+        .lou-vcap {{ margin: 0; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }}
       </style>
 
       <div class="lou-stats" aria-label="Louisville crime 2024 vs 2025 key metrics">
@@ -744,254 +719,317 @@ LOU_SECTIONS = f"""      <style>
         </ul>
       </div>
 
-      <h2 style="margin-top:40px">Core findings: 2024 vs. 2025</h2>
-      <ul class="findings">
-{items}
-      </ul>
-
-      <h2 style="margin-top:44px">Side-by-side comparison (2024 vs. 2025)</h2>
-      <p>Both datasets come from Louisville Metro Police Department (LMPD) NIBRS incident reports filtered to offenses occurring in each calendar year, paired with daily NOAA weather observations from the Louisville Weather Forecast Office (<code>USC00154958</code>) and Eastern Time full-moon dates.</p>
-      <div class="table-wrap">
-        <table class="tiers">
-          <thead>
-            <tr>
-              <th scope="col">Dimension</th>
-              <th scope="col">2024 Baseline</th>
-              <th scope="col">2025 Update</th>
-              <th scope="col">Trend</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Total offenses (incidents)</th>
-              <td>69,876 offenses across 57,246 unique incidents (190.9/day across 366 days)</td>
-              <td>70,336 offenses across 56,453 unique incidents (192.7/day across 365 days)</td>
-              <td><span class="lou-delta flat">+0.7% offenses &middot; -1.4% incidents</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Temperature &amp; precipitation</th>
-              <td><strong>r = 0.514</strong> (R&sup2; = 0.265), +0.73 offenses/&deg;F; 154.2/day (&lt;32&deg;F) vs. 207.4/day (85&deg;F+); rainy days (&ge;0.1&Prime;) avg 189.8 vs. 191.3 dry (-0.8%)</td>
-              <td><strong>r = 0.511</strong> (R&sup2; = 0.261), +0.76 offenses/&deg;F; 151.6/day (&lt;32&deg;F) vs. 211.2/day (85&deg;F+); rainy days (&ge;0.1&Prime;) avg 185.8 vs. 195.0 dry (-4.7%)</td>
-              <td><span class="lou-delta flat">Consistent (heat drives crime, rain barely does)</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Lunar influence (full moon)</th>
-              <td>193.7/day on 12 full-moon days vs. 190.8/day on other 354 days (+1.5%, not significant)</td>
-              <td>181.8/day on 12 full-moon days vs. 193.1/day on other 353 days (-5.9%, lower on full moons)</td>
-              <td><span class="lou-delta flat">Consistent (myth debunked)</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Seasonality (quarters &amp; months)</th>
-              <td><strong>Q3 highest</strong> (18,953; July peak at 6,534) &middot; <strong>Q1 lowest</strong> (15,958; Feb lowest at 5,094)</td>
-              <td><strong>Q3 highest</strong> (19,245; July peak at 6,631) &middot; <strong>Q1 lowest</strong> (15,539; Feb lowest at 4,814)</td>
-              <td><span class="lou-delta flat">Consistent</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Day of week</th>
-              <td><strong>Monday #1</strong> (10,519), Saturday #2 (10,376), Sunday #3 (10,055) &middot; Wednesday lowest (9,522)</td>
-              <td><strong>Saturday #1</strong> (10,446), Friday #2 (10,398), Sunday #3 (10,309), Monday #4 (9,984) &middot; Thursday lowest (9,509)</td>
-              <td><span class="lou-delta up">Shifted to Fri/Sat</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Holidays &amp; extreme weather</th>
-              <td><strong>Thanksgiving Day lowest</strong> of the year (112 offenses, -41% below average); Christmas Day at 184</td>
-              <td><strong>Jan 6 winter storm lowest</strong> (88 offenses, -54%); Christmas Day dropped to 133 (-31%) and Thanksgiving to 150 (-22%)</td>
-              <td><span class="lou-delta down">Weather set 2-yr low</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Peak day &amp; 1st-of-month effect</th>
-              <td><strong>July 22</strong> highest (269), followed by Aug 24 (255), May 1 (253), and June 1 (250); 1st of month avg 221.2/day (10.6% reported &gt;7 days later)</td>
-              <td><strong>July 1</strong> (276), <strong>Aug 1</strong> (274), and <strong>June 1</strong> (273) top raw counts; <strong>May 30</strong> (272) top non-1st day; 1st of month avg 241.1/day (13.0% reported &gt;7 days later)</td>
-              <td><span class="lou-delta up">Retroactive 1st-of-month spike</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Geography (ZIPs &amp; divisions)</th>
-              <td>Top ZIPs: <strong>40203</strong> (4,933), <strong>40211</strong> (4,772), <strong>40214</strong> (4,623), <strong>40219</strong> (4,618), <strong>40202</strong> (4,078); 4th Div #1 (13,296)</td>
-              <td>Top ZIPs: <strong>40203</strong> (4,929), <strong>40211</strong> (4,889), <strong>40214</strong> (4,866), <strong>40219</strong> (4,796), <strong>40215</strong> (4,040); Downtown <strong>40202</strong> fell to #7 (3,256, -20.2%)</td>
-              <td><span class="lou-delta down">Downtown -20.2%</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Offense categories</th>
-              <td>Auto theft (5,769), vandalism (6,569), burglary (3,517), shoplifting (3,200), narcotics (2,747), robbery (971), homicide (153)</td>
-              <td>Auto theft (4,608, <strong>-20.1%</strong>), vandalism (6,166, -6.1%), burglary (3,113, -11.5%), shoplifting (4,112, <strong>+28.5%</strong>), narcotics (3,349, <strong>+21.9%</strong>), robbery (792, -18.4%), homicide (113, <strong>-26.1%</strong>)</td>
-              <td><span class="lou-delta down">Auto/violent down &middot; retail/drug up</span></td>
-            </tr>
-            <tr>
-              <th scope="row">Location categories</th>
-              <td>Single-family home (27,735), apartment/condo (8,945), street/highway (8,672), parking lot/garage (7,900), dept/discount store (1,941), grocery (818)</td>
-              <td>Single-family home (27,275, -1.7%), apartment/condo (9,843, +10.0%), street/highway (9,295, +7.2%), parking lot/garage (6,963, <strong>-11.9%</strong>), dept/discount store (2,322, +19.6%), grocery (1,420, <strong>+73.6%</strong>)</td>
-              <td><span class="lou-delta up">Parking -11.9% &middot; Grocery +73.6%</span></td>
-            </tr>
-          </tbody>
-        </table>
+      <h2 style="margin-top:36px">2024 vs. 2025 at a glance</h2>
+      <div class="lou-legend">
+        <span><i class="lou-swatch" style="background:color-mix(in srgb, var(--ink-soft) 48%, var(--paper));border:1px solid var(--line)"></i>2024 Baseline (69,876 offenses)</span>
+        <span><i class="lou-swatch" style="background:var(--accent)"></i>2025 Update / Increase (70,336 offenses)</span>
+        <span><i class="lou-swatch" style="background:#2fa356"></i>2025 Decrease</span>
       </div>
 
-      <h2 style="margin-top:44px">Interactive 2024 vs. 2025 explorer</h2>
-      <p>Switch tabs below to compare monthly seasonality, daily temperature bands, day-of-week shifts, geographic movement across ZIP codes and LMPD divisions, and offense/location category changes.</p>
+      <div class="lou-vgrid">
 
-      <div class="lou-panel">
-        <div class="lou-tabs" style="margin-top:0" role="tablist" aria-label="2024 vs 2025 crime comparison views">
-          <button type="button" class="lou-tab active" onclick="louShowTab(0)">1. Monthly &amp; Quarterly Seasonality</button>
-          <button type="button" class="lou-tab" onclick="louShowTab(1)">2. Temperature Bands &amp; Moon Phase</button>
-          <button type="button" class="lou-tab" onclick="louShowTab(2)">3. Day of Week Shift</button>
-          <button type="button" class="lou-tab" onclick="louShowTab(3)">4. Top ZIP Codes &amp; Divisions</button>
-          <button type="button" class="lou-tab" onclick="louShowTab(4)">5. Offense &amp; Location Shifts</button>
-        </div>
-
-        <div class="lou-legend">
-          <span><i class="lou-swatch" style="background:color-mix(in srgb, var(--ink-soft) 55%, var(--paper));border:1px solid var(--line)"></i>2024 (69,876 offenses)</span>
-          <span><i class="lou-swatch" style="background:var(--accent)"></i>2025 (70,336 offenses)</span>
-        </div>
-
-        <!-- TAB 0: MONTHLY & QUARTERLY -->
-        <div class="lou-pane active" id="lou-pane-0">
-          <div class="lou-chart-12" role="img" aria-label="Monthly offenses in 2024 versus 2025 from January to December">
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:81.5%" title="Jan 2024: 5,404"></div><div class="lou-bar y25" style="height:75.3%" title="Jan 2025: 4,995 (-7.6%)"></div></div><span class="lou-col-lbl">Jan</span><span class="lou-col-sub">-7.6%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:76.8%" title="Feb 2024: 5,094"></div><div class="lou-bar y25" style="height:72.6%" title="Feb 2025: 4,814 (-5.5%)"></div></div><span class="lou-col-lbl">Feb</span><span class="lou-col-sub">-5.5%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:82.3%" title="Mar 2024: 5,460"></div><div class="lou-bar y25" style="height:86.4%" title="Mar 2025: 5,730 (+4.9%)"></div></div><span class="lou-col-lbl">Mar</span><span class="lou-col-sub">+4.9%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:83.2%" title="Apr 2024: 5,518"></div><div class="lou-bar y25" style="height:87.8%" title="Apr 2025: 5,824 (+5.5%)"></div></div><span class="lou-col-lbl">Apr</span><span class="lou-col-sub">+5.5%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:97.4%" title="May 2024: 6,456"></div><div class="lou-bar y25" style="height:96.2%" title="May 2025: 6,381 (-1.2%)"></div></div><span class="lou-col-lbl">May</span><span class="lou-col-sub">-1.2%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:93.0%" title="Jun 2024: 6,167"></div><div class="lou-bar y25" style="height:93.1%" title="Jun 2025: 6,171 (+0.1%)"></div></div><span class="lou-col-lbl">Jun</span><span class="lou-col-sub">+0.1%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:98.5%" title="Jul 2024: 6,534"></div><div class="lou-bar y25" style="height:100%" title="Jul 2025: 6,631 (+1.5%)"></div></div><span class="lou-col-lbl">Jul</span><span class="lou-col-sub">+1.5%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:98.2%" title="Aug 2024: 6,509"></div><div class="lou-bar y25" style="height:99.2%" title="Aug 2025: 6,576 (+1.0%)"></div></div><span class="lou-col-lbl">Aug</span><span class="lou-col-sub">+1.0%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:89.1%" title="Sep 2024: 5,910"></div><div class="lou-bar y25" style="height:91.1%" title="Sep 2025: 6,038 (+2.2%)"></div></div><span class="lou-col-lbl">Sep</span><span class="lou-col-sub">+2.2%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:88.5%" title="Oct 2024: 5,868"></div><div class="lou-bar y25" style="height:87.3%" title="Oct 2025: 5,790 (-1.3%)"></div></div><span class="lou-col-lbl">Oct</span><span class="lou-col-sub">-1.3%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:82.2%" title="Nov 2024: 5,448"></div><div class="lou-bar y25" style="height:90.4%" title="Nov 2025: 5,996 (+10.1%)"></div></div><span class="lou-col-lbl">Nov</span><span class="lou-col-sub">+10.1%</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:83.1%" title="Dec 2024: 5,508"></div><div class="lou-bar y25" style="height:81.3%" title="Dec 2025: 5,390 (-2.1%)"></div></div><span class="lou-col-lbl">Dec</span><span class="lou-col-sub">-2.1%</span></div>
+        <!-- CARD 1: TEMPERATURE -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">01 &middot; Temperature vs. Crime</span>
+            <span class="lou-vpill same">Consistent &middot; r = 0.51</span>
           </div>
-          <p class="small"><strong>Quarterly totals:</strong> <strong>Q1</strong>: 15,958 (2024) vs. 15,539 (2025, -2.6%) &middot; <strong>Q2</strong>: 18,141 vs. 18,376 (+1.3%) &middot; <strong>Q3 (peak)</strong>: 18,953 vs. 19,245 (+1.5%) &middot; <strong>Q4</strong>: 16,824 vs. 17,176 (+2.1%). January and February 2025 dipped further during extended sub-freezing stretches.</p>
-        </div>
+          <h3>Hot 85&deg;F+ days drive +39% more daily crime than freezing days</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Bar chart of average daily offenses across five NOAA temperature bands in 2024 and 2025, rising from 152 per day below freezing to 211 per day at 85 degrees or hotter.">
+              <line class="axis" x1="36" y1="155" x2="428" y2="155"/>
+              <line class="axis" x1="36" y1="116" x2="428" y2="116" stroke-dasharray="2 3"/>
+              <line class="axis" x1="36" y1="77" x2="428" y2="77" stroke-dasharray="2 3"/>
+              <line class="axis" x1="36" y1="38" x2="428" y2="38" stroke-dasharray="2 3"/>
+              <text class="muted" x="30" y="158" font-size="10" text-anchor="end">120</text>
+              <text class="muted" x="30" y="119" font-size="10" text-anchor="end">150</text>
+              <text class="muted" x="30" y="80" font-size="10" text-anchor="end">180</text>
+              <text class="muted" x="30" y="41" font-size="10" text-anchor="end">210</text>
 
-        <!-- TAB 1: TEMPERATURE BANDS & MOON PHASE -->
-        <div class="lou-pane" id="lou-pane-1">
-          <div class="lou-chart-5" role="img" aria-label="Average daily offenses by daily high temperature band in 2024 and 2025">
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:73.0%" title="2024 (<32°F, 9 days): 154.2/day"></div><div class="lou-bar y25" style="height:71.8%" title="2025 (<32°F, 21 days): 151.6/day"></div></div><span class="lou-col-lbl">&lt;32&deg;F</span><span class="lou-col-sub">154.2 vs 151.6/d</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:81.7%" title="2024 (32–49°F, 48 days): 172.6/day"></div><div class="lou-bar y25" style="height:82.8%" title="2025 (32–49°F, 56 days): 174.9/day"></div></div><span class="lou-col-lbl">32&ndash;49&deg;F</span><span class="lou-col-sub">172.6 vs 174.9/d</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:85.8%" title="2024 (50–69°F, 99 days): 181.3/day"></div><div class="lou-bar y25" style="height:90.3%" title="2025 (50–69°F, 91 days): 190.8/day"></div></div><span class="lou-col-lbl">50&ndash;69&deg;F</span><span class="lou-col-sub">181.3 vs 190.8/d</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:93.0%" title="2024 (70–84°F, 118 days): 196.4/day"></div><div class="lou-bar y25" style="height:93.0%" title="2025 (70–84°F, 109 days): 196.5/day"></div></div><span class="lou-col-lbl">70&ndash;84&deg;F</span><span class="lou-col-sub">196.4 vs 196.5/d</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:98.2%" title="2024 (85°F+, 92 days): 207.4/day"></div><div class="lou-bar y25" style="height:100%" title="2025 (85°F+, 88 days): 211.2/day"></div></div><span class="lou-col-lbl">85&deg;F+</span><span class="lou-col-sub">207.4 vs 211.2/d</span></div>
+              <rect class="b24" x="52" y="110.5" width="22" height="44.5" rx="3"/>
+              <rect class="b25" x="76" y="113.9" width="22" height="41.1" rx="3"/>
+              <text class="muted" x="63" y="105" font-size="9.5" font-weight="600" text-anchor="middle">154</text>
+              <text class="acc" x="87" y="108" font-size="9.5" font-weight="700" text-anchor="middle">152</text>
+              <text x="75" y="172" font-size="10.5" font-weight="700" text-anchor="middle">&lt;32&deg;F</text>
+              <text class="muted" x="75" y="184" font-size="9" text-anchor="middle">Freezing</text>
+
+              <rect class="b24" x="128" y="86.6" width="22" height="68.4" rx="3"/>
+              <rect class="b25" x="152" y="83.6" width="22" height="71.4" rx="3"/>
+              <text class="muted" x="139" y="81" font-size="9.5" font-weight="600" text-anchor="middle">173</text>
+              <text class="acc" x="163" y="78" font-size="9.5" font-weight="700" text-anchor="middle">175</text>
+              <text x="151" y="172" font-size="10.5" font-weight="700" text-anchor="middle">32&ndash;49&deg;F</text>
+              <text class="muted" x="151" y="184" font-size="9" text-anchor="middle">Cold</text>
+
+              <rect class="b24" x="204" y="75.3" width="22" height="79.7" rx="3"/>
+              <rect class="b25" x="228" y="63.0" width="22" height="92.0" rx="3"/>
+              <text class="muted" x="215" y="70" font-size="9.5" font-weight="600" text-anchor="middle">181</text>
+              <text class="acc" x="239" y="57" font-size="9.5" font-weight="700" text-anchor="middle">191</text>
+              <text x="227" y="172" font-size="10.5" font-weight="700" text-anchor="middle">50&ndash;69&deg;F</text>
+              <text class="muted" x="227" y="184" font-size="9" text-anchor="middle">Mild</text>
+
+              <rect class="b24" x="280" y="55.7" width="22" height="99.3" rx="3"/>
+              <rect class="b25" x="304" y="55.5" width="22" height="99.5" rx="3"/>
+              <text class="muted" x="291" y="50" font-size="9.5" font-weight="600" text-anchor="middle">196</text>
+              <text class="acc" x="315" y="50" font-size="9.5" font-weight="700" text-anchor="middle">197</text>
+              <text x="303" y="172" font-size="10.5" font-weight="700" text-anchor="middle">70&ndash;84&deg;F</text>
+              <text class="muted" x="303" y="184" font-size="9" text-anchor="middle">Warm</text>
+
+              <rect class="b24" x="356" y="41.4" width="22" height="113.6" rx="3"/>
+              <rect class="b25" x="380" y="36.4" width="22" height="118.6" rx="3"/>
+              <text class="muted" x="367" y="36" font-size="9.5" font-weight="600" text-anchor="middle">207</text>
+              <text class="acc" x="391" y="31" font-size="9.5" font-weight="700" text-anchor="middle">211</text>
+              <text x="379" y="172" font-size="10.5" font-weight="700" text-anchor="middle">85&deg;F+</text>
+              <text class="muted" x="379" y="184" font-size="9" text-anchor="middle">Hot (+39%)</text>
+
+              <path d="M 75 112 L 379 38" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="5 4" opacity=".65"/>
+              <text class="acc" x="230" y="20" font-size="10.5" font-weight="700" text-anchor="middle">+0.73 to +0.76 offenses per +1&deg;F (r = 0.514 &amp; 0.511)</text>
+            </svg>
           </div>
-          <p class="small"><strong>Temperature vs. Full Moon &amp; Rain:</strong> Every step up in daily high temperature lifts daily crime volume in both years (<strong>r = 0.514</strong> in 2024; <strong>r = 0.511</strong> in 2025). By contrast, full-moon days averaged <strong>193.7/day</strong> vs. <strong>190.8/day</strong> in 2024 (+1.5%) and <strong>181.8/day</strong> vs. <strong>193.1/day</strong> in 2025 (-5.9%), and rainy days (&ge;0.1&Prime; precipitation) averaged <strong>185.8/day</strong> vs. <strong>195.0/day</strong> on dry days in 2025 (-4.7%).</p>
-        </div>
+          <p class="lou-vcap">NOAA daily high temperature explained ~26% of daily crime variance in both 2024 and 2025.</p>
+        </article>
 
-        <!-- TAB 2: DAY OF WEEK SHIFT -->
-        <div class="lou-pane" id="lou-pane-2">
-          <div class="lou-chart-7" role="img" aria-label="Offenses by day of week in 2024 versus 2025">
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:95.6%" title="Sun 2024: 10,055"></div><div class="lou-bar y25" style="height:98.0%" title="Sun 2025: 10,309 (+2.5%)"></div></div><span class="lou-col-lbl">Sun</span><span class="lou-col-sub">10,055 &rarr; 10,309</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:100%" title="Mon 2024: 10,519 (#1 in 2024)"></div><div class="lou-bar y25" style="height:94.9%" title="Mon 2025: 9,984 (#4 in 2025, -5.1%)"></div></div><span class="lou-col-lbl">Mon</span><span class="lou-col-sub">10,519 &rarr; 9,984</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:93.2%" title="Tue 2024: 9,803"></div><div class="lou-bar y25" style="height:93.1%" title="Tue 2025: 9,790 (-0.1%)"></div></div><span class="lou-col-lbl">Tue</span><span class="lou-col-sub">9,803 &rarr; 9,790</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:90.5%" title="Wed 2024: 9,522 (Lowest in 2024)"></div><div class="lou-bar y25" style="height:94.1%" title="Wed 2025: 9,900 (+4.0%)"></div></div><span class="lou-col-lbl">Wed</span><span class="lou-col-sub">9,522 &rarr; 9,900</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:91.8%" title="Thu 2024: 9,660"></div><div class="lou-bar y25" style="height:90.4%" title="Thu 2025: 9,509 (Lowest in 2025, -1.6%)"></div></div><span class="lou-col-lbl">Thu</span><span class="lou-col-sub">9,660 &rarr; 9,509</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:94.5%" title="Fri 2024: 9,941"></div><div class="lou-bar y25" style="height:98.8%" title="Fri 2025: 10,398 (#2 in 2025, +4.6%)"></div></div><span class="lou-col-lbl">Fri</span><span class="lou-col-sub">9,941 &rarr; 10,398</span></div>
-            <div class="lou-col"><div class="lou-pair"><div class="lou-bar y24" style="height:98.6%" title="Sat 2024: 10,376 (#2 in 2024)"></div><div class="lou-bar y25" style="height:99.3%" title="Sat 2025: 10,446 (#1 in 2025, +0.7%)"></div></div><span class="lou-col-lbl">Sat</span><span class="lou-col-sub">10,376 &rarr; 10,446</span></div>
+        <!-- CARD 2: FULL MOON & RAIN MYTH -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">02 &middot; Lunar &amp; Rain Effect</span>
+            <span class="lou-vpill same">Myth Debunked</span>
           </div>
-          <p class="small"><strong>What changed:</strong> In 2024, Mondays registered the highest total (<strong>10,519</strong>, helped by 53 Mondays in the 2024 leap calendar plus weekend incidents discovered Monday morning). In 2025, <strong>Saturday (10,446)</strong> and <strong>Friday (10,398)</strong> took the top two spots, with Sunday third (<strong>10,309</strong>).</p>
-        </div>
+          <h3>Full moons (-5.9%) and rainy days (-4.7%) don&rsquo;t spike crime</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal comparison chart showing full-moon days and rainy days sit right near or slightly below the 192 offenses per day annual baseline.">
+              <line class="dash-base" x1="375" y1="22" x2="375" y2="172"/>
+              <text class="muted" x="375" y="15" font-size="9.5" font-weight="700" text-anchor="middle">~192/day avg</text>
 
-        <!-- TAB 3: GEOGRAPHY (ZIPS & DIVISIONS) -->
-        <div class="lou-pane" id="lou-pane-3">
-          <div class="table-wrap" style="margin-top:0">
-            <table class="tiers">
-              <thead>
-                <tr>
-                  <th scope="col">ZIP Code / Area</th>
-                  <th scope="col">2024 Offenses</th>
-                  <th scope="col">2025 Offenses</th>
-                  <th scope="col">YoY Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><th scope="row">40203 &middot; Old Louisville / Russell / Downtown West</th><td>4,933 (#1)</td><td>4,929 (#1)</td><td><span class="lou-delta flat">-4 (-0.1%)</span></td></tr>
-                <tr><th scope="row">40211 &middot; Shawnee / Chickasaw / Park DuValle</th><td>4,772 (#2)</td><td>4,889 (#2)</td><td><span class="lou-delta up">+117 (+2.5%)</span></td></tr>
-                <tr><th scope="row">40214 &middot; Iroquois / Beechmont / South End</th><td>4,623 (#3)</td><td>4,866 (#3)</td><td><span class="lou-delta up">+243 (+5.3%)</span></td></tr>
-                <tr><th scope="row">40219 &middot; Okolona / Highview</th><td>4,618 (#4)</td><td>4,796 (#4)</td><td><span class="lou-delta up">+178 (+3.9%)</span></td></tr>
-                <tr><th scope="row">40215 &middot; Taylor Berry / Jacobs / Hazelwood</th><td>3,798 (#7)</td><td>4,040 (#5)</td><td><span class="lou-delta up">+242 (+6.4%)</span></td></tr>
-                <tr><th scope="row">40212 &middot; Portland / Russell</th><td>3,885 (#6)</td><td>3,859 (#6)</td><td><span class="lou-delta flat">-26 (-0.7%)</span></td></tr>
-                <tr><th scope="row">40202 &middot; Downtown / Central Business District</th><td>4,078 (#5)</td><td>3,256 (#7)</td><td><span class="lou-delta down">-822 (-20.2%)</span></td></tr>
-                <tr><th scope="row">40272 &middot; Valley Station (Southwest)</th><td>2,900 (#10)</td><td>3,234 (#8)</td><td><span class="lou-delta up">+334 (+11.5%)</span></td></tr>
-                <tr><th scope="row">40216 &middot; Shively / Pleasure Ridge Park</th><td>2,986 (#9)</td><td>3,199 (#9)</td><td><span class="lou-delta up">+213 (+7.1%)</span></td></tr>
-                <tr><th scope="row">40210 &middot; Algonquin / Park Hill</th><td>3,323 (#8)</td><td>3,174 (#10)</td><td><span class="lou-delta down">-149 (-4.5%)</span></td></tr>
-              </tbody>
-            </table>
+              <text x="138" y="44" font-size="10.5" font-weight="700" text-anchor="end">2024 Full Moon (12d)</text>
+              <text class="muted" x="138" y="56" font-size="9" text-anchor="end">vs. 354 other days (190.8)</text>
+              <rect class="b24" x="145" y="34" width="232.4" height="18" rx="3"/>
+              <text x="383" y="47" font-size="10" font-weight="700">193.7/d (+1.5%)</text>
+
+              <text x="138" y="84" font-size="10.5" font-weight="700" text-anchor="end">2025 Full Moon (12d)</text>
+              <text class="muted" x="138" y="96" font-size="9" text-anchor="end">vs. 353 other days (193.1)</text>
+              <rect class="bgrn" x="145" y="74" width="218.1" height="18" rx="3"/>
+              <text class="grn" x="369" y="87" font-size="10" font-weight="700">181.8/d (-5.9%)</text>
+
+              <text x="138" y="124" font-size="10.5" font-weight="700" text-anchor="end">2025 Rainy (&ge;0.1&Prime;, 90d)</text>
+              <text class="muted" x="138" y="136" font-size="9" text-anchor="end">vs. 275 dry days (195.0)</text>
+              <rect class="b24" x="145" y="114" width="223.0" height="18" rx="3"/>
+              <text class="muted" x="374" y="127" font-size="10" font-weight="700">185.8/d (-4.7%)</text>
+
+              <text x="138" y="164" font-size="10.5" font-weight="700" text-anchor="end">2025 Hot (85&deg;F+, 88d)</text>
+              <text class="muted" x="138" y="176" font-size="9" text-anchor="end">vs. 21 freezing days (151.6)</text>
+              <rect class="b25" x="145" y="154" width="253.4" height="18" rx="3"/>
+              <text class="acc" x="403" y="167" font-size="10" font-weight="700">211.2/d</text>
+            </svg>
           </div>
-          <p class="small"><strong>By LMPD Division (2024 &rarr; 2025):</strong> <strong>4th Division</strong> stayed #1 (13,296 &rarr; 13,161, -1.0%), while <strong>3rd Division</strong> (9,917 &rarr; 10,407, +4.9%) overtook <strong>1st Division</strong> (10,755 &rarr; 10,095, -6.1%) for #2. The East End&rsquo;s <strong>8th Division</strong> posted the largest percentage increase (4,632 &rarr; 5,191, +12.1%).</p>
-        </div>
+          <p class="lou-vcap">Across all 24 full moons in 2024&ndash;2025, full-moon days averaged 187.7/day vs. 191.9/day on other days.</p>
+        </article>
 
-        <!-- TAB 4: OFFENSE & LOCATION SHIFTS -->
-        <div class="lou-pane" id="lou-pane-4">
-          <div class="table-wrap" style="margin-top:0">
-            <table class="tiers">
-              <thead>
-                <tr>
-                  <th scope="col">Offense / Location Category</th>
-                  <th scope="col">2024 Count</th>
-                  <th scope="col">2025 Count</th>
-                  <th scope="col">YoY Change &amp; Context</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><th scope="row">14 Auto Theft (Offense)</th><td>5,769</td><td>4,608</td><td><span class="lou-delta down">-1,161 (-20.1%) &middot; Post-2024 vehicle theft wave cooldown</span></td></tr>
-                <tr><th scope="row">13 Burglary (Offense)</th><td>3,517</td><td>3,113</td><td><span class="lou-delta down">-404 (-11.5%) &middot; Residential &amp; commercial break-ins down</span></td></tr>
-                <tr><th scope="row">24 Vandalism / Criminal Mischief</th><td>6,569</td><td>6,166</td><td><span class="lou-delta down">-403 (-6.1%) &middot; Property damage reports declined</span></td></tr>
-                <tr><th scope="row">8 Robbery (Offense)</th><td>971</td><td>792</td><td><span class="lou-delta down">-179 (-18.4%) &middot; Street &amp; commercial robberies down</span></td></tr>
-                <tr><th scope="row">1 Homicide (Offense)</th><td>153</td><td>113</td><td><span class="lou-delta down">-40 (-26.1%) &middot; Significant drop in criminal homicide reports</span></td></tr>
-                <tr><th scope="row">18 Shoplifting (Offense)</th><td>3,200</td><td>4,112</td><td><span class="lou-delta up">+912 (+28.5%) &middot; Largest single-category increase in 2025</span></td></tr>
-                <tr><th scope="row">34 Narcotics &amp; 35 Narcotics Equip</th><td>3,658</td><td>4,444</td><td><span class="lou-delta up">+786 (+21.5%) &middot; Proactive drug enforcement &amp; seizures</span></td></tr>
-                <tr><th scope="row">55 Trespassing (Offense)</th><td>584</td><td>817</td><td><span class="lou-delta up">+233 (+39.9%) &middot; Higher commercial &amp; multifamily enforcement</span></td></tr>
-                <tr><th scope="row">Parking Lot / Garage (Location)</th><td>7,900</td><td>6,963</td><td><span class="lou-delta down">-937 (-11.9%) &middot; Mirrors auto theft &amp; Downtown 40202 drop</span></td></tr>
-                <tr><th scope="row">Grocery / Supermarket (Location)</th><td>818</td><td>1,420</td><td><span class="lou-delta up">+602 (+73.6%) &middot; Driven by retail shoplifting surge</span></td></tr>
-                <tr><th scope="row">Department / Discount Store (Location)</th><td>1,941</td><td>2,322</td><td><span class="lou-delta up">+381 (+19.6%) &middot; Retail loss reporting increase</span></td></tr>
-                <tr><th scope="row">Apartment / Condo (Location)</th><td>8,945</td><td>9,843</td><td><span class="lou-delta up">+898 (+10.0%) &middot; Multifamily up while single-family dipped 1.7%</span></td></tr>
-              </tbody>
-            </table>
+        <!-- CARD 3: DIVERGING OFFENSE & VENUE SHIFTS -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">03 &middot; Offense &amp; Venue Mix</span>
+            <span class="lou-vpill shift">Major Structural Shift</span>
           </div>
-          <p class="small"><strong>Completion rate:</strong> Completed offenses accounted for <strong>76.3%</strong> of reports in 2024 (53,297 completed vs. 16,579 attempted/non-completed) and <strong>74.6%</strong> in 2025 (52,485 completed vs. 17,851 attempted/non-completed).</p>
-        </div>
-      </div>
+          <h3>Auto theft &amp; homicide plunged; retail shoplifting surged</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 205" role="img" aria-label="Diverging bar chart of 2024 to 2025 percentage changes: Homicide down 26.1%, Auto Theft down 20.1%, Robbery down 18.4%, Parking Lots down 11.9%, Burglary down 11.5%, while Narcotics rose 21.5%, Shoplifting rose 28.5%, Trespassing rose 39.9%, and Grocery Stores rose 73.6%.">
+              <line class="axis" x1="215" y1="18" x2="215" y2="195" stroke-width="1.5"/>
+              <text class="grn" x="145" y="13" font-size="9.5" font-weight="700" text-anchor="middle">&larr; 2025 Decreases</text>
+              <text class="acc" x="295" y="13" font-size="9.5" font-weight="700" text-anchor="middle">2025 Increases &rarr;</text>
 
-      <div class="cols" style="margin-top:40px">
-        <section>
-          <h2>What held steady across both years</h2>
-          <ul>
-            <li><strong>Heat drives crime up linearly; rain barely matters:</strong> Daily maximum temperature explained ~26% of daily variance in both years (r = 0.514 and r = 0.511), adding roughly 3 more offenses for every +4&deg;F warming, while rainy days (&ge;0.1&Prime;) moved daily totals by less than 5%.</li>
-            <li><strong>Full moons don&rsquo;t move the needle:</strong> Across 24 full moons in 2024&ndash;2025, full-moon days averaged 187.7 offenses/day versus 191.9/day on all other days.</li>
-            <li><strong>Summer Q3 peak, winter Q1 trough:</strong> July and August were the #1 and #2 months in both years, while February was the lowest month in both years.</li>
-            <li><strong>Geographic concentration:</strong> The top four ZIP codes (<code>40203</code>, <code>40211</code>, <code>40214</code>, <code>40219</code>) held the exact same 1&ndash;4 rank order in both 2024 and 2025, accounting for 27% of all citywide offenses.</li>
-            <li><strong>Retroactive 1st-of-the-month reporting lag:</strong> In both years, the 1st of the month averaged 16&ndash;26% more offenses than days 2&ndash;31 because delayed reports (13.0% reported &gt;7 days later in 2025 vs. 3.9% on other days) frequently default to the 1st.</li>
-          </ul>
-        </section>
-        <section>
-          <h2>What shifted in 2025</h2>
-          <ul>
-            <li><strong>Auto theft, homicide, robbery, and burglary dropped sharply:</strong> Auto theft fell 20.1% (-1,161), homicide fell 26.1% (-40), robbery fell 18.4% (-179), and burglary fell 11.5% (-404), while retail shoplifting (+28.5%), narcotics (+21.9%), and trespassing (+39.9%) surged.</li>
-            <li><strong>Venue mix moved from parking lots to retail aisles:</strong> Parking lot and garage offenses dropped 11.9% (-937), while grocery/supermarket incidents rose 73.6% (+602) and department/discount stores rose 19.6% (+381).</li>
-            <li><strong>Downtown dropped while outer-ring ZIPs grew:</strong> Downtown (<code>40202</code>) fell by 822 offenses (-20.2%), while Valley Station (<code>40272</code>, +11.5%), Shively (<code>40216</code>, +7.1%), and LMPD&rsquo;s 8th Division (+12.1%) saw higher volume.</li>
-            <li><strong>Weekend peak replaced the Monday peak:</strong> Saturday and Friday became the busiest days of the week in 2025, while Monday fell from #1 to #4 (-5.1%).</li>
-            <li><strong>Severe winter weather beat holidays for the quietest day:</strong> While Thanksgiving (150) and Christmas (133) stayed quiet in 2025, the January 6, 2025 snow and ice storm brought citywide reports down to just 88 offenses.</li>
-          </ul>
-        </section>
+              <rect class="bgrn" x="157" y="22" width="58" height="14" rx="2"/>
+              <text x="152" y="33" font-size="9.5" font-weight="700" text-anchor="end">Homicide -26.1%</text>
+              <text class="muted" x="221" y="33" font-size="9">153 &rarr; 113 (-40)</text>
+
+              <rect class="bgrn" x="170" y="42" width="45" height="14" rx="2"/>
+              <text x="165" y="53" font-size="9.5" font-weight="700" text-anchor="end">Auto Theft -20.1%</text>
+              <text class="muted" x="221" y="53" font-size="9">5,769 &rarr; 4,608 (-1,161)</text>
+
+              <rect class="bgrn" x="174" y="62" width="41" height="14" rx="2"/>
+              <text x="169" y="73" font-size="9.5" font-weight="700" text-anchor="end">Robbery -18.4%</text>
+              <text class="muted" x="221" y="73" font-size="9">971 &rarr; 792 (-179)</text>
+
+              <rect class="bgrn" x="188" y="82" width="27" height="14" rx="2"/>
+              <text x="183" y="93" font-size="9.5" font-weight="700" text-anchor="end">Parking Lots -11.9%</text>
+              <text class="muted" x="221" y="93" font-size="9">7,900 &rarr; 6,963 (-937)</text>
+
+              <rect class="bgrn" x="189" y="102" width="26" height="14" rx="2"/>
+              <text x="184" y="113" font-size="9.5" font-weight="700" text-anchor="end">Burglary -11.5%</text>
+              <text class="muted" x="221" y="113" font-size="9">3,517 &rarr; 3,113 (-404)</text>
+
+              <rect class="b25" x="215" y="122" width="48" height="14" rx="2"/>
+              <text class="muted" x="209" y="133" font-size="9" text-anchor="end">3,658 &rarr; 4,444 (+786)</text>
+              <text class="acc" x="268" y="133" font-size="9.5" font-weight="700">Narcotics +21.5%</text>
+
+              <rect class="b25" x="215" y="142" width="63" height="14" rx="2"/>
+              <text class="muted" x="209" y="153" font-size="9" text-anchor="end">3,200 &rarr; 4,112 (+912)</text>
+              <text class="acc" x="283" y="153" font-size="9.5" font-weight="700">Shoplifting +28.5%</text>
+
+              <rect class="b25" x="215" y="162" width="88" height="14" rx="2"/>
+              <text class="muted" x="209" y="173" font-size="9" text-anchor="end">584 &rarr; 817 (+233)</text>
+              <text class="acc" x="308" y="173" font-size="9.5" font-weight="700">Trespassing +39.9%</text>
+
+              <rect class="b25" x="215" y="182" width="135" height="14" rx="2"/>
+              <text class="muted" x="209" y="193" font-size="9" text-anchor="end">818 &rarr; 1,420 (+602)</text>
+              <text class="acc" x="355" y="193" font-size="9.5" font-weight="700">Grocery +73.6%</text>
+            </svg>
+          </div>
+          <p class="lou-vcap">Total volume was flat (+0.7%), but vehicle and violent crime fell while retail and drug reports rose.</p>
+        </article>
+
+        <!-- CARD 4: SEASONALITY & DAY OF WEEK -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">04 &middot; Seasonality &amp; Day of Week</span>
+            <span class="lou-vpill shift">Mon &rarr; Fri/Sat Shift</span>
+          </div>
+          <h3>Q3 summer peak held; busiest day shifted from Monday to weekend</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Left: 12-month curve peaking in July and August in both years. Right: Day of week bars showing Monday #1 in 2024 shifting to Saturday #1 and Friday #2 in 2025.">
+              <line class="axis" x1="224" y1="15" x2="224" y2="182"/>
+
+              <text x="114" y="16" font-size="10" font-weight="700" text-anchor="middle">Monthly Curve (Q3 Peak)</text>
+              <line class="axis" x1="18" y1="145" x2="210" y2="145"/>
+              <polyline fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="4 3"
+                points="20,100 37,115 54,97 71,94 88,47 105,62 122,43 139,45 156,75 173,77 190,98 207,95"/>
+              <polyline fill="none" stroke="var(--accent)" stroke-width="2.4"
+                points="20,120 37,129 54,84 71,79 88,51 105,61 122,38 139,41 156,68 173,81 190,70 207,101"/>
+              <circle cx="122" cy="38" r="3.5" class="acc"/>
+              <circle cx="37" cy="129" r="3.5" class="acc"/>
+              <text class="acc" x="126" y="32" font-size="9" font-weight="700" text-anchor="middle">Jul Peak (6.6k)</text>
+              <text class="muted" x="45" y="141" font-size="8.5" text-anchor="middle">Feb Low (4.8k)</text>
+              <text class="muted" x="20" y="158" font-size="8.5" text-anchor="middle">J</text>
+              <text class="muted" x="54" y="158" font-size="8.5" text-anchor="middle">M</text>
+              <text class="muted" x="88" y="158" font-size="8.5" text-anchor="middle">M</text>
+              <text class="acc" x="122" y="158" font-size="8.5" font-weight="700" text-anchor="middle">J</text>
+              <text class="muted" x="156" y="158" font-size="8.5" text-anchor="middle">S</text>
+              <text class="muted" x="190" y="158" font-size="8.5" text-anchor="middle">N</text>
+              <text class="muted" x="114" y="176" font-size="9" text-anchor="middle">Q3: 18,953 (&rsquo;24) &middot; 19,245 (&rsquo;25)</text>
+
+              <text x="334" y="16" font-size="10" font-weight="700" text-anchor="middle">Day of Week (2024 vs. 2025)</text>
+              <line class="axis" x1="234" y1="145" x2="434" y2="145"/>
+              <rect class="b24" x="238" y="71" width="9" height="74" rx="2"/><rect class="b25" x="248" y="53" width="9" height="92" rx="2"/>
+              <text class="muted" x="247" y="158" font-size="8.5" text-anchor="middle">Sun</text>
+              <rect class="b24" x="266" y="39" width="9" height="106" rx="2"/><rect class="b25" x="276" y="76" width="9" height="69" rx="2"/>
+              <text x="270" y="34" font-size="8" font-weight="700" text-anchor="middle">&rsquo;24 #1</text>
+              <text x="275" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Mon</text>
+              <rect class="b24" x="294" y="89" width="9" height="56" rx="2"/><rect class="b25" x="304" y="90" width="9" height="55" rx="2"/>
+              <text class="muted" x="303" y="158" font-size="8.5" text-anchor="middle">Tue</text>
+              <rect class="b24" x="322" y="108" width="9" height="37" rx="2"/><rect class="b25" x="332" y="82" width="9" height="63" rx="2"/>
+              <text class="muted" x="331" y="158" font-size="8.5" text-anchor="middle">Wed</text>
+              <rect class="b24" x="350" y="99" width="9" height="46" rx="2"/><rect class="b25" x="360" y="109" width="9" height="36" rx="2"/>
+              <text class="muted" x="359" y="158" font-size="8.5" text-anchor="middle">Thu</text>
+              <rect class="b24" x="378" y="79" width="9" height="66" rx="2"/><rect class="b25" x="388" y="47" width="9" height="98" rx="2"/>
+              <text class="acc" x="387" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Fri</text>
+              <rect class="b24" x="406" y="49" width="9" height="96" rx="2"/><rect class="b25" x="416" y="44" width="9" height="101" rx="2"/>
+              <text class="acc" x="415" y="38" font-size="8" font-weight="700" text-anchor="middle">&rsquo;25 #1&ndash;2</text>
+              <text class="acc" x="415" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Sat</text>
+              <text class="muted" x="334" y="176" font-size="9" text-anchor="middle">Sat (10,446) &amp; Fri (10,398) led 2025</text>
+            </svg>
+          </div>
+          <p class="lou-vcap">July and August were #1 and #2 in both years, while 2025 volume shifted from Monday (-5.1%) to Friday/Saturday.</p>
+        </article>
+
+        <!-- CARD 5: GEOGRAPHY (ZIPS & DIVISIONS) -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">05 &middot; Geography &amp; ZIP Codes</span>
+            <span class="lou-vpill low">Downtown -20.2%</span>
+          </div>
+          <h3>Top 4 ZIPs held steady; Downtown dropped -20.2% while outer ring grew</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal bar comparison of top Louisville ZIP codes: 40203, 40211, 40214, and 40219 stayed #1 to #4, while Downtown 40202 fell 20.2% and outer-ring 40272 and 8th Division rose over 11%.">
+              <text x="136" y="28" font-size="9.5" font-weight="700" text-anchor="end">40203 (Old Lou / West)</text>
+              <rect class="b25" x="142" y="17" width="197" height="14" rx="2"/>
+              <text x="345" y="28" font-size="9" font-weight="600">4,929 (-0.1%)</text>
+
+              <text x="136" y="50" font-size="9.5" font-weight="700" text-anchor="end">40211 (Shawnee / West)</text>
+              <rect class="b25" x="142" y="39" width="196" height="14" rx="2"/>
+              <text x="344" y="50" font-size="9" font-weight="600">4,889 (+2.5%)</text>
+
+              <text x="136" y="72" font-size="9.5" font-weight="700" text-anchor="end">40214 (Iroquois / South)</text>
+              <rect class="b25" x="142" y="61" width="195" height="14" rx="2"/>
+              <text x="343" y="72" font-size="9" font-weight="600">4,866 (+5.3%)</text>
+
+              <text x="136" y="94" font-size="9.5" font-weight="700" text-anchor="end">40219 (Okolona / South)</text>
+              <rect class="b25" x="142" y="83" width="192" height="14" rx="2"/>
+              <text x="340" y="94" font-size="9" font-weight="600">4,796 (+3.9%)</text>
+
+              <text x="136" y="116" font-size="9.5" font-weight="700" text-anchor="end">40215 (Taylor Berry)</text>
+              <rect class="b25" x="142" y="105" width="162" height="14" rx="2"/>
+              <text class="acc" x="310" y="116" font-size="9" font-weight="700">4,040 (+6.4%)</text>
+
+              <text x="136" y="138" font-size="9.5" font-weight="700" text-anchor="end">40202 (Downtown CBD)</text>
+              <rect class="b24" x="142" y="127" width="163" height="14" rx="2"/>
+              <rect class="bgrn" x="142" y="127" width="130" height="14" rx="2"/>
+              <text class="grn" x="311" y="138" font-size="9" font-weight="700">3,256 (-20.2% / -822)</text>
+
+              <text x="136" y="160" font-size="9.5" font-weight="700" text-anchor="end">40272 (Valley Station)</text>
+              <rect class="b25" x="142" y="149" width="129" height="14" rx="2"/>
+              <text class="acc" x="277" y="160" font-size="9" font-weight="700">3,234 (+11.5% / +334)</text>
+
+              <text x="136" y="182" font-size="9.5" font-weight="700" text-anchor="end">LMPD 8th Div (East End)</text>
+              <rect class="b25" x="142" y="171" width="208" height="14" rx="2"/>
+              <text class="acc" x="355" y="182" font-size="9" font-weight="700">5,191 (+12.1%)</text>
+            </svg>
+          </div>
+          <p class="lou-vcap">The top 4 ZIPs kept 27% of all crime in the exact same order, while Downtown fell from #5 to #7.</p>
+        </article>
+
+        <!-- CARD 6: EXTREME LOWS & 1ST-OF-MONTH SPIKE -->
+        <article class="lou-vcard">
+          <div class="lou-vcard-top">
+            <span class="lou-vkicker">06 &middot; Daily Extremes &amp; Lag</span>
+            <span class="lou-vpill low">Jan 6 Blizzard: 88</span>
+          </div>
+          <h3>Blizzard set a 2-year low (88); delayed reports spike the 1st of month</h3>
+          <div class="lou-vsvg-wrap">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Comparison of extreme low and high days against the 192 per day average: Jan 6 2025 winter storm at 88, Thanksgiving 2024 at 112, Christmas 2025 at 133, 1st-of-month average at 241.1, May 30 2025 at 272, and July 1 2025 at 276.">
+              <line class="dash-base" x1="316" y1="18" x2="316" y2="184"/>
+              <text class="muted" x="316" y="13" font-size="9" font-weight="700" text-anchor="middle">192/day avg</text>
+
+              <text x="144" y="34" font-size="9.5" font-weight="700" text-anchor="end">Jan 6, 2025 (7&Prime;+ Snow/Ice)</text>
+              <rect class="bgrn" x="150" y="23" width="76" height="14" rx="2"/>
+              <text class="grn" x="232" y="34" font-size="9.5" font-weight="700">88 (-54% &middot; 2-yr low)</text>
+
+              <text x="144" y="58" font-size="9.5" font-weight="700" text-anchor="end">Thanksgiving &rsquo;24 / &rsquo;25</text>
+              <rect class="bgrn" x="150" y="47" width="97" height="14" rx="2"/>
+              <text class="grn" x="253" y="58" font-size="9.5" font-weight="700">112 (&rsquo;24) &middot; 150 (&rsquo;25)</text>
+
+              <text x="144" y="82" font-size="9.5" font-weight="700" text-anchor="end">Christmas Day &rsquo;25 / &rsquo;24</text>
+              <rect class="bgrn" x="150" y="71" width="115" height="14" rx="2"/>
+              <text class="grn" x="271" y="82" font-size="9.5" font-weight="700">133 (&rsquo;25) &middot; 184 (&rsquo;24)</text>
+
+              <text x="144" y="108" font-size="9.5" font-weight="700" text-anchor="end">Days 2&ndash;31 Avg (2025)</text>
+              <rect class="b24" x="150" y="97" width="166" height="14" rx="2"/>
+              <text class="muted" x="322" y="108" font-size="9" font-weight="600">191.1/d (3.9% &gt;7d lag)</text>
+
+              <text x="144" y="134" font-size="9.5" font-weight="700" text-anchor="end">1st of Month Avg (2025)</text>
+              <rect class="b25" x="150" y="123" width="209" height="14" rx="2"/>
+              <text class="acc" x="364" y="134" font-size="9" font-weight="700">241.1/d (+26%)</text>
+
+              <text x="144" y="158" font-size="9.5" font-weight="700" text-anchor="end">Jul 22 &rsquo;24 / May 30 &rsquo;25</text>
+              <rect class="b25" x="150" y="147" width="236" height="14" rx="2"/>
+              <text class="acc" x="391" y="158" font-size="9" font-weight="700">269 / 272</text>
+
+              <text x="144" y="182" font-size="9.5" font-weight="700" text-anchor="end">Jul 1 / Aug 1 / Jun 1 &rsquo;25</text>
+              <rect class="b25" x="150" y="171" width="239" height="14" rx="2"/>
+              <text class="acc" x="394" y="182" font-size="9" font-weight="700">276 / 274 / 273</text>
+            </svg>
+          </div>
+          <p class="lou-vcap">13.0% of offenses dated on the 1st were reported &gt;7 days later (vs. 3.9% on other days), inflating 1st-of-month counts.</p>
+        </article>
+
       </div>
 
       <h2 style="margin-top:44px">2024 interactive Tableau workbook</h2>
       <p>Explore the original 2024 Tableau Public story and ZIP-code heat map below.</p>
 {tableau("viz-lou", "Louisville_KY_Crime_Stats/LouisvilleCrime", "Louisville, KY Crime Info")}"""
 
-LOU_SCRIPT = """
-  <script>
-    function louShowTab(idx) {
-      var tabs = document.querySelectorAll(".lou-tab");
-      var panes = document.querySelectorAll(".lou-pane");
-      for (var i = 0; i < tabs.length; i++) {
-        tabs[i].classList.toggle("active", i === idx);
-        panes[i].classList.toggle("active", i === idx);
-      }
-    }
-  </script>"""
-
 detail_page(by["louisville-crime"],
-  "I analyzed two full years of Louisville Metro Police Department (LMPD) incident reports (69,876 offenses occurring in 2024 and 70,336 in 2025) alongside daily NOAA weather observations and lunar phases to see which crime patterns hold steady year over year and where 2025 shifted.",
+  "Two-year comparison of 140,212 Louisville Metro Police Department (LMPD) incident reports (69,876 offenses in 2024 vs. 70,336 in 2025) paired with daily NOAA weather observations and lunar phases.",
   LOU_SECTIONS,
-  extra_foot=LOU_SCRIPT + tableau_script("viz-lou"))
+  extra_foot=tableau_script("viz-lou"))
 
 # Crestwood
 CHH_SECTIONS = r'''      <style>
@@ -2291,6 +2329,7 @@ def _page_text(path):
 # the project page when its facts change.
 NOTES_OVERRIDE = {
     'buffalo-trace-tracker': "Buffalo Trace Distillery rotates allocated bourbons (Blanton's, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard on davidcreason.com/projects/buffalo-trace-tracker/.",
+    'louisville-crime': "Two-year comparison of 140,212 Louisville Metro Police Department (LMPD) incident reports (69,876 offenses across 57,246 unique incidents in 2024 vs. 70,336 offenses across 56,453 unique incidents in 2025, +0.7% YoY) paired with daily NOAA weather observations (station USC00154958) and lunar phases.\n\nKey 2024 vs. 2025 Findings:\n- Temperature Correlation (Consistent): r = 0.514 in 2024 (+0.73 offenses per +1°F) and r = 0.511 in 2025 (+0.76 offenses per +1°F). In 2025, daily offenses rose from 151.6/day below 32°F (154.2 in 2024) to 174.9/day at 32–49°F, 190.8/day at 50–69°F, 196.5/day at 70–84°F, and 211.2/day at 85°F+ (+39.3% over freezing).\n- Lunar & Rain Effect (Consistent — Myth Debunked): The 12 full-moon days averaged 193.7/day vs. 190.8/day in 2024 (+1.5%) and 181.8/day vs. 193.1/day in 2025 (-5.9%). Rainy days (>=0.1 in.) averaged 185.8/day vs. 195.0/day on dry days in 2025 (-4.7%).\n- Offense & Venue Mix (Major Shift): Auto theft fell -20.1% (5,769 → 4,608, -1,161), homicide fell -26.1% (153 → 113, -40), robbery fell -18.4% (971 → 792), burglary fell -11.5% (3,517 → 3,113), and parking lot/garage offenses fell -11.9% (7,900 → 6,963). Meanwhile, retail shoplifting surged +28.5% (3,200 → 4,112, +912), grocery/supermarket incidents rose +73.6% (818 → 1,420), narcotics rose +21.5% (3,658 → 4,444), and trespassing rose +39.9% (584 → 817).\n- Seasonality & Day of Week: Q3 led both years (18,953 in 2024; 19,245 in 2025), with July #1 (6,534 and 6,631) and February lowest (5,094 and 4,814). Busiest day of the week shifted from Monday in 2024 (10,519) to Saturday (10,446) and Friday (10,398) in 2025.\n- Geography: Top 4 ZIPs held steady in both years: 40203 (4,933 → 4,929), 40211 (4,772 → 4,889), 40214 (4,623 → 4,866), and 40219 (4,618 → 4,796). Downtown 40202 dropped -20.2% (4,078 → 3,256, #5 to #7), while outer-ring 40272 (+11.5%, 2,900 → 3,234) and LMPD 8th Division (+12.1%, 4,632 → 5,191) grew.\n- Daily Extremes & 1st-of-Month Lag: Jan 6, 2025 (7+ inch snow and ice storm) set a two-year low of 88 offenses (-54%), beating Thanksgiving (112 in 2024; 150 in 2025) and Christmas (133 in 2025). Raw peak dates in 2025 fell on July 1 (276), Aug 1 (274), and June 1 (273), followed by May 30 (272) — reflecting delayed reports that default to the 1st of the month (241.1/day avg on the 1st vs. 191.1/day on days 2–31; 13.0% reported >7 days later vs. 3.9%).",
     'crestwood-home-hearth': 'How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.\n\nKey Growth & Percentage Highlights:\n- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.\n- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.\n- Customer & Ticket Velocity: +419% customer base expansion and +171% expansion in trailing 12-month average ticket value.\n- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.\n- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.\n- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.\n\nOpen full screen on Tableau Public →',
 }
 
