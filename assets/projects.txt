@@ -1,23 +1,23 @@
 DAVID CREASON'S PROJECTS (generated from davidcreason.com/projects; the project pages are the source of truth)
 
-=== DuraTech Chimney Planner ===
+=== Hearth Venting Planner ===
 Status: Active / current (Live · in development), 2026
 Project page: https://www.davidcreason.com/projects/chimney-planner/
 Links: Launch the planner: https://project-creason.github.io/chimney_planner/
-Tags: NFPA 211 checked, Part numbers & quantities, Flags problems early, CSV export
-Summary: Enter your home's measurements and get a complete DuraVent DuraTech chimney parts list that follows the manufacturer's installation rules and NFPA 211.
+Tags: NFPA 211 checked, Multi-manufacturer, Part numbers & quantities, Flags problems early, CSV export
+Summary: Enter your home's measurements, pick a manufacturer and venting system (DuraVent DuraTech, ICC EXCEL), and get a complete parts list that follows the manufacturer's installation rules and NFPA 211.
 
-Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: describe the installation and it returns every part you need, with quantities and part numbers.
+Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: pick a manufacturer and venting system, describe the installation, and it returns every part you need, with quantities and part numbers.
 
 What it does
 
+- Lets you choose a manufacturer and venting system (currently DuraVent DuraTech and ICC EXCEL, 5″–8″) and switches rules and parts automatically while keeping your measurements.
+
 - Walks you through the appliance, ceiling, attic, and roof measurements, or loads a worked example to start from.
 
-- Applies the strictest rule among the DuraVent guideline, NFPA 211, and your appliance manual’s own limits.
+- Applies the strictest rule among the manufacturer’s installation manual, NFPA 211, and your appliance manual’s own limits.
 
-- Builds the parts list by location (ceiling, chimney pipe, attic, roof, top) and flags anything to double-check.
-
-- Exports the list to CSV for ordering.
+- Builds the parts list by location (ceiling, chimney pipe, attic, roof, top), flags anything to double-check, and exports to CSV or a priced dealer order.
 
 Why it matters
 
@@ -27,7 +27,7 @@ Why it matters
 
 - Catches problems before anything is bought, like an offset that won’t fit in the attic or a chase too wide for stock flashing.
 
-- Gets the order right the first time, with exact part numbers and quantities.
+- Gets the order right the first time, with exact part numbers, quantities, and optional retailer/distributor SKU and price mapping.
 
 - Works for any stove or fireplace: you enter what its manual requires, so the planner never falls behind new models.
 
@@ -37,7 +37,7 @@ Built for
 
 - Installers and sweeps quoting jobs quickly and consistently.
 
-- Hearth retailers building a complete, correct order with a customer at the counter.
+- Hearth retailers and distributors building a complete, priced order with their own SKUs at the counter.
 
 Coming next
 
@@ -45,7 +45,7 @@ Coming next
 
 - Free-standing stove placement and stovepipe
 
-- The rest of DuraVent’s residential product lines
+- Additional residential chimney, pellet, and direct-vent product lines
 
 - AI that reads an appliance manual and fills in its requirements
 

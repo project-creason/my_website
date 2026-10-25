@@ -48,14 +48,14 @@ TURNSTILE_SITE_KEY = "0x4AAAAAAFcITuj8hmNc4RBF"
 PROJECTS = [
     {
         "slug": "chimney-planner",
-        "title": "DuraTech Chimney Planner",
+        "title": "Hearth Venting Planner",
         "status": "active",
         "badge": "Live · in development",
         "year": "2026",
-        "summary": "Enter your home's measurements and get a complete DuraVent DuraTech chimney parts list that follows the manufacturer's installation rules and NFPA 211.",
-        "tags": ["NFPA 211 checked", "Part numbers & quantities", "Flags problems early", "CSV export"],
+        "summary": "Enter your home's measurements, pick a manufacturer and venting system (DuraVent DuraTech, ICC EXCEL), and get a complete parts list that follows the manufacturer's installation rules and NFPA 211.",
+        "tags": ["NFPA 211 checked", "Multi-manufacturer", "Part numbers & quantities", "Flags problems early", "CSV export"],
         "image": "/assets/projects/chimney-planner.jpg",
-        "image_alt": "Screenshot of the DuraTech Chimney Planner form and generated parts list",
+        "image_alt": "Screenshot of the Hearth Venting Planner form and generated parts list",
         "links": [
             ("Launch the planner", "https://project-creason.github.io/chimney_planner/", True),
         ],
@@ -510,16 +510,16 @@ page("/projects/", "Projects", "Active and past projects by David Creason: web t
 
 # Chimney planner detail
 detail_page(by["chimney-planner"],
-  "Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: describe the installation and it returns every part you need, with quantities and part numbers.",
+  "Planning a wood-stove or fireplace chimney means cross-referencing a thick manufacturer catalog, clearance rules, and NFPA 211. This planner does it for you: pick a manufacturer and venting system, describe the installation, and it returns every part you need, with quantities and part numbers.",
   """      <img class="hero-shot" src="/assets/projects/chimney-planner.jpg" alt="The planner's form and generated parts list">
       <div class="cols">
         <section>
           <h2>What it does</h2>
           <ul>
+            <li>Lets you choose a manufacturer and venting system (currently DuraVent DuraTech and ICC EXCEL, 5&Prime;&ndash;8&Prime;) and switches rules and parts automatically while keeping your measurements.</li>
             <li>Walks you through the appliance, ceiling, attic, and roof measurements, or loads a worked example to start from.</li>
-            <li>Applies the strictest rule among the DuraVent guideline, NFPA 211, and your appliance manual&rsquo;s own limits.</li>
-            <li>Builds the parts list by location (ceiling, chimney pipe, attic, roof, top) and flags anything to double-check.</li>
-            <li>Exports the list to CSV for ordering.</li>
+            <li>Applies the strictest rule among the manufacturer&rsquo;s installation manual, NFPA 211, and your appliance manual&rsquo;s own limits.</li>
+            <li>Builds the parts list by location (ceiling, chimney pipe, attic, roof, top), flags anything to double-check, and exports to CSV or a priced dealer order.</li>
           </ul>
         </section>
         <section>
@@ -528,7 +528,7 @@ detail_page(by["chimney-planner"],
             <li>Turns hours of cross-checking a catalog, a code book, and an appliance manual into a few minutes of measurements.</li>
             <li>Never shorts a requirement: heights and clearances can be exceeded but never undercut, and pipe lengths always round up.</li>
             <li>Catches problems before anything is bought, like an offset that won&rsquo;t fit in the attic or a chase too wide for stock flashing.</li>
-            <li>Gets the order right the first time, with exact part numbers and quantities.</li>
+            <li>Gets the order right the first time, with exact part numbers, quantities, and optional retailer/distributor SKU and price mapping.</li>
             <li>Works for any stove or fireplace: you enter what its manual requires, so the planner never falls behind new models.</li>
           </ul>
         </section>
@@ -537,7 +537,7 @@ detail_page(by["chimney-planner"],
           <ul>
             <li><strong>Homeowners</strong> planning an install and wanting to know what it takes before they start.</li>
             <li><strong>Installers and sweeps</strong> quoting jobs quickly and consistently.</li>
-            <li><strong>Hearth retailers</strong> building a complete, correct order with a customer at the counter.</li>
+            <li><strong>Hearth retailers and distributors</strong> building a complete, priced order with their own SKUs at the counter.</li>
           </ul>
         </section>
         <section>
@@ -545,7 +545,7 @@ detail_page(by["chimney-planner"],
           <ul>
             <li>Offsets on through-the-wall installations</li>
             <li>Free-standing stove placement and stovepipe</li>
-            <li>The rest of DuraVent&rsquo;s residential product lines</li>
+            <li>Additional residential chimney, pellet, and direct-vent product lines</li>
             <li>AI that reads an appliance manual and fills in its requirements</li>
           </ul>
         </section>
@@ -995,7 +995,7 @@ for (var i = 0; i &lt; icc.length; i++) {
     success: function() { console.log('Removed', item); }
   });
 }</code></pre>
-          <p class="small">This early catalog work directly inspired two standalone tools on this site: the <a href="/projects/jobber-import-etl/">Vendor Price Sheet &rarr; Jobber Import ETL</a> pipeline and the <a href="/projects/chimney-planner/">DuraTech Chimney Planner</a>.</p>
+          <p class="small">This early catalog work directly inspired two standalone tools on this site: the <a href="/projects/jobber-import-etl/">Vendor Price Sheet &rarr; Jobber Import ETL</a> pipeline and the <a href="/projects/chimney-planner/">Hearth Venting Planner</a>.</p>
         </section>
 
         <section>
