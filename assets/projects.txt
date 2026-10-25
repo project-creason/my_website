@@ -287,30 +287,264 @@ Summary: Automated Python pipeline on GitHub Actions that polls Buffalo Trace Di
 
 Buffalo Trace Distillery rotates allocated bourbons (Blanton's, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard on davidcreason.com/projects/buffalo-trace-tracker/.
 
-=== Louisville Crime, 2024 ===
-Status: Past (Completed), 2025
+=== Louisville Crime: 2024 vs. 2025 ===
+Status: Past (Completed), 2025–2026
 Project page: https://www.davidcreason.com/projects/louisville-crime/
-Links: View dashboard: https://www.davidcreason.com/projects/louisville-crime/
-Tags: Tableau, Public data, Correlation analysis
-Summary: Analysis of a year of reported crime in Louisville, KY: weather, moon phase, geography, holidays, and timing. Hot days drive crime up; full moons don't.
+Links: Explore 2024 vs. 2025: https://www.davidcreason.com/projects/louisville-crime/
+Tags: Tableau, Python, Public data, Correlation analysis, Year-over-year
+Summary: Two-year analysis of 140,212 reported offenses in Louisville, KY across weather, moon phase, offense categories, geography, holidays, and timing. Hot days drive crime up (r = 0.51 in both years); full moons still don't.
 
-This workbook contains information about reported crimes in 2024 in Louisville, KY.
+I analyzed two full years of Louisville Metro Police Department (LMPD) incident reports (69,876 offenses occurring in 2024 and 70,336 in 2025) alongside daily NOAA weather observations and lunar phases to see which crime patterns hold steady year over year and where 2025 shifted.
 
-Key findings
+- 140,212 reported offenses analyzed (69,876 in 2024 · 70,336 in 2025, +0.7% YoY)
 
-- Lunar influence No statistically significant relationship between full moons and higher crime rates.
+- r = 0.51 daily high-temp correlation in both years (+0.73 to +0.76 offenses per °F)
 
-- Temperature A positive correlation: as daily temperatures rise, so does the number of crimes.
+- -20.1% drop in auto thefts in 2025 (-1,161), alongside homicide (-26.1%) & robbery (-18.4%)
 
-- Geography The west side of the city sees a higher incidence of criminal activity than other areas.
+- +28.5% surge in retail shoplifting (+912), with grocery store incidents up +73.6%
 
-- Holidays Thanksgiving Day recorded the fewest crimes, suggesting holidays may influence crime patterns.
+- 88 offenses on Jan 6, 2025 (winter storm & ice) — single lowest day across both years
 
-- Seasonality Q3 had the highest average monthly crime counts.
+- -20.2% drop in Downtown (40202) offenses in 2025, while outer-ring ZIPs rose
 
-- Day of week Mondays registered more crimes than any other day.
+Core findings: 2024 vs. 2025
 
-- Peak day July 22 had the single highest crime count of the year.
+- Temperature vs. rain (consistent) Daily high temperature showed a nearly identical positive correlation in both years: r = 0.514 in 2024 (+0.73 offenses/°F) and r = 0.511 in 2025 (+0.76 offenses/°F). Rain alone barely moved daily totals (-0.8% on rainy days in 2024; -4.7% in 2025).
+
+- Lunar influence (consistent) Full moons still show no positive effect. The 12 full-moon days averaged 193.7/day vs. 190.8/day in 2024 (+1.5%), and 181.8/day vs. 193.1/day in 2025 (-5.9%).
+
+- Seasonality (consistent) Q3 (Jul–Sep) led both years (18,953 in 2024; 19,245 in 2025), with July as the peak month (6,534 and 6,631) and February as the lowest (5,094 and 4,814).
+
+- Geography (core held, edges shifted) West and central ZIPs 40203 (4,933 → 4,929) and 40211 (4,772 → 4,889) stayed #1 and #2, while Downtown 40202 fell 20.2% (4,078 → 3,256) and southwest/east areas like 40272 (+11.5%), 40216 (+7.1%), and 8th Division (+12.1%) rose.
+
+- Offense mix (diverged sharply) Total volume was flat (+0.7%), but auto theft plunged 20.1% (5,769 → 4,608), homicide fell 26.1% (153 → 113), robbery fell 18.4% (971 → 792), and burglary fell 11.5% (3,517 → 3,113) — offset by surges in shoplifting (+28.5%), narcotics (+21.9%), and trespassing (+39.9%).
+
+- Venue shifts (parking down, retail up) Parking lot and garage offenses fell 11.9% (7,900 → 6,963) alongside the auto-theft drop, while grocery/supermarket incidents jumped 73.6% (818 → 1,420) and department/discount stores rose 19.6% (1,941 → 2,322).
+
+- Day of week (shifted to weekend) Mondays led 2024 (10,519 offenses), ahead of Saturday (10,376). In 2025, activity shifted to the weekend: Saturday (#1 at 10,446) and Friday (#2 at 10,398) overtook Monday (#4 at 9,984).
+
+- Holidays & severe weather (new low) Thanksgiving was the lowest day of 2024 (112) and dropped to 150 in 2025 (Christmas fell to 133). The quietest day across both years was Jan 6, 2025 (88 offenses) during a 7+ inch snow and ice storm.
+
+- Peak days & 1st-of-month effect July 22 topped 2024 (269). In 2025, July 1 (276), Aug 1 (274), and June 1 (273) led raw counts, followed by May 30 (272) — driven by retroactive reports that default to the 1st of the month (13.0% reported >7 days later vs. 3.9% on other days).
+
+Side-by-side comparison (2024 vs. 2025)
+
+Both datasets come from Louisville Metro Police Department (LMPD) NIBRS incident reports filtered to offenses occurring in each calendar year, paired with daily NOAA weather observations from the Louisville Weather Forecast Office ( USC00154958 ) and Eastern Time full-moon dates.
+
+|
+
+| Dimension
+| 2024 Baseline
+| 2025 Update
+| Trend
+
+| Total offenses (incidents)
+| 69,876 offenses across 57,246 unique incidents (190.9/day across 366 days)
+| 70,336 offenses across 56,453 unique incidents (192.7/day across 365 days)
+| +0.7% offenses · -1.4% incidents
+
+| Temperature & precipitation
+| r = 0.514 (R² = 0.265), +0.73 offenses/°F; 154.2/day (<32°F) vs. 207.4/day (85°F+); rainy days (≥0.1″) avg 189.8 vs. 191.3 dry (-0.8%)
+| r = 0.511 (R² = 0.261), +0.76 offenses/°F; 151.6/day (<32°F) vs. 211.2/day (85°F+); rainy days (≥0.1″) avg 185.8 vs. 195.0 dry (-4.7%)
+| Consistent (heat drives crime, rain barely does)
+
+| Lunar influence (full moon)
+| 193.7/day on 12 full-moon days vs. 190.8/day on other 354 days (+1.5%, not significant)
+| 181.8/day on 12 full-moon days vs. 193.1/day on other 353 days (-5.9%, lower on full moons)
+| Consistent (myth debunked)
+
+| Seasonality (quarters & months)
+| Q3 highest (18,953; July peak at 6,534) · Q1 lowest (15,958; Feb lowest at 5,094)
+| Q3 highest (19,245; July peak at 6,631) · Q1 lowest (15,539; Feb lowest at 4,814)
+| Consistent
+
+| Day of week
+| Monday #1 (10,519), Saturday #2 (10,376), Sunday #3 (10,055) · Wednesday lowest (9,522)
+| Saturday #1 (10,446), Friday #2 (10,398), Sunday #3 (10,309), Monday #4 (9,984) · Thursday lowest (9,509)
+| Shifted to Fri/Sat
+
+| Holidays & extreme weather
+| Thanksgiving Day lowest of the year (112 offenses, -41% below average); Christmas Day at 184
+| Jan 6 winter storm lowest (88 offenses, -54%); Christmas Day dropped to 133 (-31%) and Thanksgiving to 150 (-22%)
+| Weather set 2-yr low
+
+| Peak day & 1st-of-month effect
+| July 22 highest (269), followed by Aug 24 (255), May 1 (253), and June 1 (250); 1st of month avg 221.2/day (10.6% reported >7 days later)
+| July 1 (276), Aug 1 (274), and June 1 (273) top raw counts; May 30 (272) top non-1st day; 1st of month avg 241.1/day (13.0% reported >7 days later)
+| Retroactive 1st-of-month spike
+
+| Geography (ZIPs & divisions)
+| Top ZIPs: 40203 (4,933), 40211 (4,772), 40214 (4,623), 40219 (4,618), 40202 (4,078); 4th Div #1 (13,296)
+| Top ZIPs: 40203 (4,929), 40211 (4,889), 40214 (4,866), 40219 (4,796), 40215 (4,040); Downtown 40202 fell to #7 (3,256, -20.2%)
+| Downtown -20.2%
+
+| Offense categories
+| Auto theft (5,769), vandalism (6,569), burglary (3,517), shoplifting (3,200), narcotics (2,747), robbery (971), homicide (153)
+| Auto theft (4,608, -20.1% ), vandalism (6,166, -6.1%), burglary (3,113, -11.5%), shoplifting (4,112, +28.5% ), narcotics (3,349, +21.9% ), robbery (792, -18.4%), homicide (113, -26.1% )
+| Auto/violent down · retail/drug up
+
+| Location categories
+| Single-family home (27,735), apartment/condo (8,945), street/highway (8,672), parking lot/garage (7,900), dept/discount store (1,941), grocery (818)
+| Single-family home (27,275, -1.7%), apartment/condo (9,843, +10.0%), street/highway (9,295, +7.2%), parking lot/garage (6,963, -11.9% ), dept/discount store (2,322, +19.6%), grocery (1,420, +73.6% )
+| Parking -11.9% · Grocery +73.6%
+
+Interactive 2024 vs. 2025 explorer
+
+Switch tabs below to compare monthly seasonality, daily temperature bands, day-of-week shifts, geographic movement across ZIP codes and LMPD divisions, and offense/location category changes.
+
+1. Monthly & Quarterly Seasonality
+2. Temperature Bands & Moon Phase
+3. Day of Week Shift
+4. Top ZIP Codes & Divisions
+5. Offense & Location Shifts
+
+2024 (69,876 offenses)
+2025 (70,336 offenses)
+
+Jan -7.6%
+
+Feb -5.5%
+
+Mar +4.9%
+
+Apr +5.5%
+
+May -1.2%
+
+Jun +0.1%
+
+Jul +1.5%
+
+Aug +1.0%
+
+Sep +2.2%
+
+Oct -1.3%
+
+Nov +10.1%
+
+Dec -2.1%
+
+Quarterly totals: Q1 : 15,958 (2024) vs. 15,539 (2025, -2.6%) · Q2 : 18,141 vs. 18,376 (+1.3%) · Q3 (peak) : 18,953 vs. 19,245 (+1.5%) · Q4 : 16,824 vs. 17,176 (+2.1%). January and February 2025 dipped further during extended sub-freezing stretches.
+
+<32°F 154.2 vs 151.6/d
+
+32–49°F 172.6 vs 174.9/d
+
+50–69°F 181.3 vs 190.8/d
+
+70–84°F 196.4 vs 196.5/d
+
+85°F+ 207.4 vs 211.2/d
+
+Temperature vs. Full Moon & Rain: Every step up in daily high temperature lifts daily crime volume in both years ( r = 0.514 in 2024; r = 0.511 in 2025). By contrast, full-moon days averaged 193.7/day vs. 190.8/day in 2024 (+1.5%) and 181.8/day vs. 193.1/day in 2025 (-5.9%), and rainy days (≥0.1″ precipitation) averaged 185.8/day vs. 195.0/day on dry days in 2025 (-4.7%).
+
+Sun 10,055 → 10,309
+
+Mon 10,519 → 9,984
+
+Tue 9,803 → 9,790
+
+Wed 9,522 → 9,900
+
+Thu 9,660 → 9,509
+
+Fri 9,941 → 10,398
+
+Sat 10,376 → 10,446
+
+What changed: In 2024, Mondays registered the highest total ( 10,519 , helped by 53 Mondays in the 2024 leap calendar plus weekend incidents discovered Monday morning). In 2025, Saturday (10,446) and Friday (10,398) took the top two spots, with Sunday third ( 10,309 ).
+
+|
+
+| ZIP Code / Area
+| 2024 Offenses
+| 2025 Offenses
+| YoY Change
+
+| 40203 · Old Louisville / Russell / Downtown West | 4,933 (#1) | 4,929 (#1) | -4 (-0.1%)
+
+| 40211 · Shawnee / Chickasaw / Park DuValle | 4,772 (#2) | 4,889 (#2) | +117 (+2.5%)
+
+| 40214 · Iroquois / Beechmont / South End | 4,623 (#3) | 4,866 (#3) | +243 (+5.3%)
+
+| 40219 · Okolona / Highview | 4,618 (#4) | 4,796 (#4) | +178 (+3.9%)
+
+| 40215 · Taylor Berry / Jacobs / Hazelwood | 3,798 (#7) | 4,040 (#5) | +242 (+6.4%)
+
+| 40212 · Portland / Russell | 3,885 (#6) | 3,859 (#6) | -26 (-0.7%)
+
+| 40202 · Downtown / Central Business District | 4,078 (#5) | 3,256 (#7) | -822 (-20.2%)
+
+| 40272 · Valley Station (Southwest) | 2,900 (#10) | 3,234 (#8) | +334 (+11.5%)
+
+| 40216 · Shively / Pleasure Ridge Park | 2,986 (#9) | 3,199 (#9) | +213 (+7.1%)
+
+| 40210 · Algonquin / Park Hill | 3,323 (#8) | 3,174 (#10) | -149 (-4.5%)
+
+By LMPD Division (2024 → 2025): 4th Division stayed #1 (13,296 → 13,161, -1.0%), while 3rd Division (9,917 → 10,407, +4.9%) overtook 1st Division (10,755 → 10,095, -6.1%) for #2. The East End’s 8th Division posted the largest percentage increase (4,632 → 5,191, +12.1%).
+
+|
+
+| Offense / Location Category
+| 2024 Count
+| 2025 Count
+| YoY Change & Context
+
+| 14 Auto Theft (Offense) | 5,769 | 4,608 | -1,161 (-20.1%) · Post-2024 vehicle theft wave cooldown
+
+| 13 Burglary (Offense) | 3,517 | 3,113 | -404 (-11.5%) · Residential & commercial break-ins down
+
+| 24 Vandalism / Criminal Mischief | 6,569 | 6,166 | -403 (-6.1%) · Property damage reports declined
+
+| 8 Robbery (Offense) | 971 | 792 | -179 (-18.4%) · Street & commercial robberies down
+
+| 1 Homicide (Offense) | 153 | 113 | -40 (-26.1%) · Significant drop in criminal homicide reports
+
+| 18 Shoplifting (Offense) | 3,200 | 4,112 | +912 (+28.5%) · Largest single-category increase in 2025
+
+| 34 Narcotics & 35 Narcotics Equip | 3,658 | 4,444 | +786 (+21.5%) · Proactive drug enforcement & seizures
+
+| 55 Trespassing (Offense) | 584 | 817 | +233 (+39.9%) · Higher commercial & multifamily enforcement
+
+| Parking Lot / Garage (Location) | 7,900 | 6,963 | -937 (-11.9%) · Mirrors auto theft & Downtown 40202 drop
+
+| Grocery / Supermarket (Location) | 818 | 1,420 | +602 (+73.6%) · Driven by retail shoplifting surge
+
+| Department / Discount Store (Location) | 1,941 | 2,322 | +381 (+19.6%) · Retail loss reporting increase
+
+| Apartment / Condo (Location) | 8,945 | 9,843 | +898 (+10.0%) · Multifamily up while single-family dipped 1.7%
+
+Completion rate: Completed offenses accounted for 76.3% of reports in 2024 (53,297 completed vs. 16,579 attempted/non-completed) and 74.6% in 2025 (52,485 completed vs. 17,851 attempted/non-completed).
+
+What held steady across both years
+
+- Heat drives crime up linearly; rain barely matters: Daily maximum temperature explained ~26% of daily variance in both years (r = 0.514 and r = 0.511), adding roughly 3 more offenses for every +4°F warming, while rainy days (≥0.1″) moved daily totals by less than 5%.
+
+- Full moons don’t move the needle: Across 24 full moons in 2024–2025, full-moon days averaged 187.7 offenses/day versus 191.9/day on all other days.
+
+- Summer Q3 peak, winter Q1 trough: July and August were the #1 and #2 months in both years, while February was the lowest month in both years.
+
+- Geographic concentration: The top four ZIP codes ( 40203 , 40211 , 40214 , 40219 ) held the exact same 1–4 rank order in both 2024 and 2025, accounting for 27% of all citywide offenses.
+
+- Retroactive 1st-of-the-month reporting lag: In both years, the 1st of the month averaged 16–26% more offenses than days 2–31 because delayed reports (13.0% reported >7 days later in 2025 vs. 3.9% on other days) frequently default to the 1st.
+
+What shifted in 2025
+
+- Auto theft, homicide, robbery, and burglary dropped sharply: Auto theft fell 20.1% (-1,161), homicide fell 26.1% (-40), robbery fell 18.4% (-179), and burglary fell 11.5% (-404), while retail shoplifting (+28.5%), narcotics (+21.9%), and trespassing (+39.9%) surged.
+
+- Venue mix moved from parking lots to retail aisles: Parking lot and garage offenses dropped 11.9% (-937), while grocery/supermarket incidents rose 73.6% (+602) and department/discount stores rose 19.6% (+381).
+
+- Downtown dropped while outer-ring ZIPs grew: Downtown ( 40202 ) fell by 822 offenses (-20.2%), while Valley Station ( 40272 , +11.5%), Shively ( 40216 , +7.1%), and LMPD’s 8th Division (+12.1%) saw higher volume.
+
+- Weekend peak replaced the Monday peak: Saturday and Friday became the busiest days of the week in 2025, while Monday fell from #1 to #4 (-5.1%).
+
+- Severe winter weather beat holidays for the quietest day: While Thanksgiving (150) and Christmas (133) stayed quiet in 2025, the January 6, 2025 snow and ice storm brought citywide reports down to just 88 offenses.
+
+2024 interactive Tableau workbook
+
+Explore the original 2024 Tableau Public story and ZIP-code heat map below.
 
 Open full screen on Tableau Public →
 
