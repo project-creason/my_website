@@ -19,16 +19,15 @@ def _jobs(items):
 
 
 def _contact_html(parts):
+    # No email appears on the site or in the PDF; the page links to the contact form, right after the location.
     out = []
-    for p in parts:
-        if "@" in p:
-            # Email stays in the downloadable PDF only; the page links to the contact form.
-            out.append('<a href="/contact/#form">Send a message</a>')
-        elif "linkedin" in p.lower() or p.startswith("http") or "github.com" in p.lower():
+    for p in (p for p in parts if "@" not in p):
+        if "linkedin" in p.lower() or p.startswith("http") or "github.com" in p.lower():
             href = p if p.startswith("http") else "https://" + p
             out.append(f'<a href="{e(href)}" rel="noopener" target="_blank">{e(p)}</a>')
         else:
             out.append(e(p))
+    out.insert(min(1, len(out)), '<a href="/contact/#form">Send a message</a>')
     return " &middot; ".join(out)
 
 

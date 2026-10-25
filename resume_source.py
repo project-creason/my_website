@@ -7,6 +7,10 @@ removed from the extracted text.
 `redact_phone_numbers(pdf_path)` blacks out (whites out) any phone number in the
 PDF itself, in place, so the downloadable copy never shows one either.
 
+`redact_emails(pdf_path)` removes any email address from the PDF, in place, and
+re-sets the line it sat on (same font, size and color, re-centered if it was centered)
+so no gap is left behind.
+
 Requires PyMuPDF:  pip install pymupdf
 """
 import re
@@ -15,6 +19,7 @@ import tempfile
 
 import pymupdf
 
+EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 PHONE = re.compile(r"(?:\+?1[\s.-]?)?\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}\b")
 MONTH = r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
 DATE = rf"(?:{MONTH}\.?\s+)?\d{{4}}"
@@ -26,19 +31,20 @@ BULLET = re.compile(r"^[●•▪◦\-\*]\s*")
 def scrub(text):
     """Remove phone numbers and tidy separators left behind."""
     text = PHONE.sub("", text)
+    text = EMAIL.sub("", text)
     text = re.sub(r"(\s*\|\s*){2,}", " | ", text)
     return re.sub(r"^\s*\|\s*|\s*\|\s*$", "", text).strip()
 
 
 def _lines(pdf_path):
     doc = pymupdf.open(pdf_path)
-    raw = "\n".join(page.get_text() for page in doc)
+    raw = "\n".join(page.get_text(sort=True) for page in doc)
     out = []
     for line in raw.splitlines():
         line = line.replace("​", "").replace("\xa0", " ").strip()
         line = re.sub(r"\s{2,}", " ", line)
         if line:
-            out.append(scrub(line) if PHONE.search(line) else line)
+            out.append(scrub(line) if PHONE.search(line) or EMAIL.search(line) else line)
     return [l for l in out if l]
 
 
@@ -164,6 +170,51 @@ def redact_phone_numbers(pdf_path):
                 page.add_redact_annot(rect, fill=(1, 1, 1))
                 found += 1
         page.apply_redactions()
+    if found:
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+        doc.save(tmp, garbage=4, deflate=True)
+        doc.close()
+        shutil.move(tmp, pdf_path)
+    else:
+        doc.close()
+    return found
+
+
+def redact_emails(pdf_path):
+    """Remove any email address from the PDF, in place, re-setting its line. Returns how many were removed."""
+    doc = pymupdf.open(pdf_path)
+    found = 0
+    for page in doc:
+        fonts = {f[3].split("+")[-1]: f[0] for f in page.get_fonts()}
+        redo = []
+        for block in page.get_text("dict")["blocks"]:
+            for line in block.get("lines", []):
+                spans = line["spans"]
+                text = "".join(sp["text"] for sp in spans)
+                if not EMAIL.search(text):
+                    continue
+                found += len(EMAIL.findall(text))
+                first = spans[0]
+                left, right = min(sp["bbox"][0] for sp in spans), max(sp["bbox"][2] for sp in spans)
+                centered = abs((left + right) / 2 - page.rect.width / 2) < 4
+                redo.append((scrub(text), first, left, right, centered))
+                for sp in spans:
+                    page.add_redact_annot(pymupdf.Rect(sp["bbox"]), fill=(1, 1, 1))
+        if not redo:
+            continue
+        page.apply_redactions()
+        for new_text, sp, left, right, centered in redo:
+            if not new_text:
+                continue
+            buf = doc.extract_font(fonts[sp["font"]])[3]
+            font = pymupdf.Font(fontbuffer=buf)
+            width = font.text_length(new_text, sp["size"])
+            x = (left + right) / 2 - width / 2 if centered else left
+            c = sp["color"]
+            alias = "redo" + re.sub(r"[^A-Za-z]", "", sp["font"])[:12]
+            page.insert_font(fontname=alias, fontbuffer=buf)
+            page.insert_text((x, sp["origin"][1]), new_text, fontsize=sp["size"], fontname=alias,
+                             color=((c >> 16) / 255, (c >> 8 & 255) / 255, (c & 255) / 255))
     if found:
         tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
         doc.save(tmp, garbage=4, deflate=True)

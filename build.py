@@ -16,7 +16,7 @@ import html
 import os
 import re
 
-from resume_source import PHONE, load_resume, redact_phone_numbers
+from resume_source import PHONE, load_resume, redact_emails, redact_phone_numbers
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://www.davidcreason.com"
@@ -26,6 +26,9 @@ RESUME_PDF = os.path.join(ROOT, "assets", "David_Creason_Resume.pdf")
 _removed = redact_phone_numbers(RESUME_PDF)
 if _removed:
     print(f"Removed {_removed} phone number(s) from the resume PDF.")
+_removed = redact_emails(RESUME_PDF)
+if _removed:
+    print(f"Removed {_removed} email address(es) from the resume PDF.")
 RESUME = load_resume(RESUME_PDF)
 _current = RESUME["experience"][0] if RESUME["experience"] else None
 _first_sentence = re.split(r"(?<=[.!?])\s", RESUME["summary"], maxsplit=1)[0]
@@ -64,9 +67,9 @@ PROJECTS = [
         "slug": "scopeout",
         "title": "ScopeOut: Guided Deal Scoping",
         "status": "active",
-        "badge": "Live demo · sales demo project",
+        "badge": "Live demo",
         "year": "2026",
-        "summary": "A rules-based configurator that turns discovery answers into a validated software deal scope, built and sold in a live discovery-and-demo call. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.",
+        "summary": "A rules-based configurator that turns discovery answers into a validated software deal scope. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.",
         "tags": ["Sales engineering", "Rules engine", "Catalog-driven", "Approval workflow", "Vercel serverless", "Vanilla JS"],
         "image": "/assets/projects/cards/scopeout.jpg",
         "image_alt": "Discovery, rules, scope: scope it right the first time",
@@ -241,19 +244,24 @@ def write(path, text):
         f.write(text)
 
 
-def page(path, title, desc, section, body, extra_foot=""):
+SITEMAP = []  # pages search engines should index; filled by page(), written to sitemap.xml at the end
+
+
+def page(path, title, desc, section, body, extra_foot="", noindex=False):
     nav = "".join(
         f'<a href="{href}"{" aria-current=\"page\"" if label == section else ""}>{label}</a>'
         for label, href in NAV
     )
     full_title = PROFILE["name"] if title == "Home" else f"{title} · {PROFILE['name']}"
     canonical = SITE + path
+    if not noindex:
+        SITEMAP.append(path)
+    robots = '\n  <meta name="robots" content="noindex, nofollow, noarchive">' if noindex else ""
     out = f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">{robots}
   <title>{e(full_title)}</title>
   <meta name="description" content="{e(desc)}">
   <link rel="canonical" href="{canonical}">
@@ -555,7 +563,7 @@ detail_page(by["chimney-planner"],
 # Portfolio AI Assistant detail
 
 detail_page(by["scopeout"],
-  "Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, then sold it the way a solutions engineer would: in a live discovery-and-demo call.",
+  "Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, so every rep scopes the same way and every decision shows its reason.",
   """      <figure class="shot-fig">
         <img class="hero-shot" src="/assets/projects/scopeout.jpg" alt="ScopeOut in seller view: discovery questions on the left, the recommended plan, usage squares and checks on the right">
         <figcaption>Seller view. Every answer updates the plan, the bill of scope, and the reasons behind them as you go.</figcaption>
@@ -606,28 +614,27 @@ detail_page(by["scopeout"],
         </section>
       </div>
 
-      <h2 style="margin-top:44px">Selling it</h2>
-      <p>I built ScopeOut for a sales-engineering exercise: pick a product, find a real buyer for it, and run a 45-minute discovery-and-demo call with a panel playing the prospect. I chose to build rather than reuse an old product because the ones I&rsquo;ve sold before are retired or on platforms I can no longer reach.</p>
+      <h2 style="margin-top:44px">At a glance</h2>
       <ul class="stats">
-        <li><strong>45 min</strong><span>live discovery and demo call</span></li>
+        <li><strong>1</strong><span>catalog file per product: questions, plans, rules and prices</span></li>
         <li><strong>2</strong><span>industries on one engine: software deals and chimney systems</span></li>
         <li><strong>3</strong><span>roles: rep, sales manager, RevOps admin</span></li>
       </ul>
 
       <div class="cols" style="margin-top:44px">
         <section>
-          <h2>How I ran the call</h2>
+          <h2>Using it on a sales call</h2>
           <ul>
-            <li>Opened with discovery, not a feature tour, and let the prospect&rsquo;s answers decide which parts of the tool to show.</li>
-            <li>Loaded a scenario that matched their situation, so they watched their own deal get scoped.</li>
-            <li>Switched to the buyer view to show what their customers would see, then into Admin to show a rule change going live.</li>
-            <li>Handled the &ldquo;who else uses this?&rdquo; question honestly and proposed a design-partner pilot as the next step.</li>
+            <li>Start with discovery, not a feature tour, and let the prospect&rsquo;s answers decide what the scope needs.</li>
+            <li>Load a scenario that matches their situation, so they watch their own deal get scoped.</li>
+            <li>Switch to the buyer view to show what their own customers would see.</li>
+            <li>Send a branded summary at the end, so the scope and its reasoning travel with the deal.</li>
           </ul>
         </section>
         <section>
           <h2>What I&rsquo;d highlight</h2>
           <ul>
-            <li><strong>Solutions engineering end to end.</strong> Researching a buyer, scoping their problem, building the demo, and running the call.</li>
+            <li><strong>Solutions engineering end to end.</strong> Defining the buyer&rsquo;s problem, designing the rules model, and building the tool that solves it.</li>
             <li><strong>Configuration as data.</strong> Moving business rules out of code means the people who own the rules can change them.</li>
             <li><strong>AI-assisted development.</strong> Built quickly with an AI coding assistant, while I owned the product decisions, the rules, and the testing.</li>
           </ul>
@@ -797,7 +804,7 @@ CHH_SECTIONS = r'''      <style>
           <li><strong>+740%</strong><span>annualized revenue expansion from Year 1 baseline to exit (8.4x)</span></li>
           <li><strong>+310%</strong><span>peak year-over-year revenue growth via counter-seasonal CAD expansion</span></li>
           <li><strong>54&ndash;64%</strong><span>gross profit margin across field services &amp; custom installations</span></li>
-          <li><strong>+419%</strong><span>customer base expansion (1,215+ accounts &middot; +171% avg. ticket growth)</span></li>
+          <li><strong>+419%</strong><span>customer base expansion (+171% avg. ticket growth)</span></li>
           <li><strong>4,533</strong><span>manufacturer SKUs normalized across 15+ vendors via custom ETL</span></li>
           <li><strong>Acquired</strong><span>turnkey asset sale to a major local HVAC company</span></li>
         </ul>
@@ -1004,7 +1011,7 @@ for (var i = 0; i &lt; icc.length; i++) {
             <li><strong>Millivolt gas valve ohmmeter testing:</strong> Authored technician training decks standardizing multimeter resistance checks across Robertshaw &amp; SIT Electromagnet Power Units (<code>0&ndash;13 &Omega;</code> specification between EPU lead and TP terminal) and preventative pilot/spill-switch replacement rules to eliminate repeat callbacks.</li>
             <li><strong>Magnehelic differential pressure &amp; airflow telemetry:</strong> Built CDET dryer exhaust evaluation forms recording pre- and post-cleaning backpressure (<code>&le; 0.6&quot; Water Column</code>) and anemometer airflow velocity (<code>MPH</code>) at the appliance and exterior termination.</li>
             <li><strong>Time-critical chemical &amp; refractory SOPs:</strong> Documented step-by-step field runbooks for ChamberGuard and FireGuard ceramic resurfacing equipment, including a strict 2-minute pump-blockage recovery decision tree before refractory material cures in the line.</li>
-            <li><strong>M&amp;A transition to a major local HVAC company:</strong> In 2022, packaged the 1,215-customer book (+419% growth), brand assets, inventory/tooling assessments, and operational playbooks into a clean asset sale and 3-year management integration agreement with a major local HVAC company.</li>
+            <li><strong>M&amp;A transition to a major local HVAC company:</strong> In 2022, packaged the customer book (+419% growth), brand assets, inventory/tooling assessments, and operational playbooks into a clean asset sale and 3-year management integration agreement with a major local HVAC company.</li>
           </ul>
         </section>
       </div>
@@ -1105,7 +1112,7 @@ CHH_SCRIPT = r'''  <script>
           bullets: [
             "Scaled revenue to 6.9x Year 1 baseline (+590% cumulative 3-year growth; +68% YoY on top of 2020's 4.1x surge), with 87.6% driven by technical field services and 12.4% by direct hardware sales.",
             "Allocated 15.8% of revenue to W-2 technician payroll and 1099 contractors, funding national academy certifications and launching high-yield FireGuard ceramic flue resurfacing (2.25x hourly yield index).",
-            "Expanded cumulative customer base past 1,200 accounts while increasing trailing 12-month average ticket value by +171% vs. Year 1."
+            "Continued expanding the customer base while increasing trailing 12-month average ticket value by +171% vs. Year 1."
           ]
         },
         {
@@ -1114,7 +1121,7 @@ CHH_SCRIPT = r'''  <script>
           gp: "54.0% Gross Margin",
           net: "100% Turnkey Asset Transfer",
           bullets: [
-            "Reached an 8.4x annualized revenue run-rate (+740% over Year 1 baseline) across 1,215 active customer accounts (+419% expansion) and 2,160+ historical digital invoices.",
+            "Reached an 8.4x annualized revenue run-rate (+740% over Year 1 baseline) with +419% customer base expansion over Year 1.",
             "Packaged accrual financial telemetry, margin-percentage rate cards, inventory/tooling schedules, and supplier onboarding runbooks into a formal M&A data room.",
             "Executed a turnkey asset sale and 3-year management integration agreement with a major local HVAC company."
           ]
@@ -1949,7 +1956,7 @@ page("/404/", "Page not found", "Page not found.", "", """  <main id="main">
       <h1 class="page-title">Page not found</h1>
       <p class="lede">That page doesn&rsquo;t exist. Try the <a href="/">home page</a> or <a href="/projects/">my projects</a>.</p>
     </div>
-  </main>""")
+  </main>""", noindex=True)
 os.replace(os.path.join(ROOT, "404/index.html"), os.path.join(ROOT, "404.html"))
 os.rmdir(os.path.join(ROOT, "404"))
 print("Built", len(PROJECTS), "projects.")
@@ -1982,7 +1989,7 @@ def _page_text(path):
 # the project page when its facts change.
 NOTES_OVERRIDE = {
     'buffalo-trace-tracker': "Buffalo Trace Distillery rotates allocated bourbons (Blanton's, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard on davidcreason.com/projects/buffalo-trace-tracker/.",
-    'crestwood-home-hearth': 'How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.\n\nKey Growth & Percentage Highlights:\n- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.\n- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.\n- Customer & Ticket Velocity: +419% customer base expansion (1,215+ active accounts across 2,160+ digital invoices) and +171% expansion in trailing 12-month average ticket value.\n- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.\n- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.\n- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.\n\nOpen full screen on Tableau Public →',
+    'crestwood-home-hearth': 'How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.\n\nKey Growth & Percentage Highlights:\n- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.\n- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.\n- Customer & Ticket Velocity: +419% customer base expansion and +171% expansion in trailing 12-month average ticket value.\n- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.\n- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.\n- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.\n\nOpen full screen on Tableau Public →',
 }
 
 
@@ -2001,6 +2008,14 @@ for _p in PROJECTS:
         f"{NOTES_OVERRIDE.get(_p['slug']) or _page_text('/projects/' + _p['slug'] + '/')}\n"
     )
 write("assets/projects.txt", "\n".join(_notes))
+
+# ---- Search engines: sitemap.xml and robots.txt ----
+# Every page built with page() is listed unless it was built with noindex=True. The ScopeOut demo is a
+# standalone app outside build.py, and so is the Buffalo Trace tracker page, so they're added by hand. Old Google Sites redirects stay out.
+_urls = SITEMAP + ["/projects/buffalo-trace-tracker/", "/scopeout/"]
+write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+      + "".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in _urls) + "</urlset>\n")
+write("robots.txt", f"User-agent: *\nDisallow: /scopeout-mailer/\n\nSitemap: {SITE}/sitemap.xml\n")
 
 # ---- Final safety check: no phone number or email address in any published page ----
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")

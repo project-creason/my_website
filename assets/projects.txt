@@ -52,13 +52,13 @@ Coming next
 A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.
 
 === ScopeOut: Guided Deal Scoping ===
-Status: Active / current (Live demo · sales demo project), 2026
+Status: Active / current (Live demo), 2026
 Project page: https://www.davidcreason.com/projects/scopeout/
 Links: Read the case study: https://www.davidcreason.com/projects/scopeout/; Try the live demo: https://www.davidcreason.com/scopeout/
 Tags: Sales engineering, Rules engine, Catalog-driven, Approval workflow, Vercel serverless, Vanilla JS
-Summary: A rules-based configurator that turns discovery answers into a validated software deal scope, built and sold in a live discovery-and-demo call. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.
+Summary: A rules-based configurator that turns discovery answers into a validated software deal scope. Editable rules, price books, discount approvals, and branded buyer summaries, all driven by one catalog file.
 
-Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, then sold it the way a solutions engineer would: in a live discovery-and-demo call.
+Scoping a software deal usually means a rep applying packaging rules from memory or a spreadsheet, and the mistakes show up later as a surprise re-scope, a discount fight, or an unhappy first renewal. I built ScopeOut to turn those rules into a guided discovery flow, so every rep scopes the same way and every decision shows its reason.
 
 The problem
 
@@ -96,29 +96,27 @@ For RevOps
 
 - Catalog imports are validated line by line, so a broken rule or a typo in a formula is caught before it reaches a rep.
 
-Selling it
+At a glance
 
-I built ScopeOut for a sales-engineering exercise: pick a product, find a real buyer for it, and run a 45-minute discovery-and-demo call with a panel playing the prospect. I chose to build rather than reuse an old product because the ones I’ve sold before are retired or on platforms I can no longer reach.
-
-- 45 min live discovery and demo call
+- 1 catalog file per product: questions, plans, rules and prices
 
 - 2 industries on one engine: software deals and chimney systems
 
 - 3 roles: rep, sales manager, RevOps admin
 
-How I ran the call
+Using it on a sales call
 
-- Opened with discovery, not a feature tour, and let the prospect’s answers decide which parts of the tool to show.
+- Start with discovery, not a feature tour, and let the prospect’s answers decide what the scope needs.
 
-- Loaded a scenario that matched their situation, so they watched their own deal get scoped.
+- Load a scenario that matches their situation, so they watch their own deal get scoped.
 
-- Switched to the buyer view to show what their customers would see, then into Admin to show a rule change going live.
+- Switch to the buyer view to show what their own customers would see.
 
-- Handled the “who else uses this?” question honestly and proposed a design-partner pilot as the next step.
+- Send a branded summary at the end, so the scope and its reasoning travel with the deal.
 
 What I’d highlight
 
-- Solutions engineering end to end. Researching a buyer, scoping their problem, building the demo, and running the call.
+- Solutions engineering end to end. Defining the buyer’s problem, designing the rules model, and building the tool that solves it.
 
 - Configuration as data. Moving business rules out of code means the people who own the rules can change them.
 
@@ -328,7 +326,7 @@ How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 
 Key Growth & Percentage Highlights:
 - Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.
 - Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.
-- Customer & Ticket Velocity: +419% customer base expansion (1,215+ active accounts across 2,160+ digital invoices) and +171% expansion in trailing 12-month average ticket value.
+- Customer & Ticket Velocity: +419% customer base expansion and +171% expansion in trailing 12-month average ticket value.
 - Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.
 - 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.
 - Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.
