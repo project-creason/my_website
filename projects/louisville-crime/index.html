@@ -39,38 +39,119 @@
       
       <style>
         .lou-stats { margin: 28px 0 36px; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
-        .lou-legend { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; font: 600 .8rem var(--head); color: var(--ink-soft); margin: 12px 0 20px; }
-        .lou-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-        .lou-vgrid {
-          display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin: 20px 0 44px;
+        .lou-bar-top {
+          display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+          margin: 36px 0 18px;
         }
-        @media (max-width: 820px) { .lou-vgrid { grid-template-columns: 1fr; } }
+        .lou-bar-top h2 { margin: 0; }
+        .lou-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .lou-btn {
+          background: var(--card); color: var(--ink-soft); border: 1px solid var(--line);
+          border-radius: 8px; padding: 7px 13px; font: 600 .8rem var(--head); cursor: pointer;
+          transition: all .15s ease; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .lou-btn:hover { border-color: var(--accent); color: var(--ink); }
+        .lou-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+        .lou-legend { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; font: 600 .8rem var(--head); color: var(--ink-soft); margin: 0 0 20px; }
+        .lou-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+        .lou-hint { margin-left: auto; font: 600 .76rem var(--head); color: var(--accent); }
+        @media (max-width: 720px) { .lou-hint { margin-left: 0; width: 100%; } }
+
+        .lou-vgrid {
+          display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin: 16px 0 44px;
+        }
+        .lou-vgrid.full-mode { grid-template-columns: 1fr; gap: 28px; }
+        @media (max-width: 860px) { .lou-vgrid { grid-template-columns: 1fr; } }
+
         .lou-vcard {
           background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
           padding: 20px 22px 18px; display: flex; flex-direction: column; gap: 10px;
+          transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease;
         }
+        .lou-vcard:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); box-shadow: 0 10px 28px rgba(0,0,0,.08); }
+        .lou-vcard.expanded {
+          grid-column: 1 / -1; border-color: var(--accent);
+          box-shadow: 0 14px 36px rgba(0,0,0,.12); padding: 26px 28px 22px;
+        }
+        .lou-vcard.expanded h3 { font-size: 1.35rem; }
+        .lou-vcard.expanded .lou-vsvg-wrap { padding: 18px 18px 12px; }
+
         .lou-vcard-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
         .lou-vkicker { font: 700 .72rem var(--head); text-transform: uppercase; letter-spacing: .09em; color: var(--accent); }
-        .lou-vpill { font: 700 .7rem var(--head); padding: 2px 8px; border-radius: 999px; }
+        .lou-vtop-right { display: flex; align-items: center; gap: 8px; }
+        .lou-vpill { font: 700 .7rem var(--head); padding: 3px 9px; border-radius: 999px; }
         .lou-vpill.same { background: color-mix(in srgb, var(--line) 70%, transparent); color: var(--ink-soft); }
         .lou-vpill.shift { background: rgba(181,85,43,.14); color: var(--accent); }
         .lou-vpill.low { background: rgba(47,163,86,.15); color: #2fa356; }
+        .lou-exp-btn {
+          background: var(--paper); color: var(--ink-soft); border: 1px solid var(--line);
+          border-radius: 6px; padding: 3px 9px; font: 600 .72rem var(--head); cursor: pointer;
+          transition: all .15s ease;
+        }
+        .lou-exp-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .lou-vcard.expanded .lou-exp-btn { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
         .lou-vcard h3 { font-size: 1.12rem; margin: 0; line-height: 1.25; }
         .lou-vsvg-wrap {
           background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
-          padding: 12px 10px 8px; margin-top: 2px;
+          padding: 12px 10px 8px; margin-top: 2px; position: relative;
         }
         .lou-vsvg { width: 100%; height: auto; display: block; overflow: visible; }
-        .lou-vsvg text { font-family: var(--head); fill: var(--ink); }
+        .lou-vsvg text { font-family: var(--head); fill: var(--ink); pointer-events: none; transition: opacity .15s ease; }
         .lou-vsvg .muted { fill: var(--ink-soft); }
         .lou-vsvg .acc { fill: var(--accent); }
         .lou-vsvg .grn { fill: #2fa356; }
-        .lou-vsvg .axis { stroke: var(--line); stroke-width: 1; }
-        .lou-vsvg .dash-base { stroke: var(--ink-soft); stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .65; }
-        .lou-vsvg .b24 { fill: color-mix(in srgb, var(--ink-soft) 48%, var(--paper)); stroke: var(--line); stroke-width: 1; }
-        .lou-vsvg .b25 { fill: var(--accent); }
-        .lou-vsvg .bgrn { fill: #2fa356; }
-        .lou-vcap { margin: 0; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+        .lou-vsvg .axis { stroke: var(--line); stroke-width: 1; pointer-events: none; }
+        .lou-vsvg .dash-base { stroke: var(--ink-soft); stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .65; pointer-events: none; }
+        .lou-vsvg .b24 { fill: color-mix(in srgb, var(--ink-soft) 48%, var(--paper)); stroke: var(--line); stroke-width: 1; transition: all .15s ease; }
+        .lou-vsvg .b25 { fill: var(--accent); transition: all .15s ease; }
+        .lou-vsvg .bgrn { fill: #2fa356; transition: all .15s ease; }
+
+        /* Year focus modes */
+        .lou-vgrid.focus-2024 .b25, .lou-vgrid.focus-2024 .bgrn, .lou-vgrid.focus-2024 .line-25 { opacity: .18; }
+        .lou-vgrid.focus-2024 .b24 { fill: var(--accent); stroke: var(--accent); }
+        .lou-vgrid.focus-2025 .b24, .lou-vgrid.focus-2025 .line-24 { opacity: .18; }
+
+        /* Interactive SVG hover groups */
+        .lou-hit { cursor: pointer; outline: none; transition: opacity .15s ease; }
+        .lou-hit .hit-bg { fill: transparent; rx: 5px; transition: fill .15s ease, stroke .15s ease; }
+        .lou-vsvg:has(.lou-hit:hover) .lou-hit:not(:hover),
+        .lou-vsvg:has(.lou-hit:focus) .lou-hit:not(:focus) { opacity: .38; }
+        .lou-hit:hover .hit-bg, .lou-hit:focus .hit-bg {
+          fill: color-mix(in srgb, var(--accent) 9%, transparent);
+          stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+          stroke-width: 1;
+        }
+        .lou-hit:hover .b24, .lou-hit:focus .b24 { stroke: var(--ink); stroke-width: 1.5; filter: brightness(1.06); }
+        .lou-hit:hover .b25, .lou-hit:focus .b25,
+        .lou-hit:hover .bgrn, .lou-hit:focus .bgrn { stroke: var(--ink); stroke-width: 1.5; filter: brightness(1.1); }
+
+        /* Live readout bar inside each card */
+        .lou-readout {
+          display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+          background: color-mix(in srgb, var(--line) 28%, var(--paper)); border: 1px solid var(--line);
+          border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 12px;
+          font: .84rem/1.4 var(--head); color: var(--ink-soft); min-height: 38px;
+        }
+        .lou-readout strong { color: var(--ink); font-weight: 700; }
+        .lou-readout .ro-badges { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .78rem; font-weight: 700; }
+        .lou-readout .ro-24 { color: var(--ink-soft); }
+        .lou-readout .ro-25 { color: var(--accent); }
+        .lou-readout .ro-d { padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--line) 75%, transparent); color: var(--ink); }
+
+        /* Floating cursor tooltip */
+        #lou-tip {
+          position: fixed; z-index: 9999; pointer-events: none; opacity: 0; transform: translateY(4px);
+          transition: opacity .12s ease, transform .12s ease;
+          background: var(--navy); color: #fff; border: 1px solid rgba(255,255,255,.16);
+          border-radius: 8px; padding: 10px 13px; box-shadow: 0 12px 28px rgba(0,0,0,.28);
+          font: .78rem/1.45 var(--head); max-width: 280px;
+        }
+        #lou-tip.show { opacity: 1; transform: translateY(0); }
+        #lou-tip .t-head { font-weight: 700; font-size: .84rem; color: #fff; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,.14); padding-bottom: 4px; }
+        #lou-tip .t-row { display: flex; justify-content: space-between; gap: 14px; color: #d9e0e8; }
+        #lou-tip .t-row b { color: #fff; }
+        #lou-tip .t-note { margin-top: 5px; color: #f0b597; font-size: .74rem; font-weight: 600; }
       </style>
 
       <div class="lou-stats" aria-label="Louisville crime 2024 vs 2025 key metrics">
@@ -84,24 +165,39 @@
         </ul>
       </div>
 
-      <h2 style="margin-top:36px">2024 vs. 2025 at a glance</h2>
+      <div class="lou-bar-top">
+        <h2>2024 vs. 2025 interactive visual comparison</h2>
+        <div class="lou-controls" role="toolbar" aria-label="Chart display controls">
+          <button type="button" class="lou-btn active" data-yr="both" onclick="louSetYear('both', this)">Both Years</button>
+          <button type="button" class="lou-btn" data-yr="2024" onclick="louSetYear('2024', this)">2024 Only</button>
+          <button type="button" class="lou-btn" data-yr="2025" onclick="louSetYear('2025', this)">2025 Only</button>
+          <button type="button" class="lou-btn" id="lou-layout-btn" onclick="louToggleAllExpand()">&#x2922; Expand All Charts</button>
+        </div>
+      </div>
+
       <div class="lou-legend">
         <span><i class="lou-swatch" style="background:color-mix(in srgb, var(--ink-soft) 48%, var(--paper));border:1px solid var(--line)"></i>2024 Baseline (69,876 offenses)</span>
         <span><i class="lou-swatch" style="background:var(--accent)"></i>2025 Update / Increase (70,336 offenses)</span>
         <span><i class="lou-swatch" style="background:#2fa356"></i>2025 Decrease</span>
+        <span class="lou-hint">Hover any bar or point to inspect &middot; Click &#x2922; Expand on any card for full-width view</span>
       </div>
 
-      <div class="lou-vgrid">
+      <div id="lou-tip" role="status" aria-hidden="true"></div>
+
+      <div class="lou-vgrid" id="lou-vgrid">
 
         <!-- CARD 1: TEMPERATURE -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-1">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">01 &middot; Temperature vs. Crime</span>
-            <span class="lou-vpill same">Consistent &middot; r = 0.51</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill same">Consistent &middot; r = 0.51</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Hot 85&deg;F+ days drive +39% more daily crime than freezing days</h3>
           <div class="lou-vsvg-wrap">
-            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Bar chart of average daily offenses across five NOAA temperature bands in 2024 and 2025, rising from 152 per day below freezing to 211 per day at 85 degrees or hotter.">
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Interactive bar chart of average daily offenses across five NOAA temperature bands in 2024 and 2025.">
               <line class="axis" x1="36" y1="155" x2="428" y2="155"/>
               <line class="axis" x1="36" y1="116" x2="428" y2="116" stroke-dasharray="2 3"/>
               <line class="axis" x1="36" y1="77" x2="428" y2="77" stroke-dasharray="2 3"/>
@@ -111,142 +207,211 @@
               <text class="muted" x="30" y="80" font-size="10" text-anchor="end">180</text>
               <text class="muted" x="30" y="41" font-size="10" text-anchor="end">210</text>
 
-              <rect class="b24" x="52" y="110.5" width="22" height="44.5" rx="3"/>
-              <rect class="b25" x="76" y="113.9" width="22" height="41.1" rx="3"/>
-              <text class="muted" x="63" y="105" font-size="9.5" font-weight="600" text-anchor="middle">154</text>
-              <text class="acc" x="87" y="108" font-size="9.5" font-weight="700" text-anchor="middle">152</text>
-              <text x="75" y="172" font-size="10.5" font-weight="700" text-anchor="middle">&lt;32&deg;F</text>
-              <text class="muted" x="75" y="184" font-size="9" text-anchor="middle">Freezing</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Freezing Days (&lt;32&deg;F)" data-v24="154.2/day (9d)" data-v25="151.6/day (21d)" data-delta="-1.7% YoY" data-note="Coldest days consistently record the lowest daily crime volume.">
+                <rect class="hit-bg" x="44" y="28" width="62" height="160"/>
+                <rect class="b24" x="52" y="110.5" width="22" height="44.5" rx="3"/>
+                <rect class="b25" x="76" y="113.9" width="22" height="41.1" rx="3"/>
+                <text class="muted" x="63" y="105" font-size="9.5" font-weight="600" text-anchor="middle">154</text>
+                <text class="acc" x="87" y="108" font-size="9.5" font-weight="700" text-anchor="middle">152</text>
+                <text x="75" y="172" font-size="10.5" font-weight="700" text-anchor="middle">&lt;32&deg;F</text>
+                <text class="muted" x="75" y="184" font-size="9" text-anchor="middle">Freezing</text>
+              </g>
 
-              <rect class="b24" x="128" y="86.6" width="22" height="68.4" rx="3"/>
-              <rect class="b25" x="152" y="83.6" width="22" height="71.4" rx="3"/>
-              <text class="muted" x="139" y="81" font-size="9.5" font-weight="600" text-anchor="middle">173</text>
-              <text class="acc" x="163" y="78" font-size="9.5" font-weight="700" text-anchor="middle">175</text>
-              <text x="151" y="172" font-size="10.5" font-weight="700" text-anchor="middle">32&ndash;49&deg;F</text>
-              <text class="muted" x="151" y="184" font-size="9" text-anchor="middle">Cold</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Cold Days (32&ndash;49&deg;F)" data-v24="172.6/day (48d)" data-v25="174.9/day (56d)" data-delta="+1.3% YoY" data-note="Stepping above freezing adds ~20+ offenses per day in both years.">
+                <rect class="hit-bg" x="120" y="28" width="62" height="160"/>
+                <rect class="b24" x="128" y="86.6" width="22" height="68.4" rx="3"/>
+                <rect class="b25" x="152" y="83.6" width="22" height="71.4" rx="3"/>
+                <text class="muted" x="139" y="81" font-size="9.5" font-weight="600" text-anchor="middle">173</text>
+                <text class="acc" x="163" y="78" font-size="9.5" font-weight="700" text-anchor="middle">175</text>
+                <text x="151" y="172" font-size="10.5" font-weight="700" text-anchor="middle">32&ndash;49&deg;F</text>
+                <text class="muted" x="151" y="184" font-size="9" text-anchor="middle">Cold</text>
+              </g>
 
-              <rect class="b24" x="204" y="75.3" width="22" height="79.7" rx="3"/>
-              <rect class="b25" x="228" y="63.0" width="22" height="92.0" rx="3"/>
-              <text class="muted" x="215" y="70" font-size="9.5" font-weight="600" text-anchor="middle">181</text>
-              <text class="acc" x="239" y="57" font-size="9.5" font-weight="700" text-anchor="middle">191</text>
-              <text x="227" y="172" font-size="10.5" font-weight="700" text-anchor="middle">50&ndash;69&deg;F</text>
-              <text class="muted" x="227" y="184" font-size="9" text-anchor="middle">Mild</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Mild Days (50&ndash;69&deg;F)" data-v24="181.3/day (99d)" data-v25="190.8/day (91d)" data-delta="+5.2% YoY" data-note="Spring and autumn mild days hover near the ~191/day annual mean.">
+                <rect class="hit-bg" x="196" y="28" width="62" height="160"/>
+                <rect class="b24" x="204" y="75.3" width="22" height="79.7" rx="3"/>
+                <rect class="b25" x="228" y="63.0" width="22" height="92.0" rx="3"/>
+                <text class="muted" x="215" y="70" font-size="9.5" font-weight="600" text-anchor="middle">181</text>
+                <text class="acc" x="239" y="57" font-size="9.5" font-weight="700" text-anchor="middle">191</text>
+                <text x="227" y="172" font-size="10.5" font-weight="700" text-anchor="middle">50&ndash;69&deg;F</text>
+                <text class="muted" x="227" y="184" font-size="9" text-anchor="middle">Mild</text>
+              </g>
 
-              <rect class="b24" x="280" y="55.7" width="22" height="99.3" rx="3"/>
-              <rect class="b25" x="304" y="55.5" width="22" height="99.5" rx="3"/>
-              <text class="muted" x="291" y="50" font-size="9.5" font-weight="600" text-anchor="middle">196</text>
-              <text class="acc" x="315" y="50" font-size="9.5" font-weight="700" text-anchor="middle">197</text>
-              <text x="303" y="172" font-size="10.5" font-weight="700" text-anchor="middle">70&ndash;84&deg;F</text>
-              <text class="muted" x="303" y="184" font-size="9" text-anchor="middle">Warm</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Warm Days (70&ndash;84&deg;F)" data-v24="196.4/day (118d)" data-v25="196.5/day (109d)" data-delta="+0.1% YoY" data-note="Identical daily average (196.4 vs 196.5/day) across both years.">
+                <rect class="hit-bg" x="272" y="28" width="62" height="160"/>
+                <rect class="b24" x="280" y="55.7" width="22" height="99.3" rx="3"/>
+                <rect class="b25" x="304" y="55.5" width="22" height="99.5" rx="3"/>
+                <text class="muted" x="291" y="50" font-size="9.5" font-weight="600" text-anchor="middle">196</text>
+                <text class="acc" x="315" y="50" font-size="9.5" font-weight="700" text-anchor="middle">197</text>
+                <text x="303" y="172" font-size="10.5" font-weight="700" text-anchor="middle">70&ndash;84&deg;F</text>
+                <text class="muted" x="303" y="184" font-size="9" text-anchor="middle">Warm</text>
+              </g>
 
-              <rect class="b24" x="356" y="41.4" width="22" height="113.6" rx="3"/>
-              <rect class="b25" x="380" y="36.4" width="22" height="118.6" rx="3"/>
-              <text class="muted" x="367" y="36" font-size="9.5" font-weight="600" text-anchor="middle">207</text>
-              <text class="acc" x="391" y="31" font-size="9.5" font-weight="700" text-anchor="middle">211</text>
-              <text x="379" y="172" font-size="10.5" font-weight="700" text-anchor="middle">85&deg;F+</text>
-              <text class="muted" x="379" y="184" font-size="9" text-anchor="middle">Hot (+39%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Hot Days (85&deg;F+)" data-v24="207.4/day (92d)" data-v25="211.2/day (88d)" data-delta="+39.3% vs Freezing" data-note="Days reaching 85&deg;F+ averaged 211.2 offenses/day in 2025 vs 151.6 below freezing.">
+                <rect class="hit-bg" x="348" y="28" width="62" height="160"/>
+                <rect class="b24" x="356" y="41.4" width="22" height="113.6" rx="3"/>
+                <rect class="b25" x="380" y="36.4" width="22" height="118.6" rx="3"/>
+                <text class="muted" x="367" y="36" font-size="9.5" font-weight="600" text-anchor="middle">207</text>
+                <text class="acc" x="391" y="31" font-size="9.5" font-weight="700" text-anchor="middle">211</text>
+                <text x="379" y="172" font-size="10.5" font-weight="700" text-anchor="middle">85&deg;F+</text>
+                <text class="muted" x="379" y="184" font-size="9" text-anchor="middle">Hot (+39%)</text>
+              </g>
 
-              <path d="M 75 112 L 379 38" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="5 4" opacity=".65"/>
+              <path d="M 75 112 L 379 38" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="5 4" opacity=".65" pointer-events="none"/>
               <text class="acc" x="230" y="20" font-size="10.5" font-weight="700" text-anchor="middle">+0.73 to +0.76 offenses per +1&deg;F (r = 0.514 &amp; 0.511)</text>
             </svg>
           </div>
-          <p class="lou-vcap">NOAA daily high temperature explained ~26% of daily crime variance in both 2024 and 2025.</p>
+          <div class="lou-readout" data-default="NOAA daily high temperature explained ~26% of daily crime variance in both 2024 and 2025.">
+            <span>NOAA daily high temperature explained ~26% of daily crime variance in both 2024 and 2025.</span>
+          </div>
         </article>
 
         <!-- CARD 2: FULL MOON & RAIN MYTH -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-2">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">02 &middot; Lunar &amp; Rain Effect</span>
-            <span class="lou-vpill same">Myth Debunked</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill same">Myth Debunked</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Full moons (-5.9%) and rainy days (-4.7%) don&rsquo;t spike crime</h3>
           <div class="lou-vsvg-wrap">
-            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal comparison chart showing full-moon days and rainy days sit right near or slightly below the 192 offenses per day annual baseline.">
-              <line class="dash-base" x1="375" y1="22" x2="375" y2="172"/>
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal comparison chart showing full-moon days and rainy days sit near or slightly below the 192 offenses per day annual baseline.">
+              <line class="dash-base" x1="375" y1="22" x2="375" y2="178"/>
               <text class="muted" x="375" y="15" font-size="9.5" font-weight="700" text-anchor="middle">~192/day avg</text>
 
-              <text x="138" y="44" font-size="10.5" font-weight="700" text-anchor="end">2024 Full Moon (12d)</text>
-              <text class="muted" x="138" y="56" font-size="9" text-anchor="end">vs. 354 other days (190.8)</text>
-              <rect class="b24" x="145" y="34" width="232.4" height="18" rx="3"/>
-              <text x="383" y="47" font-size="10" font-weight="700">193.7/d (+1.5%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="2024 Full Moon Days (12 dates)" data-v24="193.7/day (Full Moon)" data-v25="190.8/day (Other 354d)" data-delta="+1.5% (Noise)" data-note="No statistically significant difference between full moons and normal days in 2024.">
+                <rect class="hit-bg" x="8" y="27" width="426" height="34"/>
+                <text x="138" y="44" font-size="10.5" font-weight="700" text-anchor="end">2024 Full Moon (12d)</text>
+                <text class="muted" x="138" y="56" font-size="9" text-anchor="end">vs. 354 other days (190.8)</text>
+                <rect class="b24" x="145" y="34" width="232.4" height="18" rx="3"/>
+                <text x="383" y="47" font-size="10" font-weight="700">193.7/d (+1.5%)</text>
+              </g>
 
-              <text x="138" y="84" font-size="10.5" font-weight="700" text-anchor="end">2025 Full Moon (12d)</text>
-              <text class="muted" x="138" y="96" font-size="9" text-anchor="end">vs. 353 other days (193.1)</text>
-              <rect class="bgrn" x="145" y="74" width="218.1" height="18" rx="3"/>
-              <text class="grn" x="369" y="87" font-size="10" font-weight="700">181.8/d (-5.9%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="2025 Full Moon Days (12 dates)" data-v24="193.1/day (Other 353d)" data-v25="181.8/day (Full Moon)" data-delta="-5.9% Lower" data-note="In 2025, full-moon days actually averaged 11.3 fewer offenses per day than non-full-moon days.">
+                <rect class="hit-bg" x="8" y="67" width="426" height="34"/>
+                <text x="138" y="84" font-size="10.5" font-weight="700" text-anchor="end">2025 Full Moon (12d)</text>
+                <text class="muted" x="138" y="96" font-size="9" text-anchor="end">vs. 353 other days (193.1)</text>
+                <rect class="bgrn" x="145" y="74" width="218.1" height="18" rx="3"/>
+                <text class="grn" x="369" y="87" font-size="10" font-weight="700">181.8/d (-5.9%)</text>
+              </g>
 
-              <text x="138" y="124" font-size="10.5" font-weight="700" text-anchor="end">2025 Rainy (&ge;0.1&Prime;, 90d)</text>
-              <text class="muted" x="138" y="136" font-size="9" text-anchor="end">vs. 275 dry days (195.0)</text>
-              <rect class="b24" x="145" y="114" width="223.0" height="18" rx="3"/>
-              <text class="muted" x="374" y="127" font-size="10" font-weight="700">185.8/d (-4.7%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Rainy Days (&ge;0.1&Prime; Precipitation)" data-v24="189.8/day (94 rainy d)" data-v25="185.8/day (90 rainy d)" data-delta="-4.7% vs Dry" data-note="Rain alone barely suppresses crime unless combined with sub-freezing ice or snow.">
+                <rect class="hit-bg" x="8" y="107" width="426" height="34"/>
+                <text x="138" y="124" font-size="10.5" font-weight="700" text-anchor="end">2025 Rainy (&ge;0.1&Prime;, 90d)</text>
+                <text class="muted" x="138" y="136" font-size="9" text-anchor="end">vs. 275 dry days (195.0)</text>
+                <rect class="b24" x="145" y="114" width="223.0" height="18" rx="3"/>
+                <text class="muted" x="374" y="127" font-size="10" font-weight="700">185.8/d (-4.7%)</text>
+              </g>
 
-              <text x="138" y="164" font-size="10.5" font-weight="700" text-anchor="end">2025 Hot (85&deg;F+, 88d)</text>
-              <text class="muted" x="138" y="176" font-size="9" text-anchor="end">vs. 21 freezing days (151.6)</text>
-              <rect class="b25" x="145" y="154" width="253.4" height="18" rx="3"/>
-              <text class="acc" x="403" y="167" font-size="10" font-weight="700">211.2/d</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Hot Days (85&deg;F+ Contrast)" data-v24="207.4/day (92 hot d)" data-v25="211.2/day (88 hot d)" data-delta="+39.3% vs Freezing" data-note="Unlike moon phase or rain, high temperature strongly and reliably lifts daily crime.">
+                <rect class="hit-bg" x="8" y="147" width="426" height="34"/>
+                <text x="138" y="164" font-size="10.5" font-weight="700" text-anchor="end">2025 Hot (85&deg;F+, 88d)</text>
+                <text class="muted" x="138" y="176" font-size="9" text-anchor="end">vs. 21 freezing days (151.6)</text>
+                <rect class="b25" x="145" y="154" width="253.4" height="18" rx="3"/>
+                <text class="acc" x="403" y="167" font-size="10" font-weight="700">211.2/d</text>
+              </g>
             </svg>
           </div>
-          <p class="lou-vcap">Across all 24 full moons in 2024&ndash;2025, full-moon days averaged 187.7/day vs. 191.9/day on other days.</p>
+          <div class="lou-readout" data-default="Across all 24 full moons in 2024–2025, full-moon days averaged 187.7/day vs. 191.9/day on other days.">
+            <span>Across all 24 full moons in 2024&ndash;2025, full-moon days averaged 187.7/day vs. 191.9/day on other days.</span>
+          </div>
         </article>
 
         <!-- CARD 3: DIVERGING OFFENSE & VENUE SHIFTS -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-3">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">03 &middot; Offense &amp; Venue Mix</span>
-            <span class="lou-vpill shift">Major Structural Shift</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill shift">Major Structural Shift</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Auto theft &amp; homicide plunged; retail shoplifting surged</h3>
           <div class="lou-vsvg-wrap">
-            <svg class="lou-vsvg" viewBox="0 0 440 205" role="img" aria-label="Diverging bar chart of 2024 to 2025 percentage changes: Homicide down 26.1%, Auto Theft down 20.1%, Robbery down 18.4%, Parking Lots down 11.9%, Burglary down 11.5%, while Narcotics rose 21.5%, Shoplifting rose 28.5%, Trespassing rose 39.9%, and Grocery Stores rose 73.6%.">
-              <line class="axis" x1="215" y1="18" x2="215" y2="195" stroke-width="1.5"/>
+            <svg class="lou-vsvg" viewBox="0 0 440 205" role="img" aria-label="Diverging bar chart of 2024 to 2025 percentage changes across major crime and location categories.">
+              <line class="axis" x1="215" y1="18" x2="215" y2="198" stroke-width="1.5"/>
               <text class="grn" x="145" y="13" font-size="9.5" font-weight="700" text-anchor="middle">&larr; 2025 Decreases</text>
               <text class="acc" x="295" y="13" font-size="9.5" font-weight="700" text-anchor="middle">2025 Increases &rarr;</text>
 
-              <rect class="bgrn" x="157" y="22" width="58" height="14" rx="2"/>
-              <text x="152" y="33" font-size="9.5" font-weight="700" text-anchor="end">Homicide -26.1%</text>
-              <text class="muted" x="221" y="33" font-size="9">153 &rarr; 113 (-40)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="1 Homicide (Offense)" data-v24="153 offenses" data-v25="113 offenses" data-delta="-40 (-26.1%)" data-note="Criminal homicide offenses dropped 26.1% year over year in 2025.">
+                <rect class="hit-bg" x="10" y="19" width="420" height="19"/>
+                <rect class="bgrn" x="157" y="22" width="58" height="14" rx="2"/>
+                <text x="152" y="33" font-size="9.5" font-weight="700" text-anchor="end">Homicide -26.1%</text>
+                <text class="muted" x="221" y="33" font-size="9">153 &rarr; 113 (-40)</text>
+              </g>
 
-              <rect class="bgrn" x="170" y="42" width="45" height="14" rx="2"/>
-              <text x="165" y="53" font-size="9.5" font-weight="700" text-anchor="end">Auto Theft -20.1%</text>
-              <text class="muted" x="221" y="53" font-size="9">5,769 &rarr; 4,608 (-1,161)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="14 Auto Theft (Offense)" data-v24="5,769 offenses" data-v25="4,608 offenses" data-delta="-1,161 (-20.1%)" data-note="Largest volume drop in 2025 as the 2023–2024 Kia/Hyundai theft wave cooled.">
+                <rect class="hit-bg" x="10" y="39" width="420" height="19"/>
+                <rect class="bgrn" x="170" y="42" width="45" height="14" rx="2"/>
+                <text x="165" y="53" font-size="9.5" font-weight="700" text-anchor="end">Auto Theft -20.1%</text>
+                <text class="muted" x="221" y="53" font-size="9">5,769 &rarr; 4,608 (-1,161)</text>
+              </g>
 
-              <rect class="bgrn" x="174" y="62" width="41" height="14" rx="2"/>
-              <text x="169" y="73" font-size="9.5" font-weight="700" text-anchor="end">Robbery -18.4%</text>
-              <text class="muted" x="221" y="73" font-size="9">971 &rarr; 792 (-179)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="8 Robbery (Offense)" data-v24="971 offenses" data-v25="792 offenses" data-delta="-179 (-18.4%)" data-note="Street and commercial robberies declined by 179 offenses in 2025.">
+                <rect class="hit-bg" x="10" y="59" width="420" height="19"/>
+                <rect class="bgrn" x="174" y="62" width="41" height="14" rx="2"/>
+                <text x="169" y="73" font-size="9.5" font-weight="700" text-anchor="end">Robbery -18.4%</text>
+                <text class="muted" x="221" y="73" font-size="9">971 &rarr; 792 (-179)</text>
+              </g>
 
-              <rect class="bgrn" x="188" y="82" width="27" height="14" rx="2"/>
-              <text x="183" y="93" font-size="9.5" font-weight="700" text-anchor="end">Parking Lots -11.9%</text>
-              <text class="muted" x="221" y="93" font-size="9">7,900 &rarr; 6,963 (-937)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Parking Lots &amp; Garages (Venue)" data-v24="7,900 offenses" data-v25="6,963 offenses" data-delta="-937 (-11.9%)" data-note="Mirrors the 20% drop in vehicle thefts and 20% drop in Downtown 40202.">
+                <rect class="hit-bg" x="10" y="79" width="420" height="19"/>
+                <rect class="bgrn" x="188" y="82" width="27" height="14" rx="2"/>
+                <text x="183" y="93" font-size="9.5" font-weight="700" text-anchor="end">Parking Lots -11.9%</text>
+                <text class="muted" x="221" y="93" font-size="9">7,900 &rarr; 6,963 (-937)</text>
+              </g>
 
-              <rect class="bgrn" x="189" y="102" width="26" height="14" rx="2"/>
-              <text x="184" y="113" font-size="9.5" font-weight="700" text-anchor="end">Burglary -11.5%</text>
-              <text class="muted" x="221" y="113" font-size="9">3,517 &rarr; 3,113 (-404)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="13 Burglary (Offense)" data-v24="3,517 offenses" data-v25="3,113 offenses" data-delta="-404 (-11.5%)" data-note="Residential and commercial burglary reports dropped 11.5% in 2025.">
+                <rect class="hit-bg" x="10" y="99" width="420" height="19"/>
+                <rect class="bgrn" x="189" y="102" width="26" height="14" rx="2"/>
+                <text x="184" y="113" font-size="9.5" font-weight="700" text-anchor="end">Burglary -11.5%</text>
+                <text class="muted" x="221" y="113" font-size="9">3,517 &rarr; 3,113 (-404)</text>
+              </g>
 
-              <rect class="b25" x="215" y="122" width="48" height="14" rx="2"/>
-              <text class="muted" x="209" y="133" font-size="9" text-anchor="end">3,658 &rarr; 4,444 (+786)</text>
-              <text class="acc" x="268" y="133" font-size="9.5" font-weight="700">Narcotics +21.5%</text>
+              <g class="lou-hit" tabindex="0" data-lbl="34 Narcotics &amp; 35 Equip (Offense)" data-v24="3,658 offenses" data-v25="4,444 offenses" data-delta="+786 (+21.5%)" data-note="Reflects higher proactive drug enforcement and seizures in 2025.">
+                <rect class="hit-bg" x="10" y="119" width="420" height="19"/>
+                <rect class="b25" x="215" y="122" width="48" height="14" rx="2"/>
+                <text class="muted" x="209" y="133" font-size="9" text-anchor="end">3,658 &rarr; 4,444 (+786)</text>
+                <text class="acc" x="268" y="133" font-size="9.5" font-weight="700">Narcotics +21.5%</text>
+              </g>
 
-              <rect class="b25" x="215" y="142" width="63" height="14" rx="2"/>
-              <text class="muted" x="209" y="153" font-size="9" text-anchor="end">3,200 &rarr; 4,112 (+912)</text>
-              <text class="acc" x="283" y="153" font-size="9.5" font-weight="700">Shoplifting +28.5%</text>
+              <g class="lou-hit" tabindex="0" data-lbl="18 Shoplifting (Offense)" data-v24="3,200 offenses" data-v25="4,112 offenses" data-delta="+912 (+28.5%)" data-note="Largest single offense increase in 2025 (+912 retail theft reports).">
+                <rect class="hit-bg" x="10" y="139" width="420" height="19"/>
+                <rect class="b25" x="215" y="142" width="63" height="14" rx="2"/>
+                <text class="muted" x="209" y="153" font-size="9" text-anchor="end">3,200 &rarr; 4,112 (+912)</text>
+                <text class="acc" x="283" y="153" font-size="9.5" font-weight="700">Shoplifting +28.5%</text>
+              </g>
 
-              <rect class="b25" x="215" y="162" width="88" height="14" rx="2"/>
-              <text class="muted" x="209" y="173" font-size="9" text-anchor="end">584 &rarr; 817 (+233)</text>
-              <text class="acc" x="308" y="173" font-size="9.5" font-weight="700">Trespassing +39.9%</text>
+              <g class="lou-hit" tabindex="0" data-lbl="55 Trespassing (Offense)" data-v24="584 offenses" data-v25="817 offenses" data-delta="+233 (+39.9%)" data-note="Increased commercial and multifamily trespassing enforcement.">
+                <rect class="hit-bg" x="10" y="159" width="420" height="19"/>
+                <rect class="b25" x="215" y="162" width="88" height="14" rx="2"/>
+                <text class="muted" x="209" y="173" font-size="9" text-anchor="end">584 &rarr; 817 (+233)</text>
+                <text class="acc" x="308" y="173" font-size="9.5" font-weight="700">Trespassing +39.9%</text>
+              </g>
 
-              <rect class="b25" x="215" y="182" width="135" height="14" rx="2"/>
-              <text class="muted" x="209" y="193" font-size="9" text-anchor="end">818 &rarr; 1,420 (+602)</text>
-              <text class="acc" x="355" y="193" font-size="9.5" font-weight="700">Grocery +73.6%</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Grocery &amp; Supermarkets (Venue)" data-v24="818 offenses" data-v25="1,420 offenses" data-delta="+602 (+73.6%)" data-note="Driven by retail shoplifting; department/discount stores also rose +19.6%.">
+                <rect class="hit-bg" x="10" y="179" width="420" height="19"/>
+                <rect class="b25" x="215" y="182" width="135" height="14" rx="2"/>
+                <text class="muted" x="209" y="193" font-size="9" text-anchor="end">818 &rarr; 1,420 (+602)</text>
+                <text class="acc" x="355" y="193" font-size="9.5" font-weight="700">Grocery +73.6%</text>
+              </g>
             </svg>
           </div>
-          <p class="lou-vcap">Total volume was flat (+0.7%), but vehicle and violent crime fell while retail and drug reports rose.</p>
+          <div class="lou-readout" data-default="Total volume was flat (+0.7%), but vehicle and violent crime fell while retail and drug reports rose.">
+            <span>Total volume was flat (+0.7%), but vehicle and violent crime fell while retail and drug reports rose.</span>
+          </div>
         </article>
 
         <!-- CARD 4: SEASONALITY & DAY OF WEEK -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-4">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">04 &middot; Seasonality &amp; Day of Week</span>
-            <span class="lou-vpill shift">Mon &rarr; Fri/Sat Shift</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill shift">Mon &rarr; Fri/Sat Shift</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Q3 summer peak held; busiest day shifted from Monday to weekend</h3>
           <div class="lou-vsvg-wrap">
@@ -255,14 +420,31 @@
 
               <text x="114" y="16" font-size="10" font-weight="700" text-anchor="middle">Monthly Curve (Q3 Peak)</text>
               <line class="axis" x1="18" y1="145" x2="210" y2="145"/>
-              <polyline fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="4 3"
+              <polyline class="line-24" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"
                 points="20,100 37,115 54,97 71,94 88,47 105,62 122,43 139,45 156,75 173,77 190,98 207,95"/>
-              <polyline fill="none" stroke="var(--accent)" stroke-width="2.4"
+              <polyline class="line-25" fill="none" stroke="var(--accent)" stroke-width="2.4" pointer-events="none"
                 points="20,120 37,129 54,84 71,79 88,51 105,61 122,38 139,41 156,68 173,81 190,70 207,101"/>
-              <circle cx="122" cy="38" r="3.5" class="acc"/>
-              <circle cx="37" cy="129" r="3.5" class="acc"/>
-              <text class="acc" x="126" y="32" font-size="9" font-weight="700" text-anchor="middle">Jul Peak (6.6k)</text>
-              <text class="muted" x="45" y="141" font-size="8.5" text-anchor="middle">Feb Low (4.8k)</text>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Q1 (Jan&ndash;Mar) &amp; Feb Trough" data-v24="15,958 (Feb: 5,094)" data-v25="15,539 (Feb: 4,814)" data-delta="-2.6% in Q1" data-note="February was the lowest month of the year in both 2024 (5,094) and 2025 (4,814).">
+                <rect class="hit-bg" x="14" y="24" width="48" height="138"/>
+                <circle cx="37" cy="129" r="4" class="b25"/>
+                <text class="muted" x="45" y="141" font-size="8.5" text-anchor="middle">Feb Low (4.8k)</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Q2 (Apr&ndash;Jun) Spring Warmup" data-v24="18,141 (May: 6,456)" data-v25="18,376 (May: 6,381)" data-delta="+1.3% in Q2" data-note="Crime climbs sharply each May as daily highs cross 75°F.">
+                <rect class="hit-bg" x="63" y="24" width="48" height="138"/>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Q3 (Jul&ndash;Sep) Summer Peak" data-v24="18,953 (Jul: 6,534)" data-v25="19,245 (Jul: 6,631)" data-delta="+1.5% in Q3" data-note="July (#1) and August (#2) were the top two months in both 2024 and 2025.">
+                <rect class="hit-bg" x="112" y="24" width="50" height="138"/>
+                <circle cx="122" cy="38" r="4" class="b25"/>
+                <text class="acc" x="126" y="32" font-size="9" font-weight="700" text-anchor="middle">Jul Peak (6.6k)</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Q4 (Oct&ndash;Dec) Autumn/Winter" data-v24="16,824 (Nov: 5,448)" data-v25="17,176 (Nov: 5,996)" data-delta="+2.1% in Q4" data-note="Q4 cools down from summer highs; December 2025 dipped to 5,390.">
+                <rect class="hit-bg" x="163" y="24" width="50" height="138"/>
+              </g>
+
               <text class="muted" x="20" y="158" font-size="8.5" text-anchor="middle">J</text>
               <text class="muted" x="54" y="158" font-size="8.5" text-anchor="middle">M</text>
               <text class="muted" x="88" y="158" font-size="8.5" text-anchor="middle">M</text>
@@ -273,116 +455,202 @@
 
               <text x="334" y="16" font-size="10" font-weight="700" text-anchor="middle">Day of Week (2024 vs. 2025)</text>
               <line class="axis" x1="234" y1="145" x2="434" y2="145"/>
-              <rect class="b24" x="238" y="71" width="9" height="74" rx="2"/><rect class="b25" x="248" y="53" width="9" height="92" rx="2"/>
-              <text class="muted" x="247" y="158" font-size="8.5" text-anchor="middle">Sun</text>
-              <rect class="b24" x="266" y="39" width="9" height="106" rx="2"/><rect class="b25" x="276" y="76" width="9" height="69" rx="2"/>
-              <text x="270" y="34" font-size="8" font-weight="700" text-anchor="middle">&rsquo;24 #1</text>
-              <text x="275" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Mon</text>
-              <rect class="b24" x="294" y="89" width="9" height="56" rx="2"/><rect class="b25" x="304" y="90" width="9" height="55" rx="2"/>
-              <text class="muted" x="303" y="158" font-size="8.5" text-anchor="middle">Tue</text>
-              <rect class="b24" x="322" y="108" width="9" height="37" rx="2"/><rect class="b25" x="332" y="82" width="9" height="63" rx="2"/>
-              <text class="muted" x="331" y="158" font-size="8.5" text-anchor="middle">Wed</text>
-              <rect class="b24" x="350" y="99" width="9" height="46" rx="2"/><rect class="b25" x="360" y="109" width="9" height="36" rx="2"/>
-              <text class="muted" x="359" y="158" font-size="8.5" text-anchor="middle">Thu</text>
-              <rect class="b24" x="378" y="79" width="9" height="66" rx="2"/><rect class="b25" x="388" y="47" width="9" height="98" rx="2"/>
-              <text class="acc" x="387" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Fri</text>
-              <rect class="b24" x="406" y="49" width="9" height="96" rx="2"/><rect class="b25" x="416" y="44" width="9" height="101" rx="2"/>
-              <text class="acc" x="415" y="38" font-size="8" font-weight="700" text-anchor="middle">&rsquo;25 #1&ndash;2</text>
-              <text class="acc" x="415" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Sat</text>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Sunday" data-v24="10,055 (#3)" data-v25="10,309 (#3)" data-delta="+2.5% YoY" data-note="Sunday stayed the 3rd-busiest day of the week in both years.">
+                <rect class="hit-bg" x="235" y="26" width="25" height="136"/>
+                <rect class="b24" x="238" y="71" width="9" height="74" rx="2"/><rect class="b25" x="248" y="53" width="9" height="92" rx="2"/>
+                <text class="muted" x="247" y="158" font-size="8.5" text-anchor="middle">Sun</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Monday (#1 in 2024 &rarr; #4 in 2025)" data-v24="10,519 (#1)" data-v25="9,984 (#4)" data-delta="-5.1% YoY" data-note="Monday led 2024 (helped by 53 leap-year Mondays) before dropping to #4 in 2025.">
+                <rect class="hit-bg" x="263" y="26" width="25" height="136"/>
+                <rect class="b24" x="266" y="39" width="9" height="106" rx="2"/><rect class="b25" x="276" y="76" width="9" height="69" rx="2"/>
+                <text x="270" y="34" font-size="8" font-weight="700" text-anchor="middle">&rsquo;24 #1</text>
+                <text x="275" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Mon</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Tuesday" data-v24="9,803 (#5)" data-v25="9,790 (#6)" data-delta="-0.1% YoY" data-note="Tuesday volume was virtually identical across both years.">
+                <rect class="hit-bg" x="291" y="26" width="25" height="136"/>
+                <rect class="b24" x="294" y="89" width="9" height="56" rx="2"/><rect class="b25" x="304" y="90" width="9" height="55" rx="2"/>
+                <text class="muted" x="303" y="158" font-size="8.5" text-anchor="middle">Tue</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Wednesday" data-v24="9,522 (#7 Lowest)" data-v25="9,900 (#5)" data-delta="+4.0% YoY" data-note="Wednesday was the quietest day in 2024 before edging up in 2025.">
+                <rect class="hit-bg" x="319" y="26" width="25" height="136"/>
+                <rect class="b24" x="322" y="108" width="9" height="37" rx="2"/><rect class="b25" x="332" y="82" width="9" height="63" rx="2"/>
+                <text class="muted" x="331" y="158" font-size="8.5" text-anchor="middle">Wed</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Thursday" data-v24="9,660 (#6)" data-v25="9,509 (#7 Lowest)" data-delta="-1.6% YoY" data-note="Thursday was the quietest day of the week in 2025 (9,509 offenses).">
+                <rect class="hit-bg" x="347" y="26" width="25" height="136"/>
+                <rect class="b24" x="350" y="99" width="9" height="46" rx="2"/><rect class="b25" x="360" y="109" width="9" height="36" rx="2"/>
+                <text class="muted" x="359" y="158" font-size="8.5" text-anchor="middle">Thu</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Friday (#4 in 2024 &rarr; #2 in 2025)" data-v24="9,941 (#4)" data-v25="10,398 (#2)" data-delta="+4.6% YoY" data-note="Friday jumped +457 offenses to become the #2 busiest day in 2025.">
+                <rect class="hit-bg" x="375" y="26" width="25" height="136"/>
+                <rect class="b24" x="378" y="79" width="9" height="66" rx="2"/><rect class="b25" x="388" y="47" width="9" height="98" rx="2"/>
+                <text class="acc" x="387" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Fri</text>
+              </g>
+
+              <g class="lou-hit" tabindex="0" data-lbl="Saturday (#2 in 2024 &rarr; #1 in 2025)" data-v24="10,376 (#2)" data-v25="10,446 (#1)" data-delta="+0.7% YoY" data-note="Saturday took the #1 spot in 2025 with 10,446 offenses (200.9/day).">
+                <rect class="hit-bg" x="403" y="26" width="25" height="136"/>
+                <rect class="b24" x="406" y="49" width="9" height="96" rx="2"/><rect class="b25" x="416" y="44" width="9" height="101" rx="2"/>
+                <text class="acc" x="415" y="38" font-size="8" font-weight="700" text-anchor="middle">&rsquo;25 #1&ndash;2</text>
+                <text class="acc" x="415" y="158" font-size="8.5" font-weight="700" text-anchor="middle">Sat</text>
+              </g>
+
               <text class="muted" x="334" y="176" font-size="9" text-anchor="middle">Sat (10,446) &amp; Fri (10,398) led 2025</text>
             </svg>
           </div>
-          <p class="lou-vcap">July and August were #1 and #2 in both years, while 2025 volume shifted from Monday (-5.1%) to Friday/Saturday.</p>
+          <div class="lou-readout" data-default="July and August were #1 and #2 in both years, while 2025 volume shifted from Monday (-5.1%) to Friday/Saturday.">
+            <span>July and August were #1 and #2 in both years, while 2025 volume shifted from Monday (-5.1%) to Friday/Saturday.</span>
+          </div>
         </article>
 
         <!-- CARD 5: GEOGRAPHY (ZIPS & DIVISIONS) -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-5">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">05 &middot; Geography &amp; ZIP Codes</span>
-            <span class="lou-vpill low">Downtown -20.2%</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill low">Downtown -20.2%</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Top 4 ZIPs held steady; Downtown dropped -20.2% while outer ring grew</h3>
           <div class="lou-vsvg-wrap">
-            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal bar comparison of top Louisville ZIP codes: 40203, 40211, 40214, and 40219 stayed #1 to #4, while Downtown 40202 fell 20.2% and outer-ring 40272 and 8th Division rose over 11%.">
-              <text x="136" y="28" font-size="9.5" font-weight="700" text-anchor="end">40203 (Old Lou / West)</text>
-              <rect class="b25" x="142" y="17" width="197" height="14" rx="2"/>
-              <text x="345" y="28" font-size="9" font-weight="600">4,929 (-0.1%)</text>
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Horizontal bar comparison of top Louisville ZIP codes and LMPD 8th Division.">
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40203 (Old Louisville / Russell)" data-v24="4,933 (#1)" data-v25="4,929 (#1)" data-delta="-4 (-0.1%)" data-note="Highest-volume ZIP code in both 2024 and 2025, virtually unchanged.">
+                <rect class="hit-bg" x="8" y="14" width="424" height="20"/>
+                <text x="136" y="28" font-size="9.5" font-weight="700" text-anchor="end">40203 (Old Lou / West)</text>
+                <rect class="b25" x="142" y="17" width="197" height="14" rx="2"/>
+                <text x="345" y="28" font-size="9" font-weight="600">4,929 (-0.1%)</text>
+              </g>
 
-              <text x="136" y="50" font-size="9.5" font-weight="700" text-anchor="end">40211 (Shawnee / West)</text>
-              <rect class="b25" x="142" y="39" width="196" height="14" rx="2"/>
-              <text x="344" y="50" font-size="9" font-weight="600">4,889 (+2.5%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40211 (Shawnee / Chickasaw)" data-v24="4,772 (#2)" data-v25="4,889 (#2)" data-delta="+117 (+2.5%)" data-note="Second-highest ZIP code in both years, located in West Louisville.">
+                <rect class="hit-bg" x="8" y="36" width="424" height="20"/>
+                <text x="136" y="50" font-size="9.5" font-weight="700" text-anchor="end">40211 (Shawnee / West)</text>
+                <rect class="b25" x="142" y="39" width="196" height="14" rx="2"/>
+                <text x="344" y="50" font-size="9" font-weight="600">4,889 (+2.5%)</text>
+              </g>
 
-              <text x="136" y="72" font-size="9.5" font-weight="700" text-anchor="end">40214 (Iroquois / South)</text>
-              <rect class="b25" x="142" y="61" width="195" height="14" rx="2"/>
-              <text x="343" y="72" font-size="9" font-weight="600">4,866 (+5.3%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40214 (Iroquois / Beechmont)" data-v24="4,623 (#3)" data-v25="4,866 (#3)" data-delta="+243 (+5.3%)" data-note="Held #3 rank in both years; part of LMPD 3rd &amp; 4th Divisions.">
+                <rect class="hit-bg" x="8" y="58" width="424" height="20"/>
+                <text x="136" y="72" font-size="9.5" font-weight="700" text-anchor="end">40214 (Iroquois / South)</text>
+                <rect class="b25" x="142" y="61" width="195" height="14" rx="2"/>
+                <text x="343" y="72" font-size="9" font-weight="600">4,866 (+5.3%)</text>
+              </g>
 
-              <text x="136" y="94" font-size="9.5" font-weight="700" text-anchor="end">40219 (Okolona / South)</text>
-              <rect class="b25" x="142" y="83" width="192" height="14" rx="2"/>
-              <text x="340" y="94" font-size="9" font-weight="600">4,796 (+3.9%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40219 (Okolona / Highview)" data-v24="4,618 (#4)" data-v25="4,796 (#4)" data-delta="+178 (+3.9%)" data-note="Held #4 rank in both years; top 4 ZIPs account for 27% of all Louisville crime.">
+                <rect class="hit-bg" x="8" y="80" width="424" height="20"/>
+                <text x="136" y="94" font-size="9.5" font-weight="700" text-anchor="end">40219 (Okolona / South)</text>
+                <rect class="b25" x="142" y="83" width="192" height="14" rx="2"/>
+                <text x="340" y="94" font-size="9" font-weight="600">4,796 (+3.9%)</text>
+              </g>
 
-              <text x="136" y="116" font-size="9.5" font-weight="700" text-anchor="end">40215 (Taylor Berry)</text>
-              <rect class="b25" x="142" y="105" width="162" height="14" rx="2"/>
-              <text class="acc" x="310" y="116" font-size="9" font-weight="700">4,040 (+6.4%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40215 (Taylor Berry / Jacobs)" data-v24="3,798 (#7)" data-v25="4,040 (#5)" data-delta="+242 (+6.4%)" data-note="Rose from #7 in 2024 to #5 in 2025 as Downtown 40202 dropped.">
+                <rect class="hit-bg" x="8" y="102" width="424" height="20"/>
+                <text x="136" y="116" font-size="9.5" font-weight="700" text-anchor="end">40215 (Taylor Berry)</text>
+                <rect class="b25" x="142" y="105" width="162" height="14" rx="2"/>
+                <text class="acc" x="310" y="116" font-size="9" font-weight="700">4,040 (+6.4%)</text>
+              </g>
 
-              <text x="136" y="138" font-size="9.5" font-weight="700" text-anchor="end">40202 (Downtown CBD)</text>
-              <rect class="b24" x="142" y="127" width="163" height="14" rx="2"/>
-              <rect class="bgrn" x="142" y="127" width="130" height="14" rx="2"/>
-              <text class="grn" x="311" y="138" font-size="9" font-weight="700">3,256 (-20.2% / -822)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40202 (Downtown / Central Business District)" data-v24="4,078 (#5)" data-v25="3,256 (#7)" data-delta="-822 (-20.2%)" data-note="Largest geographic drop in the city (-822 offenses), falling from #5 to #7.">
+                <rect class="hit-bg" x="8" y="124" width="424" height="20"/>
+                <text x="136" y="138" font-size="9.5" font-weight="700" text-anchor="end">40202 (Downtown CBD)</text>
+                <rect class="b24" x="142" y="127" width="163" height="14" rx="2"/>
+                <rect class="bgrn" x="142" y="127" width="130" height="14" rx="2"/>
+                <text class="grn" x="311" y="138" font-size="9" font-weight="700">3,256 (-20.2% / -822)</text>
+              </g>
 
-              <text x="136" y="160" font-size="9.5" font-weight="700" text-anchor="end">40272 (Valley Station)</text>
-              <rect class="b25" x="142" y="149" width="129" height="14" rx="2"/>
-              <text class="acc" x="277" y="160" font-size="9" font-weight="700">3,234 (+11.5% / +334)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="ZIP 40272 (Valley Station)" data-v24="2,900 (#10)" data-v25="3,234 (#8)" data-delta="+334 (+11.5%)" data-note="Fastest-growing top-10 ZIP code (+11.5% YoY) in Southwest Jefferson County.">
+                <rect class="hit-bg" x="8" y="146" width="424" height="20"/>
+                <text x="136" y="160" font-size="9.5" font-weight="700" text-anchor="end">40272 (Valley Station)</text>
+                <rect class="b25" x="142" y="149" width="129" height="14" rx="2"/>
+                <text class="acc" x="277" y="160" font-size="9" font-weight="700">3,234 (+11.5% / +334)</text>
+              </g>
 
-              <text x="136" y="182" font-size="9.5" font-weight="700" text-anchor="end">LMPD 8th Div (East End)</text>
-              <rect class="b25" x="142" y="171" width="208" height="14" rx="2"/>
-              <text class="acc" x="355" y="182" font-size="9" font-weight="700">5,191 (+12.1%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="LMPD 8th Division (East End / Middletown)" data-v24="4,632 offenses" data-v25="5,191 offenses" data-delta="+559 (+12.1%)" data-note="Largest percentage increase among all 8 LMPD patrol divisions.">
+                <rect class="hit-bg" x="8" y="168" width="424" height="20"/>
+                <text x="136" y="182" font-size="9.5" font-weight="700" text-anchor="end">LMPD 8th Div (East End)</text>
+                <rect class="b25" x="142" y="171" width="208" height="14" rx="2"/>
+                <text class="acc" x="355" y="182" font-size="9" font-weight="700">5,191 (+12.1%)</text>
+              </g>
             </svg>
           </div>
-          <p class="lou-vcap">The top 4 ZIPs kept 27% of all crime in the exact same order, while Downtown fell from #5 to #7.</p>
+          <div class="lou-readout" data-default="The top 4 ZIPs kept 27% of all crime in the exact same order, while Downtown fell from #5 to #7.">
+            <span>The top 4 ZIPs kept 27% of all crime in the exact same order, while Downtown fell from #5 to #7.</span>
+          </div>
         </article>
 
         <!-- CARD 6: EXTREME LOWS & 1ST-OF-MONTH SPIKE -->
-        <article class="lou-vcard">
+        <article class="lou-vcard" id="lou-card-6">
           <div class="lou-vcard-top">
             <span class="lou-vkicker">06 &middot; Daily Extremes &amp; Lag</span>
-            <span class="lou-vpill low">Jan 6 Blizzard: 88</span>
+            <div class="lou-vtop-right">
+              <span class="lou-vpill low">Jan 6 Blizzard: 88</span>
+              <button type="button" class="lou-exp-btn" onclick="louToggleCard(this)">&#x2922; Expand</button>
+            </div>
           </div>
           <h3>Blizzard set a 2-year low (88); delayed reports spike the 1st of month</h3>
           <div class="lou-vsvg-wrap">
-            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Comparison of extreme low and high days against the 192 per day average: Jan 6 2025 winter storm at 88, Thanksgiving 2024 at 112, Christmas 2025 at 133, 1st-of-month average at 241.1, May 30 2025 at 272, and July 1 2025 at 276.">
-              <line class="dash-base" x1="316" y1="18" x2="316" y2="184"/>
+            <svg class="lou-vsvg" viewBox="0 0 440 195" role="img" aria-label="Comparison of extreme low and high days against the 192 per day average.">
+              <line class="dash-base" x1="316" y1="18" x2="316" y2="188"/>
               <text class="muted" x="316" y="13" font-size="9" font-weight="700" text-anchor="middle">192/day avg</text>
 
-              <text x="144" y="34" font-size="9.5" font-weight="700" text-anchor="end">Jan 6, 2025 (7&Prime;+ Snow/Ice)</text>
-              <rect class="bgrn" x="150" y="23" width="76" height="14" rx="2"/>
-              <text class="grn" x="232" y="34" font-size="9.5" font-weight="700">88 (-54% &middot; 2-yr low)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Jan 6, 2025 Winter Storm &amp; Ice" data-v24="182 (Jan 15 '24 storm)" data-v25="88 offenses (Jan 6 '25)" data-delta="-54% vs Avg" data-note="7+ inches of snow and ice shut down Louisville, setting the single lowest day of 2024–2025.">
+                <rect class="hit-bg" x="8" y="19" width="424" height="21"/>
+                <text x="144" y="34" font-size="9.5" font-weight="700" text-anchor="end">Jan 6, 2025 (7&Prime;+ Snow/Ice)</text>
+                <rect class="bgrn" x="150" y="23" width="76" height="14" rx="2"/>
+                <text class="grn" x="232" y="34" font-size="9.5" font-weight="700">88 (-54% &middot; 2-yr low)</text>
+              </g>
 
-              <text x="144" y="58" font-size="9.5" font-weight="700" text-anchor="end">Thanksgiving &rsquo;24 / &rsquo;25</text>
-              <rect class="bgrn" x="150" y="47" width="97" height="14" rx="2"/>
-              <text class="grn" x="253" y="58" font-size="9.5" font-weight="700">112 (&rsquo;24) &middot; 150 (&rsquo;25)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Thanksgiving Day (Nov 28 '24 / Nov 27 '25)" data-v24="112 offenses (#1 low '24)" data-v25="150 offenses" data-delta="-41% / -22% vs Avg" data-note="Lowest single day of 2024 (112) and well below average again in 2025 (150).">
+                <rect class="hit-bg" x="8" y="43" width="424" height="21"/>
+                <text x="144" y="58" font-size="9.5" font-weight="700" text-anchor="end">Thanksgiving &rsquo;24 / &rsquo;25</text>
+                <rect class="bgrn" x="150" y="47" width="97" height="14" rx="2"/>
+                <text class="grn" x="253" y="58" font-size="9.5" font-weight="700">112 (&rsquo;24) &middot; 150 (&rsquo;25)</text>
+              </g>
 
-              <text x="144" y="82" font-size="9.5" font-weight="700" text-anchor="end">Christmas Day &rsquo;25 / &rsquo;24</text>
-              <rect class="bgrn" x="150" y="71" width="115" height="14" rx="2"/>
-              <text class="grn" x="271" y="82" font-size="9.5" font-weight="700">133 (&rsquo;25) &middot; 184 (&rsquo;24)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Christmas Day (Dec 25)" data-v24="184 offenses" data-v25="133 offenses (#5 low '25)" data-delta="-31% vs '25 Avg" data-note="Christmas Day 2025 dropped to 133 offenses (104 unique incidents).">
+                <rect class="hit-bg" x="8" y="67" width="424" height="21"/>
+                <text x="144" y="82" font-size="9.5" font-weight="700" text-anchor="end">Christmas Day &rsquo;25 / &rsquo;24</text>
+                <rect class="bgrn" x="150" y="71" width="115" height="14" rx="2"/>
+                <text class="grn" x="271" y="82" font-size="9.5" font-weight="700">133 (&rsquo;25) &middot; 184 (&rsquo;24)</text>
+              </g>
 
-              <text x="144" y="108" font-size="9.5" font-weight="700" text-anchor="end">Days 2&ndash;31 Avg (2025)</text>
-              <rect class="b24" x="150" y="97" width="166" height="14" rx="2"/>
-              <text class="muted" x="322" y="108" font-size="9" font-weight="600">191.1/d (3.9% &gt;7d lag)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Days 2&ndash;31 Daily Average" data-v24="189.9/day (3.5% &gt;7d lag)" data-v25="191.1/day (3.9% &gt;7d lag)" data-delta="+0.6% YoY" data-note="Normal calendar days (excluding the 1st of the month) average ~190–191 offenses/day.">
+                <rect class="hit-bg" x="8" y="93" width="424" height="21"/>
+                <text x="144" y="108" font-size="9.5" font-weight="700" text-anchor="end">Days 2&ndash;31 Avg (2025)</text>
+                <rect class="b24" x="150" y="97" width="166" height="14" rx="2"/>
+                <text class="muted" x="322" y="108" font-size="9" font-weight="600">191.1/d (3.9% &gt;7d lag)</text>
+              </g>
 
-              <text x="144" y="134" font-size="9.5" font-weight="700" text-anchor="end">1st of Month Avg (2025)</text>
-              <rect class="b25" x="150" y="123" width="209" height="14" rx="2"/>
-              <text class="acc" x="364" y="134" font-size="9" font-weight="700">241.1/d (+26%)</text>
+              <g class="lou-hit" tabindex="0" data-lbl="1st of the Month Average (12 dates/yr)" data-v24="221.2/day (10.6% &gt;7d lag)" data-v25="241.1/day (13.0% &gt;7d lag)" data-delta="+26.2% vs Days 2-31" data-note="Long-window crimes (fraud, identity theft) default to the 1st of the month when reported later.">
+                <rect class="hit-bg" x="8" y="119" width="424" height="21"/>
+                <text x="144" y="134" font-size="9.5" font-weight="700" text-anchor="end">1st of Month Avg (2025)</text>
+                <rect class="b25" x="150" y="123" width="209" height="14" rx="2"/>
+                <text class="acc" x="364" y="134" font-size="9" font-weight="700">241.1/d (+26%)</text>
+              </g>
 
-              <text x="144" y="158" font-size="9.5" font-weight="700" text-anchor="end">Jul 22 &rsquo;24 / May 30 &rsquo;25</text>
-              <rect class="b25" x="150" y="147" width="236" height="14" rx="2"/>
-              <text class="acc" x="391" y="158" font-size="9" font-weight="700">269 / 272</text>
+              <g class="lou-hit" tabindex="0" data-lbl="Highest Non-1st Days (Jul 22 '24 / May 30 '25)" data-v24="269 (July 22, 2024)" data-v25="272 (May 30, 2025)" data-delta="+42% vs Avg" data-note="Peak single days not falling on the 1st of a month in 2024 and 2025.">
+                <rect class="hit-bg" x="8" y="143" width="424" height="21"/>
+                <text x="144" y="158" font-size="9.5" font-weight="700" text-anchor="end">Jul 22 &rsquo;24 / May 30 &rsquo;25</text>
+                <rect class="b25" x="150" y="147" width="236" height="14" rx="2"/>
+                <text class="acc" x="391" y="158" font-size="9" font-weight="700">269 / 272</text>
+              </g>
 
-              <text x="144" y="182" font-size="9.5" font-weight="700" text-anchor="end">Jul 1 / Aug 1 / Jun 1 &rsquo;25</text>
-              <rect class="b25" x="150" y="171" width="239" height="14" rx="2"/>
-              <text class="acc" x="394" y="182" font-size="9" font-weight="700">276 / 274 / 273</text>
+              <g class="lou-hit" tabindex="0" data-lbl="2025 Summer 1st-of-Month Peaks" data-v24="253 (May 1) / 250 (Jun 1)" data-v25="276 (Jul 1) / 274 (Aug 1)" data-delta="Top Raw Dates" data-note="Combines summer heat with 1st-of-the-month retroactive reporting.">
+                <rect class="hit-bg" x="8" y="167" width="424" height="21"/>
+                <text x="144" y="182" font-size="9.5" font-weight="700" text-anchor="end">Jul 1 / Aug 1 / Jun 1 &rsquo;25</text>
+                <rect class="b25" x="150" y="171" width="239" height="14" rx="2"/>
+                <text class="acc" x="394" y="182" font-size="9" font-weight="700">276 / 274 / 273</text>
+              </g>
             </svg>
           </div>
-          <p class="lou-vcap">13.0% of offenses dated on the 1st were reported &gt;7 days later (vs. 3.9% on other days), inflating 1st-of-month counts.</p>
+          <div class="lou-readout" data-default="13.0% of offenses dated on the 1st were reported >7 days later (vs. 3.9% on other days), inflating 1st-of-month counts.">
+            <span>13.0% of offenses dated on the 1st were reported &gt;7 days later (vs. 3.9% on other days), inflating 1st-of-month counts.</span>
+          </div>
         </article>
 
       </div>
@@ -419,6 +687,88 @@
     </div>
   </footer>
   <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+  <script>
+    function louToggleCard(btn) {
+      var card = btn.closest(".lou-vcard");
+      var exp = card.classList.toggle("expanded");
+      btn.innerHTML = exp ? "&#x2921; Collapse" : "&#x2922; Expand";
+      if (exp) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    function louToggleAllExpand() {
+      var grid = document.getElementById("lou-vgrid");
+      var btn = document.getElementById("lou-layout-btn");
+      var full = grid.classList.toggle("full-mode");
+      btn.classList.toggle("active", full);
+      btn.innerHTML = full ? "&#x229E; 2-Column Grid" : "&#x2922; Expand All Charts";
+      document.querySelectorAll(".lou-vcard").forEach(function (c) {
+        c.classList.remove("expanded");
+        var b = c.querySelector(".lou-exp-btn");
+        if (b) b.innerHTML = "&#x2922; Expand";
+      });
+    }
+    function louSetYear(yr, btn) {
+      var grid = document.getElementById("lou-vgrid");
+      grid.classList.remove("focus-2024", "focus-2025");
+      if (yr === "2024") grid.classList.add("focus-2024");
+      if (yr === "2025") grid.classList.add("focus-2025");
+      document.querySelectorAll(".lou-controls [data-yr]").forEach(function (b) {
+        b.classList.toggle("active", b === btn);
+      });
+    }
+    (function () {
+      var tip = document.getElementById("lou-tip");
+      if (!tip) return;
+      function showHit(hit, e) {
+        var lbl = hit.getAttribute("data-lbl") || "";
+        var v24 = hit.getAttribute("data-v24") || "";
+        var v25 = hit.getAttribute("data-v25") || "";
+        var dlt = hit.getAttribute("data-delta") || "";
+        var note = hit.getAttribute("data-note") || "";
+        tip.innerHTML =
+          '<div class="t-head">' + lbl + '</div>' +
+          '<div class="t-row"><span>2024:</span><b>' + v24 + '</b></div>' +
+          '<div class="t-row"><span>2025:</span><b>' + v25 + '</b></div>' +
+          '<div class="t-row"><span>Difference:</span><b>' + dlt + '</b></div>' +
+          (note ? '<div class="t-note">' + note + '</div>' : '');
+        tip.classList.add("show");
+        var card = hit.closest(".lou-vcard");
+        var ro = card ? card.querySelector(".lou-readout") : null;
+        if (ro) {
+          ro.innerHTML =
+            '<strong>' + lbl + '</strong>' +
+            '<span class="ro-badges">' +
+              '<span class="ro-24">2024: ' + v24 + '</span>' +
+              '<span class="ro-25">2025: ' + v25 + '</span>' +
+              '<span class="ro-d">' + dlt + '</span>' +
+            '</span>';
+        }
+        if (e && e.clientX) moveTip(e);
+      }
+      function moveTip(e) {
+        var x = e.clientX + 16;
+        var y = e.clientY + 16;
+        if (x + 290 > window.innerWidth) x = e.clientX - 295;
+        if (y + 140 > window.innerHeight) y = e.clientY - 140;
+        tip.style.left = Math.max(8, x) + "px";
+        tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideHit(hit) {
+        tip.classList.remove("show");
+        var card = hit.closest(".lou-vcard");
+        var ro = card ? card.querySelector(".lou-readout") : null;
+        if (ro) {
+          ro.innerHTML = '<span>' + (ro.getAttribute("data-default") || "") + '</span>';
+        }
+      }
+      document.querySelectorAll(".lou-hit").forEach(function (hit) {
+        hit.addEventListener("mouseenter", function (e) { showHit(hit, e); });
+        hit.addEventListener("mousemove", moveTip);
+        hit.addEventListener("mouseleave", function () { hideHit(hit); });
+        hit.addEventListener("focus", function (e) { showHit(hit, e); });
+        hit.addEventListener("blur", function () { hideHit(hit); });
+      });
+    })();
+  </script>
   <script>
     (function () {
       var div = document.getElementById("viz-lou");
