@@ -77,20 +77,6 @@
           margin-right: 6px;
           box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
         }
-        .bt-refresh-btn {
-          background: var(--paper);
-          color: var(--ink);
-          border: 1px solid var(--line);
-          border-radius: 6px;
-          padding: 6px 12px;
-          font: 600 0.78rem var(--head);
-          cursor: pointer;
-          transition: border-color 0.15s ease;
-        }
-        .bt-refresh-btn:hover {
-          border-color: var(--accent);
-          color: var(--accent);
-        }
         .bt-cat-title {
           font: 700 0.85rem var(--head);
           text-transform: uppercase;
@@ -163,7 +149,6 @@
           </div>
           <div class="bt-status-bar">
             <span><i class="bt-dot"></i><span id="bt-last-updated">Loading latest check&hellip;</span></span>
-            <button type="button" class="bt-refresh-btn" id="bt-refresh">Refresh</button>
           </div>
         </div>
         <div id="bt-content" aria-live="polite">
@@ -203,7 +188,6 @@
       var FEED_URL = "https://raw.githubusercontent.com/project-creason/buffalo-trace-tracker/main/last_state.json";
       var contentEl = document.getElementById("bt-content");
       var updatedEl = document.getElementById("bt-last-updated");
-      var refreshBtn = document.getElementById("bt-refresh");
 
       function esc(str) {
         var d = document.createElement("div");
@@ -268,7 +252,6 @@
           });
       }
 
-      refreshBtn.addEventListener("click", loadFeed);
       loadFeed();
     })();
   </script>
