@@ -1,0 +1,1569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ScopeOut · Guided deal scoping</title>
+<meta name="description" content="ScopeOut turns discovery answers into a validated deal scope. A demo by David Creason.">
+<link rel="icon" href="scopeout-mark.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: spec-sheet tool — header band, three tabs, questions left / live scope right */
+/* Single light theme on purpose: this is screen-shared on sales calls. */
+:root{
+  color-scheme:light;
+  --bg:#F7F8FB; --surface:#FFFFFF; --sunk:#EFF2F8; --ink:#141B2D; --muted:#566079; --line:#DFE4EE;
+  --accent:#1E4ECF; --accent-soft:#E6ECFB; --on-accent:#FFFFFF; --prod:#0E9AA7; --prod-soft:#E0F4F5;
+  --warn:#8A4B00; --warn-bg:#FCF1E1; --crit:#9B2028; --crit-bg:#F9E6E7; --info:#3B4A63; --info-bg:#EDF0F5; --overlay:rgba(14,20,36,.45);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+header .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-block:14px}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand b{font-family:var(--f-display);font-size:38px;line-height:1;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:12px}
+.brand b .out{color:var(--accent)}
+.mark{width:52px;height:52px;flex:none}
+.lockup{display:flex;flex-direction:column;gap:2px}
+#tagline{font-size:15px;color:var(--muted);padding-left:64px;letter-spacing:.01em}
+.brand > span{font-size:16px}
+@media (max-width:480px){.brand b{font-size:30px;gap:10px}.mark{width:42px;height:42px}.brand > span{font-size:14px}#tagline{font-size:13.5px;padding-left:52px}}
+.mark .br{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mark .sd{fill:var(--accent)} .mark .sp{fill:var(--prod)}
+.brand > span{color:var(--muted)}
+.catalog{font-family:var(--f-mono);font-size:12px;color:var(--muted);background:var(--sunk);padding:3px 8px;border-radius:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:500 13px var(--f-body);background:transparent;color:var(--muted);border:0;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:18px;overflow-x:auto}
+nav.tabs button{font:600 14px var(--f-body);background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:20px 48px}
+.grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+h2{font-family:var(--f-display);font-size:19px;margin:0 0 4px;text-wrap:balance}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;font-weight:600}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chip{font:500 12px var(--f-body);border:1px solid var(--line);background:var(--sunk);color:var(--ink);border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.hover-tip{position:absolute;z-index:60;max-width:300px;background:var(--ink);color:#fff;font:400 13px/1.45 var(--f-body);padding:8px 11px;border-radius:8px;box-shadow:0 6px 20px rgba(15,23,42,.18);pointer-events:none}
+.q{display:grid;gap:5px;padding-block:10px;border-top:1px solid var(--line)}
+.q label.t{font-weight:600;font-size:14px}
+.q .h{font-size:12px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+input[type=number],input[type=text],select{font:15px var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:6px 8px;min-width:0}
+input[type=number]{width:84px;font-variant-numeric:tabular-nums}
+.opt{display:inline-flex;gap:5px;align-items:center;font-size:14px}
+.result{display:grid;gap:16px}
+.verdict{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-start}
+.verdict .big{font-family:var(--f-display);font-size:40px;line-height:1;letter-spacing:-.02em}
+.verdict .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.planpill{display:inline-block;font:600 13px var(--f-body);background:var(--accent-soft);color:var(--accent);padding:3px 10px;border-radius:999px;margin-top:6px}
+.cells{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:8px;--cs:30px}
+.cells.mid{--cs:22px} .cells.dense{--cs:14px}
+.cgroup{display:grid;gap:6px;align-content:start;min-width:0}
+.cgroup .cap{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cgroup .cap b{color:var(--ink);font-weight:600}
+.sq{display:flex;flex-wrap:wrap;gap:5px;max-width:calc(var(--cs)*8 + 35px)}
+.cell{width:var(--cs);height:var(--cs);border-radius:5px}
+.cells.dense .cell{border-radius:3px}
+.cell.d{background:var(--accent)}
+.cell.p{background:var(--prod)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.flags{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.flags li{font-size:14px;padding:8px 10px;border-radius:5px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:baseline}
+.flags .tag{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.04em}
+.f-crit{background:var(--crit-bg);color:var(--crit)} .f-crit span:last-child{color:var(--ink)}
+.f-warn{background:var(--warn-bg);color:var(--warn)} .f-warn span:last-child{color:var(--ink)}
+.f-info{background:var(--info-bg);color:var(--info)} .f-info span:last-child{color:var(--ink)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px}
+.tbl td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+.tbl td.n{text-align:right;font-family:var(--f-mono);font-size:13px}
+.scroll{overflow-x:auto}
+.trace{display:grid;gap:4px;margin:0;padding:0;list-style:none;font-size:13px}
+.trace li{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px}
+.trace code{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.trace li.sets strong{font-weight:700;color:var(--ink)}
+.trace .setsTag{display:inline-block;margin-left:6px;font:600 10.5px var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft,#E8EEFC);border-radius:999px;padding:1px 7px;vertical-align:1px}
+.muted{color:var(--muted)}
+.cta{border:1px dashed var(--accent);border-radius:8px;padding:16px;display:grid;gap:8px}
+.btn{font:600 14px var(--f-body);background:var(--accent);color:var(--on-accent);border:0;border-radius:6px;padding:9px 14px;cursor:pointer;justify-self:start}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+pre{font-family:var(--f-mono);font-size:12.5px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:12px;overflow:auto;max-height:440px;margin:0;white-space:pre}
+pre.wrapped{white-space:pre-wrap}
+pre.json{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;tab-size:2}
+pre.json .jl{display:block} pre.json .jk{color:#1E4ECF} pre.json .js{color:#0B7A55} pre.json .jn{color:#B4540A} pre.json .jb{color:#8A3FB8;font-weight:600}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.rule{display:grid;grid-template-columns:auto 46px minmax(0,1fr);gap:10px;align-items:baseline;padding-block:8px;border-top:1px solid var(--line);font-size:14px}
+.rule code{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.rule .src{font-size:12px;color:var(--muted)}
+.assume{font:500 11px var(--f-mono);color:var(--warn);background:var(--warn-bg);padding:1px 6px;border-radius:3px;margin-left:6px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.toast{font-size:13px;color:var(--accent)}
+.qh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.info{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--sunk);color:var(--muted);font:600 12px/1 var(--f-mono);cursor:pointer;display:inline-grid;place-items:center}
+.info:hover,.info[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.help{font-size:13px;background:var(--sunk);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.help b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);display:block}
+.aud{display:grid;gap:6px;margin-bottom:14px}
+.aud label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;border:1px solid var(--line);border-radius:6px;padding:10px;cursor:pointer;font-size:14px}
+.aud label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.aud small{display:block;color:var(--muted);font-size:12px}
+.glance{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.glance li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;font-size:14px;border-top:1px solid var(--line);padding-top:10px}
+.glance li span:first-child{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+@media (max-width:480px){.glance li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.pkg{display:grid;gap:8px;margin:0;padding-left:18px;font-size:14px}
+.pricebox{font-family:var(--f-display);font-size:26px;letter-spacing:-.01em}
+.vis{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14px}
+.lblh{display:inline-flex;align-items:center;gap:6px}
+th .info{width:18px;height:18px;font-size:10px;vertical-align:middle;margin-left:4px}
+.vis .help{grid-column:1/-1}
+.help a,.guide a{color:var(--accent);font-weight:600;text-decoration:none;cursor:pointer}
+.help a:hover,.guide a:hover{text-decoration:underline}
+.guide{display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.guide{grid-template-columns:minmax(0,1fr)}}
+.gnav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:grid;gap:2px}
+@media (max-width:860px){.gnav{position:static;display:flex;flex-wrap:wrap;gap:6px}}
+.gnav a{font-size:14px;padding:6px 10px;border-radius:5px;color:var(--muted);font-weight:500}
+.gnav a:hover{background:var(--sunk);color:var(--ink);text-decoration:none}
+.gbody{display:grid;gap:20px;min-width:0}
+.gbody section{scroll-margin-top:16px}
+.gbody p,.gbody li{max-width:68ch}
+.gbody h2{font-size:22px;margin-bottom:8px}
+.gbody ol,.gbody ul{padding-left:20px;margin:0;display:grid;gap:6px}
+.ref{display:grid;gap:0}
+.ref div{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:4px 20px;padding-block:10px;border-top:1px solid var(--line);font-size:14px}
+@media (max-width:620px){.ref div{grid-template-columns:minmax(0,1fr)}}
+.ref dt{font-weight:600}
+.ref dd{margin:0;display:grid;gap:4px}
+.ref dd span{color:var(--muted)}
+.ref dd em{font-style:normal;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:600;margin-right:6px}
+.faq details{border-top:1px solid var(--line);padding-block:10px;font-size:14px}
+.faq summary{font-weight:600;cursor:pointer}
+.faq p{margin:8px 0 0}
+.adminbar{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px}
+.adminbar .who{display:grid;gap:2px;font-size:14px}
+.adminbar .who span{color:var(--muted);font-size:13px}
+.lockpill{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);margin-left:8px}
+.lockpill.on{background:var(--accent-soft);color:var(--accent)}
+.draftbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--warn-bg);border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:14px}
+.draftbar ul{margin:0;padding-left:18px;flex-basis:100%;font-size:13px}
+#p-rules input:disabled,#p-rules select:disabled{opacity:.6;cursor:not-allowed}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.msgs{margin:8px 0 0;padding-left:18px;font-size:13px;display:grid;gap:3px}
+.msgs.err{color:var(--crit)} .msgs.ok{color:var(--accent);list-style:none;padding-left:0}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:0;font-size:14px}
+.log li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 16px;border-top:1px solid var(--line);padding-block:8px}
+@media (max-width:620px){.log li{grid-template-columns:minmax(0,1fr)}}
+.log time{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.log b{font-weight:600}
+.planned{font:600 11px var(--f-mono);color:var(--muted);background:var(--sunk);padding:1px 6px;border-radius:3px;margin-left:6px}
+.catalog{display:inline-flex;align-items:center;gap:6px}
+.catalog select{font:500 12px var(--f-mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 4px;max-width:100%}
+.cathead{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-start;justify-content:space-between}
+.cathead > div{min-width:0}
+#catJson{margin-top:12px;max-height:560px}
+.tot td{border-bottom:0;padding-block:5px}
+input.disc{width:68px;padding:3px 6px;font-size:14px;text-align:right}
+#discBar{display:grid;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+#discBar #discAll{width:72px}
+.pill{flex:none;white-space:nowrap;font:600 12px var(--f-body);padding:4px 10px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.pill.st-ok{background:var(--accent-soft);color:var(--accent)} .pill.st-warn{background:var(--warn-bg);color:var(--warn)}
+.pill.st-info{background:var(--info-bg);color:var(--info)} .pill.st-crit{background:var(--crit-bg);color:var(--crit)}
+.apprrow .h{flex-basis:100%}
+#discBar .h,.pbrow .h,.rbcond .h,.adminbar .h{font-size:12px;color:var(--muted)}
+.pbrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:12px;font-size:14px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:600 13px var(--f-body);cursor:pointer}
+.linkbtn:hover{text-decoration:underline}
+.rule{display:grid;grid-template-columns:auto 46px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding-block:8px;border-top:1px solid var(--line);font-size:14px}
+.rb{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px dashed var(--accent);border-radius:8px}
+.rbcond{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.rbcond .h{min-width:34px}
+.rb select,.rb input[type=text]{max-width:100%}
+.rbgrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:center;font-size:14px}
+.rbgrid input[type=text]{width:100%}
+#rbPrev{font-size:13px;background:var(--sunk);border-radius:6px;padding:10px 12px;overflow-wrap:anywhere}
+.limits{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14px}
+.mform{display:grid;gap:8px;margin-top:6px}
+.mform label:not(.opt){font-weight:600;font-size:13px}
+.mform input[type=text],.mform input[type=email],.mform textarea{width:100%;font:15px var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:7px 9px}
+.mform textarea{min-height:84px;resize:vertical}
+.mform .row{margin-top:4px}
+.hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.mstatus{font-size:13px;color:var(--accent);margin:0;min-height:1em}
+.mstatus.bad{color:var(--crit)}
+.btn:disabled{opacity:.6;cursor:wait}
+.modal{position:fixed;inset:0;z-index:50;background:var(--overlay);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.mbox{background:var(--surface);border-radius:10px;width:100%;max-width:700px;box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden}
+.mhead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line)}
+.mhead > div{min-width:0;overflow-wrap:anywhere}
+.mnote{margin:0;padding:10px 16px;background:var(--info-bg);color:var(--info);font-size:13px}
+.mbody{background:#F4F6FA;overflow-x:auto}
+.livetag{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);margin-left:8px;vertical-align:middle}
+.vendor{display:inline-flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
+.vendor b{font-family:var(--f-display);font-size:36px;line-height:1;letter-spacing:-.02em;color:var(--accent)}
+.powered{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--muted)}
+.powered svg{width:16px;height:16px}
+@media (max-width:480px){.vendor b{font-size:28px}}
+.q input.wide{flex:1 1 220px;min-width:0}
+.flags li.fgroup{display:grid;grid-template-columns:minmax(0,1fr);gap:0;background:none;padding:10px 0 2px;font:600 12px var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--ink)}
+.flags li.fgroup:first-child{padding-top:0}
+.flags li.fgroup small{font:400 12px var(--f-body);text-transform:none;letter-spacing:0;color:var(--muted)}
+.effect{display:flex;margin-top:6px;background:var(--surface);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:4px 10px;font:600 13px var(--f-body);cursor:pointer;text-align:left}
+.effect:hover{background:var(--accent-soft)}
+tr.flash td{background:var(--accent-soft)!important;box-shadow:inset 0 0 0 2px var(--accent)}
+@media (prefers-reduced-motion:no-preference){#lines tr td{transition:background .3s,box-shadow .3s}}
+tr.added td{background:var(--accent-soft)}
+tr.added td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.addpill{display:inline-block;font:600 11px var(--f-body);color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:1px 8px;margin-left:8px;vertical-align:1px;white-space:nowrap}
+input.disc.over{border:2px solid var(--warn);background:var(--warn-bg);color:var(--warn);font-weight:700}
+input.disc.block{border:2px solid var(--crit);background:var(--crit-bg);color:var(--crit);font-weight:700}
+tr.row-over td{background:var(--warn-bg)} tr.row-block td{background:var(--crit-bg)}
+.dalert{display:grid;gap:6px;border-radius:8px;padding:14px 16px;border:2px solid var(--line);font-size:14px}
+.dalert strong{font-size:16px}
+.dalert.st-warn{border-color:var(--warn);background:var(--warn-bg)} .dalert.st-warn strong{color:var(--warn)}
+.dalert.st-crit{border-color:var(--crit);background:var(--crit-bg)} .dalert.st-crit strong{color:var(--crit)}
+.dalert.st-info{border-color:var(--info);background:var(--info-bg)} .dalert.st-info strong{color:var(--info)}
+.dalert .row{margin-top:4px}
+footer{font-size:12px;color:var(--muted);padding-block:0 32px}
+@media (prefers-reduced-motion:no-preference){.cell{transition:background .2s}}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><div class="lockup"><b id="brandName" aria-label="ScopeOut"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="br" d="M4 11V7Q4 4 7 4H11"/><path class="br" d="M21 4H25Q28 4 28 7V11"/><path class="br" d="M28 21V25Q28 28 25 28H21"/><path class="br" d="M11 28H7Q4 28 4 25V21"/><rect class="sd" x="9.6" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="16.8" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="9.6" y="16.8" width="5.6" height="5.6" rx="1.3"/><rect class="sp" x="16.8" y="16.8" width="5.6" height="5.6" rx="1.3"/></svg><span aria-hidden="true">Scope<span class="out">Out</span></span></b><span id="tagline">Scope it right the first time.</span></div><span class="vendor" id="vendorBrand" hidden><b id="vendorName"></b><span class="powered">Powered by <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="br" d="M4 11V7Q4 4 7 4H11"/><path class="br" d="M21 4H25Q28 4 28 7V11"/><path class="br" d="M28 21V25Q28 28 25 28H21"/><path class="br" d="M11 28H7Q4 28 4 25V21"/><rect class="sd" x="9.6" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="16.8" y="9.6" width="5.6" height="5.6" rx="1.3"/><rect class="sd" x="9.6" y="16.8" width="5.6" height="5.6" rx="1.3"/><rect class="sp" x="16.8" y="16.8" width="5.6" height="5.6" rx="1.3"/></svg>ScopeOut</span></span><label class="catalog" for="catSel">Catalog <select id="catSel"></select></label></div>
+    <div class="row"><span class="muted" style="font-size:13px">View as</span>
+      <div class="seg" role="group" aria-label="View as">
+        <button id="modeSeller" aria-pressed="true">Seller</button><button id="modeBuyer" aria-pressed="false">Buyer</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-scope" aria-selected="true" data-tab="scope">Scope</button>
+    <button role="tab" id="tab-rules" aria-selected="false" data-tab="rules">Admin</button>
+    <button role="tab" id="tab-output" aria-selected="false" data-tab="output">Output</button>
+    <button role="tab" id="tab-guide" aria-selected="false" data-tab="guide">Guide</button>
+  </nav>
+
+  <main>
+  <!-- SCOPE -->
+  <section id="p-scope">
+    <div class="grid">
+      <div class="panel">
+        <h2 id="qTitle">Discovery questions</h2>
+        <p class="sub" id="qSub">Answer what you learned on the call. The scope updates as you go.</p>
+        <div class="presets" id="presets"></div>
+        <div class="aud buyerOnly" id="audPick" hidden>
+          <label><input type="radio" name="aud" value="exec"><span><strong>I need a quick overview</strong><small>For a CIO or CDO deciding whether this is worth a closer look</small></span></label>
+          <label><input type="radio" name="aud" value="lead"><span><strong>I'm scoping a project</strong><small>For a director or lead building the package for leadership approval</small></span></label>
+        </div>
+        <div id="qList"></div>
+      </div>
+
+      <div class="result">
+        <div id="discAlert" class="dalert" role="alert" hidden></div>
+        <div class="panel">
+          <div class="verdict" id="verdict"></div>
+          <div id="allocWrap">
+            <div style="margin-top:16px" class="lbl" aria-hidden="true" id="allocCap"></div>
+            <div class="cells" id="cells" aria-label="Allocation"></div>
+            <div class="legend" id="legend"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Checks</h3>
+          <ul class="flags" id="flags"></ul>
+        </div>
+        <div class="panel execOnly" hidden>
+          <h3>At a glance</h3>
+          <ul class="glance" id="glance"></ul>
+        </div>
+        <div class="panel notExec">
+          <h3>Bill of scope</h3>
+          <div class="scroll"><table class="tbl"><thead id="linesHead"></thead><tbody id="lines"></tbody></table></div>
+          <div id="discBar" hidden></div>
+          <p class="note" id="priceNote"></p>
+        </div>
+        <div class="panel sellerOnly">
+          <h3>Why this scope</h3>
+          <ul class="trace" id="trace"></ul>
+        </div>
+        <div class="panel leadOnly" hidden>
+          <h3>Leadership package</h3>
+          <p class="sub">Everything your leadership will ask for, in one document.</p>
+          <div class="pricebox" id="pkgPrice"></div>
+          <p class="note" id="pkgPriceNote" style="margin-top:2px"></p>
+          <ol class="pkg" id="pkgList"></ol>
+        </div>
+        <div class="cta buyerOnly" id="mailBuyer" hidden>
+          <strong>Email me this scope</strong>
+          <span class="muted" id="mbSub"></span>
+          <form id="mbForm" class="mform" novalidate>
+            <label for="mbName">Name</label><input type="text" id="mbName" maxlength="80" autocomplete="name" placeholder="Your name">
+            <label for="mbEmail">Work email</label><input type="email" id="mbEmail" maxlength="254" autocomplete="email" placeholder="Your work email address">
+            <label class="opt"><input type="checkbox" id="mbCall"> <span id="mbCallLbl"></span></label>
+            <label class="opt"><input type="checkbox" id="mbConsent"> Email me this scope. A solutions engineer may follow up about it.</label>
+            <div class="hp" aria-hidden="true"><label for="mbWeb">Leave this empty</label><input type="text" id="mbWeb" tabindex="-1" autocomplete="off"></div>
+            <div id="tsBuyer"></div>
+            <div class="row"><button class="btn" type="submit" id="mbSend">Email me this scope</button><button class="btn ghost" type="button" data-preview="buyer">Preview the email</button></div>
+            <p class="mstatus" id="mbStatus" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section id="p-rules" hidden>
+    <div class="adminbar">
+      <div class="who"><strong id="roleName">Signed in as Sales rep<span class="lockpill" id="lockPill">View only</span></strong><span id="roleNote">Packaging and rules are managed by RevOps. Ask an admin to request a change.</span></div>
+      <label class="row" for="roleSel"><span class="h">Demo role</span><select id="roleSel"><option value="rep">Sales rep</option><option value="manager">Sales manager</option><option value="admin">RevOps admin</option></select></label>
+    </div>
+    <div class="draftbar" id="draftBar" hidden>
+      <strong id="draftText"></strong>
+      <button class="btn" id="publishBtn" type="button">Publish changes</button>
+      <button class="btn ghost" id="discardBtn" type="button">Discard draft</button>
+      <ul id="draftList"></ul>
+    </div>
+    <p class="toast" id="pubToast" hidden style="margin:0 0 12px"></p>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="cathead">
+        <div><h2 id="catTitle"></h2><p class="sub" id="catStats" style="margin:0"></p></div>
+        <div class="row">
+          <label class="btn filebtn adminOnly" for="catFile">Import catalog file<input type="file" id="catFile" accept=".json,application/json"></label>
+          <button class="btn ghost" type="button" id="catShow" aria-controls="catJson" aria-expanded="false">Show catalog file</button>
+          <button class="btn ghost" type="button" data-copy="catJson">Copy catalog file</button><span class="toast" id="t-catJson" hidden>Copied</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">A catalog file defines one product: its questions, plans, rules and outputs. Import a new file and ScopeOut reconfigures, with no code changes. Files are checked before anything loads.</p>
+      <ul class="msgs" id="catMsgs" hidden></ul>
+      <pre id="catJson" class="json" hidden></pre>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <h2>Packaging</h2>
+        <p class="sub" id="pkgNote"></p>
+        <div class="pbrow"><span>Price book: <strong id="pbName"></strong></span><select id="pbSel" aria-label="Price book to load"></select><button class="btn ghost adminOnly" type="button" id="pbLoad">Load price book</button><span class="h" id="pbNote" style="flex-basis:100%"></span></div>
+        <div class="scroll"><table class="tbl"><thead id="planHead"></thead><tbody id="planRows"></tbody></table></div>
+        <div class="help" id="pkHelp" hidden style="margin-top:10px"></div>
+        <h3 style="margin-top:20px">Estimating and thresholds</h3>
+        <div class="scroll"><table class="tbl"><tbody id="paramRows"></tbody></table></div>
+        <p class="note" id="estNote"></p>
+        <h3 style="margin-top:20px">Discount limits</h3>
+        <div class="limits">
+          <span class="lblh"><label for="discRep">Reps can give up to (%)</label><button type="button" class="info" data-set="disc-rep" aria-controls="sh-disc-rep" aria-expanded="false" aria-label="About the rep discount limit">i</button></span>
+          <input type="number" id="discRep" data-dpol="repMax" min="0" max="100">
+          <div class="help" id="sh-disc-rep" hidden style="grid-column:1/-1"></div>
+          <span class="lblh"><label for="discMax">Manager can approve up to (%)</label><button type="button" class="info" data-set="disc-max" aria-controls="sh-disc-max" aria-expanded="false" aria-label="About the approval ceiling">i</button></span>
+          <input type="number" id="discMax" data-dpol="approvalMax" min="0" max="100">
+          <div class="help" id="sh-disc-max" hidden style="grid-column:1/-1"></div>
+        </div>
+        <h3 style="margin-top:20px">What each website visitor sees</h3>
+        <div class="vis">
+          <span class="lblh"><label for="vis-exec">Executive overview: pricing</label><button type="button" class="info" data-set="vis-exec" aria-controls="sh-vis-exec" aria-expanded="false" aria-label="About Executive overview: pricing">i</button></span>
+          <select id="vis-exec" data-vis="exec"><option value="hidden">Hidden</option><option value="range">Indicative range</option><option value="list">List price</option></select>
+          <div class="help" id="sh-vis-exec" hidden></div>
+          <span class="lblh"><label for="vis-lead">Project lead package: pricing</label><button type="button" class="info" data-set="vis-lead" aria-controls="sh-vis-lead" aria-expanded="false" aria-label="About Project lead package: pricing">i</button></span>
+          <select id="vis-lead" data-vis="lead"><option value="hidden">Hidden</option><option value="range">Indicative range</option><option value="list">List price</option></select>
+          <div class="help" id="sh-vis-lead" hidden></div>
+          <span class="lblh"><label for="vis-band">Range width (± %)</label><button type="button" class="info" data-set="vis-band" aria-controls="sh-vis-band" aria-expanded="false" aria-label="About Range width (± %)">i</button></span>
+          <input type="number" id="vis-band" data-param="rangePct" min="0" max="50">
+          <div class="help" id="sh-vis-band" hidden></div>
+        </div>
+        <p class="note">Sellers always see list price. With no price book loaded, every visitor sees "pricing on request".</p>
+      </div>
+      <div class="panel">
+        <h2>Rules</h2>
+        <p class="sub">Each rule can only raise the requirement. The strictest rule sets the plan, and every decision lands in the trace.</p>
+        <div id="ruleRows"></div>
+        <button class="btn ghost adminOnly" type="button" id="rbOpen" style="margin-top:12px">Add a rule</button>
+        <div class="rb" id="rb" hidden>
+          <strong>New rule</strong>
+          <div class="row"><label class="opt"><input type="radio" name="rbKind" value="plan" checked> Raise the plan</label><label class="opt"><input type="radio" name="rbKind" value="flag"> Add a flag</label></div>
+          <div id="rbConds"></div>
+          <button type="button" class="linkbtn" id="rbAnd" style="justify-self:start">+ And another condition</button>
+          <div class="rbgrid" id="rbPlanBox"><label for="rbPlan">Then the plan is at least</label><select id="rbPlan"></select></div>
+          <div class="rbgrid" id="rbFlagBox" hidden>
+            <label for="rbTag">Flag label</label><input type="text" id="rbTag" maxlength="24" placeholder="e.g. Security review">
+            <label for="rbMsg">Message</label><input type="text" id="rbMsg" maxlength="200" placeholder="What the rep should do">
+            <label for="rbLevel">Level</label><select id="rbLevel"><option value="warn">Warning</option><option value="info">Info</option><option value="crit">Critical</option></select>
+            <label for="rbShow">Shown to</label><select id="rbShow"><option value="seller">Sellers only</option><option value="lead">Sellers and project leads</option><option value="all">Everyone, including executives</option></select>
+          </div>
+          <div id="rbPrev" aria-live="polite"></div>
+          <div class="row"><button class="btn" type="button" id="rbSave">Add to draft</button><button class="btn ghost" type="button" id="rbCancel">Cancel</button></div>
+          <p class="note" style="margin:0">Simple rules are built here. Calculated rules, like the services estimate, live in the catalog file.</p>
+        </div>
+        <h3 style="margin-top:20px">Packaging data file<button type="button" class="info" data-pk="csv" aria-label="About the packaging data file" style="margin-left:6px">i</button></h3>
+        <pre id="csv"></pre>
+        <div class="row" style="margin-top:10px">
+          <label class="btn ghost filebtn adminOnly" for="csvFile">Import CSV<input type="file" id="csvFile" accept=".csv,text/csv"></label>
+          <button class="btn ghost" type="button" data-copy="csv">Copy CSV</button><span class="toast" id="t-csv" hidden>Copied</span>
+        </div>
+        <ul class="msgs" id="csvMsgs" hidden></ul>
+        <p class="note">Imported files are checked row by row and land in the draft. Nothing reaches reps until an admin publishes.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h2>Change log</h2>
+      <p class="sub">Every published change, who made it and when. Scopes record which version they were built on.</p>
+      <ul class="log" id="changeLog"></ul>
+    </div>
+  </section>
+
+  <!-- OUTPUT -->
+  <section id="p-output" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>Buyer summary</h2>
+        <p class="sub">Paste into a proposal or follow-up email.</p>
+        <pre class="wrapped" id="summary"></pre>
+        <div class="row" style="margin-top:10px"><button class="btn ghost" data-copy="summary">Copy summary</button><span class="toast" id="t-summary" hidden>Copied</span></div>
+      </div>
+      <div class="panel">
+        <h2>CRM payload</h2>
+        <p class="sub">Deal properties and line items, typed for the CRM. No re-keying.</p>
+        <pre id="payload" class="json"></pre>
+        <div class="row" style="margin-top:10px"><button class="btn ghost" data-copy="payload">Copy JSON</button><span class="toast" id="t-payload" hidden>Copied</span></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h2>Email to prospect<span class="livetag" id="liveTag"></span></h2>
+      <p class="sub" id="msHint"></p>
+      <div id="msDiscWarn" class="dalert" hidden style="margin-bottom:12px;max-width:560px"></div>
+      <form id="msForm" class="mform" novalidate style="max-width:560px">
+        <label for="msName">Prospect name</label><input type="text" id="msName" maxlength="80" autocomplete="off" placeholder="e.g. Jordan Ellis">
+        <label for="msEmail">Prospect email</label><input type="email" id="msEmail" maxlength="254" autocomplete="off" placeholder="Their work email address">
+        <label for="msNote">Personal note (optional)</label><textarea id="msNote" maxlength="600" placeholder="Thanks for the time today. Here's the scope we talked through…"></textarea>
+        <div class="hp" aria-hidden="true"><label for="msWeb">Leave this empty</label><input type="text" id="msWeb" tabindex="-1" autocomplete="off"></div>
+        <div id="tsSeller"></div>
+        <div class="row"><button class="btn" type="submit" id="msSend">Send to prospect</button><button class="btn ghost" type="button" data-preview="seller">Preview the email</button></div>
+        <p class="mstatus" id="msStatus" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+  <!-- GUIDE -->
+  <section id="p-guide" hidden>
+    <div class="guide">
+      <nav class="gnav" aria-label="Guide sections">
+        <a data-goto="g-start">Getting started</a><a data-goto="g-terms">Key terms</a><a data-goto="g-rules">How the plan is chosen</a>
+        <a data-goto="g-views">Seller and buyer views</a><a data-goto="g-roles">Roles and access</a><a data-goto="g-fields">Question reference</a><a data-goto="g-settings">Settings reference</a><a data-goto="g-faq">Common questions</a>
+      </nav>
+      <div class="gbody">
+        <section class="panel" id="g-start"><h2>Getting started</h2>
+          <p class="sub">Your first scope takes about five minutes.</p>
+          <ol>
+            <li>Type the prospect's company name, or load one of the example scenarios to see how a finished scope looks.</li>
+            <li>Answer the questions as you learn the answers on the call. You don't need them in order. Tap <strong>i</strong> on any question for what to listen for and what to ask next.</li>
+            <li>Watch the <strong>Checks</strong> panel. A warning means ask another question, or route the deal to a solutions engineer before quoting.</li>
+            <li>Read <strong>Why this scope</strong> so you can explain the plan to the buyer in one sentence.</li>
+            <li>Open <strong>Output</strong> and copy the buyer summary into your follow-up email, or the CRM payload into the deal.</li>
+          </ol>
+        </section>
+        <section class="panel" id="g-terms"><h2>Key terms</h2>
+          <dl class="ref" id="gTerms"></dl>
+        </section>
+        <section class="panel" id="g-rules"><h2>How the plan is chosen</h2>
+          <p id="gRuleIntro"></p>
+          <p id="gRuleExample"></p>
+          <p id="gRuleFlags"></p>
+          <p id="gCatalogs" class="note"></p>
+        </section>
+        <section class="panel" id="g-views"><h2>Seller and buyer views</h2>
+          <div class="scroll"><table class="tbl">
+            <thead><tr><th>View</th><th>Who it's for</th><th>What they see</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Seller</strong></td><td>Reps and solutions engineers on a call</td><td>All questions with coaching tips, every check, the rule trace, list prices and the CRM output.</td></tr>
+              <tr><td><strong>Buyer: quick overview</strong></td><td>Executives deciding whether to look closer</td><td><span id="execCount">Six</span> questions and an at-a-glance summary. Pricing follows the setting for this audience.</td></tr>
+              <tr><td><strong>Buyer: scoping a project</strong></td><td>Directors building a case for approval</td><td>All questions, the full scope and a leadership package. Pricing follows the setting for this audience.</td></tr>
+            </tbody></table></div>
+          <p class="note">Buyers never see internal flags such as SE review or services gaps, or the rule trace.</p>
+        </section>
+        <section class="panel" id="g-roles"><h2>Roles and access</h2>
+          <p>Reps can see the packaging but can't change it, and can discount up to the rep limit. Bigger discounts need a sales manager. RevOps admins edit packaging, rules and pricing visibility in a draft, then publish it to every rep at once. Each publish is recorded in the change log.</p>
+          <div class="scroll"><table class="tbl">
+            <thead><tr><th>Role</th><th>Can do</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Sales rep</strong></td><td>Build scopes, share buyer summaries, view packaging and the change log.</td></tr>
+              <tr><td><strong>Sales manager</strong></td><td>Everything a rep can do, plus approve or decline discounts between the rep limit and the approval ceiling.</td></tr>
+              <tr><td><strong>RevOps admin</strong></td><td>Everything a rep can do, plus edit packaging, price books, discount limits and rules (including new rules from the rule builder), import catalog and CSV files, set what website visitors see, and publish.</td></tr>
+              <tr><td><strong>Solutions engineer</strong><span class="planned">planned</span></td><td>Approve deals flagged for SE review, and override a plan with a recorded reason.</td></tr>
+              <tr><td><strong>Finance approver</strong><span class="planned">planned</span></td><td>Second approval before any price book change is published.</td></tr>
+              <tr><td><strong>Partner</strong><span class="planned">planned</span></td><td>Scope with a partner price book, limited to the plans that partner resells.</td></tr>
+            </tbody></table></div>
+        </section>
+        <section class="panel" id="g-fields"><h2>Question reference</h2>
+          <dl class="ref" id="gFields"></dl>
+        </section>
+        <section class="panel" id="g-settings"><h2>Settings reference</h2>
+          <p class="sub">These live on the Admin tab. Changes apply to every new scope immediately.</p>
+          <dl class="ref" id="gSettings"></dl>
+        </section>
+        <section class="panel faq" id="g-faq"><h2>Common questions</h2>
+          <div id="faqList"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+<div class="modal" id="mailModal" hidden role="dialog" aria-modal="true" aria-labelledby="mmTitle">
+  <div class="mbox">
+    <div class="mhead"><div><strong id="mmTitle">Email preview</strong><div class="h" id="mmMeta"></div></div><button class="btn ghost" type="button" id="mmClose">Close</button></div>
+    <p class="mnote" id="mmNote"></p>
+    <div class="mbody" id="mmBody"></div>
+  </div>
+</div>
+<footer class="wrap" id="footNote"></footer>
+
+<script>
+/* ScopeOut scope email. One template, used by the page (preview) and by the mail server (real send).
+   It takes plain data, never HTML, so nothing a visitor types can change the email's markup. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.ScopeOutEmail = factory();
+})(typeof self !== "undefined" ? self : this, function () {
+  const C = { bg: "#F4F6FA", card: "#FFFFFF", ink: "#141B2D", muted: "#566079", line: "#DCE2EC", accent: "#1E4ECF", soft: "#E6ECFB", prod: "#0E9AA7", warnBg: "#FBEEDA", warn: "#8A4B00" };
+  const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+  const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const str = (v, max) => String(v == null ? "" : v).replace(/<[^>]*>/g, "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
+  const list = (v, max) => (Array.isArray(v) ? v : []).slice(0, max);
+
+  /* Coerce untrusted input into the shape the template expects, with hard length limits. */
+  function clean(d) {
+    d = d && typeof d === "object" ? d : {};
+    return {
+      mode: d.mode === "seller" ? "seller" : "buyer",
+      brand: d.brand && typeof d.brand === "object" ? { name: str(d.brand.name, 40), accent: /^#[0-9a-f]{6}$/i.test(d.brand.accent || "") ? d.brand.accent : "", soft: /^#[0-9a-f]{6}$/i.test(d.brand.soft || "") ? d.brand.soft : "" } : null,
+      recipientName: str(d.recipientName, 80),
+      company: str(d.company, 100),
+      product: str(d.product, 60) || "your",
+      plan: str(d.plan, 40),
+      stats: list(d.stats, 3).map(s => ({ label: str(s && s.label, 30), value: str(s && s.value, 24), sub: str(s && s.sub, 60) })).filter(s => s.label && s.value),
+      highlights: list(d.highlights, 6).map(h => ({ label: str(h && h.label, 30), text: str(h && h.text, 240) })).filter(h => h.label && h.text),
+      lines: list(d.lines, 20).map(l => ({ name: str(l && l.name, 60), detail: str(l && l.detail, 160), qty: str(l && l.qty, 16), added: !!(l && l.added) })).filter(l => l.name),
+      reasons: list(d.reasons, 8).map(r => str(r, 160)).filter(Boolean),
+      investment: str(d.investment, 80),
+      investmentNote: str(d.investmentNote, 200),
+      notes: list(d.notes, 5).map(n => ({ tag: str(n && n.tag, 24), msg: str(n && n.msg, 240) })).filter(n => n.msg),
+      note: str(d.note, 600),
+      wantsCall: !!d.wantsCall,
+      demoFooter: str(d.demoFooter, 300),
+      pageUrl: str(d.pageUrl, 200)
+    };
+  }
+
+  function render(input, opts) {
+    const d = clean(input), o = opts || {};
+    const B = d.brand && d.brand.name ? d.brand : null, A = (B && B.accent) || C.accent, S = (B && B.soft) || C.soft;
+    const first = d.recipientName.split(/\s+/)[0];
+    const subject = d.mode === "seller"
+      ? `${d.company || "Your"} ${d.product} scope${d.plan ? `: ${d.plan} plan` : ""}`
+      : `Your ${d.product} scope${d.plan ? `: ${d.plan} plan` : ""}`;
+    const intro = d.mode === "seller"
+      ? (d.note || `As promised, here's the scope we put together${d.company ? ` for ${d.company}` : ""}. Reply with any questions and I'll walk you through it.`)
+      : `Here's the scope you built${d.company ? ` for ${d.company}` : ""}. A solutions engineer will review it and follow up within one business day${d.wantsCall ? " to set up your call" : ""}.`;
+
+    const h2 = t => `<tr><td style="padding:24px 32px 8px;font:600 12px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(t)}</td></tr>`;
+    const stats = d.stats.length ? `<tr><td style="padding:8px 32px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>${d.stats.map(s =>
+      `<td valign="top" style="padding:14px 12px 14px 0;border-top:2px solid ${A};width:${Math.floor(100 / d.stats.length)}%">
+        <div style="font:600 11px ${FONT};letter-spacing:.08em;text-transform:uppercase;color:${C.muted}">${esc(s.label)}</div>
+        <div style="font:700 26px/1.15 ${FONT};color:${C.ink};margin-top:4px">${esc(s.value)}</div>
+        ${s.sub ? `<div style="font:13px ${FONT};color:${C.muted};margin-top:2px">${esc(s.sub)}</div>` : ""}</td>`).join("")}</tr></table></td></tr>` : "";
+    const highlights = d.highlights.length ? h2("At a glance") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.highlights.map(x =>
+      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 13px ${FONT};color:${C.muted};width:130px">${esc(x.label)}</td><td style="padding:9px 0;border-top:1px solid ${C.line};font:15px/1.45 ${FONT};color:${C.ink}">${esc(x.text)}</td></tr>`).join("")}</table></td></tr>` : "";
+    const lines = d.lines.length ? h2("What's included") + `<tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${d.lines.map(l =>
+      `<tr><td valign="top" style="padding:9px 12px 9px 0;border-top:1px solid ${C.line};font:600 15px ${FONT};color:${C.ink}">${esc(l.name)}${l.added ? ` <span style="display:inline-block;font:600 11px ${FONT};color:${A};background:${S};border-radius:999px;padding:2px 8px;margin-left:4px;vertical-align:2px">Recommended</span>` : ""}<div style="font:400 13px/1.4 ${FONT};color:${C.muted};margin-top:2px">${esc(l.detail)}</div></td><td valign="top" align="right" style="padding:9px 0;border-top:1px solid ${C.line};font:15px ${FONT};color:${C.ink};white-space:nowrap">${esc(l.qty)}</td></tr>`).join("")}</table></td></tr>` : "";
+    const reasons = d.reasons.length ? h2(`Why ${d.plan || "this plan"}`) + `<tr><td style="padding:0 32px"><ul style="margin:0;padding-left:20px;font:15px/1.55 ${FONT};color:${C.ink}">${d.reasons.map(r => `<li style="margin:2px 0">${esc(r)}</li>`).join("")}</ul></td></tr>` : "";
+    const invest = d.investment ? h2("Investment") + `<tr><td style="padding:0 32px"><div style="font:700 22px ${FONT};color:${C.ink}">${esc(d.investment)}</div>${d.investmentNote ? `<div style="font:13px/1.45 ${FONT};color:${C.muted};margin-top:4px">${esc(d.investmentNote)}</div>` : ""}</td></tr>` : "";
+    const notes = d.notes.length ? h2("Worth knowing") + `<tr><td style="padding:0 32px">${d.notes.map(n =>
+      `<div style="background:${S};border-radius:6px;padding:10px 12px;margin:0 0 6px;font:14px/1.45 ${FONT};color:${C.ink}">${n.tag ? `<strong style="color:${A}">${esc(n.tag)}:</strong> ` : ""}${esc(n.msg)}</div>`).join("")}</td></tr>` : "";
+    const logo = B
+      ? `<span style="font:700 24px ${FONT};color:${A}">${esc(B.name)}</span>`
+      : o.logoUrl
+      ? `<img src="${esc(o.logoUrl)}" width="150" height="34" alt="ScopeOut" style="display:block;border:0;outline:none;height:auto;width:150px">`
+      : `<span style="font:700 22px ${FONT};color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></span>`;
+
+    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(subject)}</title></head>
+<body style="margin:0;padding:0;background:${C.bg}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(d.plan ? `${d.plan} plan, ready for your review.` : "Your scope is ready.")}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border-collapse:collapse"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${C.card};border:1px solid ${C.line};border-radius:10px;border-collapse:separate">
+<tr><td style="padding:24px 32px 18px;border-bottom:1px solid ${C.line}"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>${logo}</td><td align="right" style="font:13px ${FONT};color:${C.muted}">Scope summary</td></tr></table></td></tr>
+<tr><td style="padding:28px 32px 4px;font:700 26px/1.2 ${FONT};color:${C.ink}">Your ${esc(d.product)} scope${d.plan ? `: <span style="color:${A}">${esc(d.plan)}</span>` : ""}</td></tr>
+<tr><td style="padding:10px 32px 4px;font:15px/1.55 ${FONT};color:${C.ink}">${first ? `Hi ${esc(first)},<br><br>` : ""}${esc(intro).replace(/\n/g, "<br>")}</td></tr>
+${stats}${highlights}${lines}${reasons}${invest}${notes}
+<tr><td style="padding:26px 32px 28px"><div style="background:${C.bg};border-radius:8px;padding:14px 16px;font:15px/1.5 ${FONT};color:${C.ink}"><strong>Questions?</strong> Just reply to this email and it goes straight to your solutions engineer.</div></td></tr>
+</table>
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px"><tr><td style="padding:16px 32px;font:12px/1.5 ${FONT};color:${C.muted}" align="center">
+${B ? "Powered by" : "Sent with"} <strong style="color:${C.ink}">Scope<span style="color:${C.accent}">Out</span></strong> · Scope it right the first time.<br>${esc(d.demoFooter)}${d.mode === "buyer" && d.pageUrl ? `<br>You asked for this summary at ${esc(d.pageUrl.replace(/^https?:\/\//, ""))}.` : ""}
+</td></tr></table>
+</td></tr></table></body></html>`;
+
+    const t = [];
+    t.push(`Your ${d.product} scope${d.plan ? `: ${d.plan}` : ""}`, "");
+    if (first) t.push(`Hi ${first},`, "");
+    t.push(intro, "");
+    d.stats.forEach(s => t.push(`${s.label}: ${s.value}${s.sub ? ` (${s.sub})` : ""}`));
+    if (d.highlights.length) { t.push("", "AT A GLANCE"); d.highlights.forEach(x => t.push(`- ${x.label}: ${x.text}`)); }
+    if (d.lines.length) { t.push("", "WHAT'S INCLUDED"); d.lines.forEach(l => t.push(`- ${l.name}${l.added ? " [recommended]" : ""}: ${l.detail} (${l.qty})`)); }
+    if (d.reasons.length) { t.push("", `WHY ${(d.plan || "this plan").toUpperCase()}`); d.reasons.forEach(r => t.push(`- ${r}`)); }
+    if (d.investment) { t.push("", "INVESTMENT", d.investment + (d.investmentNote ? ` (${d.investmentNote})` : "")); }
+    if (d.notes.length) { t.push("", "WORTH KNOWING"); d.notes.forEach(n => t.push(`- ${n.tag ? n.tag + ": " : ""}${n.msg}`)); }
+    t.push("", "Questions? Just reply to this email.", "", "Sent with ScopeOut. Scope it right the first time.", d.demoFooter);
+    return { subject, html, text: t.join("\n"), data: d };
+  }
+  return { render, clean };
+});
+
+/* ScopeOut engine. Knows nothing about any product: every question, rule, plan and output comes from a catalog. */
+const $=id=>document.getElementById(id);
+const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const clone=o=>JSON.parse(JSON.stringify(o));
+/* Pretty JSON: indented text with keys, strings, numbers and true/false/null colored. Copy still uses plain text. */
+function jsonHtml(s){ const e=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); let out="", last=0;
+  s.replace(/"(?:\\.|[^"\\])*"(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,(m,colon,i)=>{ out+=e(s.slice(last,i));
+    const cls=m[0]==='"'?(colon?"jk":"js"):/^[tfn]/.test(m)?"jb":"jn";
+    out+=colon?`<span class="jk">${e(m.slice(0,m.lastIndexOf(":")))}</span>${e(m.slice(m.lastIndexOf(":")))}`:`<span class="${cls}">${e(m)}</span>`; last=i+m.length; return m; });
+  out+=e(s.slice(last));
+  /* One block per line, so a long value wraps under its own key instead of at the left edge. */
+  return out.split("\n").map(l=>{ const n=l.match(/^ */)[0].length+4; return `<span class="jl" style="padding-left:${n}ch;text-indent:-${n}ch">${l||" "}</span>`; }).join(""); }
+function setJson(id,s){ const el=$(id); el.dataset.raw=s; el.innerHTML=jsonHtml(s); }
+const fmt=n=>(+n).toLocaleString("en-US");
+const money=n=>"$"+Math.round(n).toLocaleString("en-US");
+
+/* ---------- Rule language: small expressions, evaluated without eval() ---------- */
+const FUNCS={
+  ceil:Math.ceil, floor:Math.floor, round:Math.round, abs:Math.abs,
+  max:(...a)=>Math.max(...a), min:(...a)=>Math.min(...a),
+  ceil5:n=>Math.ceil(n/5)*5,
+  count:a=>Array.isArray(a)?a.length:0,
+  has:(a,v)=>Array.isArray(a)&&a.includes(v),
+  join:a=>Array.isArray(a)?a.join(", "):"",
+  isnum:v=>v!==""&&v!=null&&isFinite(parseFloat(v)),
+  num:v=>parseFloat(v),
+  unl:v=>(+v>=999?"unlimited":v),
+  fmtk:n=>{n=+n||0;return n>=1000?(Math.round(n/100)/10).toLocaleString("en-US")+"M":Math.round(n).toLocaleString("en-US")+"k";},
+  s:n=>(n==1?"":"s"),
+  nextPlanWith:()=>"", planAttr:()=>undefined
+};
+const BAD=new Set(["__proto__","constructor","prototype","__fn"]);
+function tokenize(src){
+  const re=/\s*(?:(\d+(?:\.\d+)?|\.\d+)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|([A-Za-z_$][\w$]*)|(==|!=|<=|>=|&&|\|\||[-+*\/%<>!?:(),.]))/y;
+  const out=[];
+  while(re.lastIndex<src.length){
+    const at=re.lastIndex, m=re.exec(src);
+    if(!m){ if(/^\s*$/.test(src.slice(at))) break; throw new Error(`can't read "${src.slice(at).trim().slice(0,14)}"`); }
+    if(m[1]!==undefined) out.push({t:"num",v:parseFloat(m[1])});
+    else if(m[2]!==undefined) out.push({t:"str",v:m[2].slice(1,-1).replace(/\\(.)/g,(_,c)=>c==="n"?"\n":c)});
+    else if(m[3]!==undefined) out.push({t:"id",v:m[3]});
+    else out.push({t:"op",v:m[4]});
+  }
+  return out;
+}
+function compile(src){
+  const toks=tokenize(String(src)); let k=0; const names=new Set(), params=new Set();
+  const is=v=>k<toks.length&&toks[k].t==="op"&&toks[k].v===v;
+  const expect=v=>{ if(!is(v)) throw new Error(`expected "${v}"`+(k<toks.length?` but found "${toks[k].v}"`:" at the end")); k++; };
+  const bin=(sub,ops,mk)=>()=>{ let l=sub(); while(ops.some(is)){ const op=toks[k++].v, a=l, b=sub(); l=mk(op,a,b); } return l; };
+  let ternary;
+  function primary(){
+    const t=toks[k++]; if(!t) throw new Error("the expression ends too early");
+    if(t.t==="num"||t.t==="str"){ const v=t.v; return {fn:()=>v}; }
+    if(t.t==="id"){
+      if(t.v==="true") return {fn:()=>true}; if(t.v==="false") return {fn:()=>false}; if(t.v==="null") return {fn:()=>null};
+      if(is("(")){
+        k++; const name=t.v; if(!Object.prototype.hasOwnProperty.call(FUNCS,name)) throw new Error(`unknown function "${name}"`);
+        const args=[]; if(!is(")")){ do{ args.push(ternary()); }while(is(",")&&++k); } expect(")");
+        return {fn:e=>{ const f=(e.__fn&&e.__fn[name])||FUNCS[name]; return f(...args.map(a=>a(e))); }};
+      }
+      if(BAD.has(t.v)) throw new Error(`"${t.v}" isn't allowed`);
+      names.add(t.v); const n=t.v; return {fn:e=>e[n], ident:n};
+    }
+    if(t.t==="op"&&t.v==="("){ const a=ternary(); expect(")"); return {fn:a}; }
+    throw new Error(`unexpected "${t.v}"`);
+  }
+  function postfix(){
+    const p0=primary(); let fn=p0.fn, base=p0.ident||null;
+    while(is(".")){
+      k++; const t=toks[k++]; if(!t||t.t!=="id") throw new Error('expected a name after "."');
+      if(BAD.has(t.v)) throw new Error(`"${t.v}" isn't allowed`);
+      if(base==="p") params.add(t.v); base=null;
+      const o=fn, prop=t.v; fn=e=>{ const v=o(e); return v==null?undefined:v[prop]; };
+    }
+    return fn;
+  }
+  const unary=()=>{ if(is("!")){k++;const a=unary();return e=>!a(e);} if(is("-")){k++;const a=unary();return e=>-a(e);} return postfix(); };
+  const mul=bin(unary,["*","/","%"],(op,a,b)=>op==="*"?e=>a(e)*b(e):op==="/"?e=>a(e)/b(e):e=>a(e)%b(e));
+  const add=bin(mul,["+","-"],(op,a,b)=>op==="+"?e=>a(e)+b(e):e=>a(e)-b(e));
+  const rel=bin(add,["<=",">=","<",">"],(op,a,b)=>op==="<"?e=>a(e)<b(e):op==="<="?e=>a(e)<=b(e):op===">"?e=>a(e)>b(e):e=>a(e)>=b(e));
+  const eq=bin(rel,["==","!="],(op,a,b)=>op==="=="?e=>a(e)==b(e):e=>a(e)!=b(e));
+  const and=bin(eq,["&&"],(op,a,b)=>e=>a(e)&&b(e));
+  const or=bin(and,["||"],(op,a,b)=>e=>a(e)||b(e));
+  ternary=()=>{ const c=or(); if(is("?")){ k++; const a=ternary(); expect(":"); const b=ternary(); return e=>c(e)?a(e):b(e); } return c; };
+  if(!toks.length) throw new Error("the expression is empty");
+  const fn=ternary(); if(k<toks.length) throw new Error(`unexpected "${toks[k].v}"`);
+  return {fn,names:[...names],params:[...params]};
+}
+const CC=new Map();
+function cexpr(src){ src=String(src); if(!CC.has(src)) CC.set(src,compile(src)); return CC.get(src); }
+const ev=(src,env)=>cexpr(src).fn(env);
+const TC=new Map();
+function ctpl(src){
+  src=String(src); if(TC.has(src)) return TC.get(src);
+  const out=[]; let buf="", i=0;
+  while(i<src.length){
+    if(src[i]!=="{"){ buf+=src[i++]; continue; }
+    let j=i+1, q=null, depth=0;
+    for(;j<src.length;j++){ const d=src[j];
+      if(q){ if(d==="\\"){j++;continue;} if(d===q) q=null; continue; }
+      if(d==="'"||d==='"'){ q=d; continue; }
+      if(d==="(") depth++; else if(d===")") depth--; else if(d==="}"&&depth<=0) break; }
+    if(j>=src.length) throw new Error('a "{" has no closing "}"');
+    out.push(buf); buf=""; out.push(cexpr(src.slice(i+1,j))); i=j+1;
+  }
+  out.push(buf); TC.set(src,out); return out;
+}
+const val=(v,html)=>{ const s=v==null?"":Array.isArray(v)?v.join(", "):String(v); return html?esc(s):s; };
+// Catalog text may use <b>, <strong>, <em> and the "confirm" pill; anything else is shown as text.
+const rich=s=>esc(s).replace(/&lt;(\/?)(b|strong|em)&gt;/g,"<$1$2>").replace(/&lt;span class=&quot;assume&quot;&gt;(.*?)&lt;\/span&gt;/g,'<span class="assume">$1</span>');
+function tpl(src,env,html){ return ctpl(src).map(p=>typeof p==="string"?(html?rich(p):p):val(p.fn(env),html)).join(""); }
+
+/* ---------- Built-in catalogs (same format as an imported catalog file) ---------- */
+const BUILTIN=[{"id": "quillmetrics", "name": "Quillmetrics", "label": "Quillmetrics (product analytics)", "brand": {"name": "Quillmetrics", "accent": "#5B3FD6", "soft": "#EEEAFD"}, "unit": "1k tracked users", "companyExample": "e.g. Harbor Lane Outfitters", "reviewTag": "SE review", "planColumns": [{"key": "integrations", "label": "Integrations incl.", "csv": "integrations", "type": "intU", "term": "integrations", "help": "How many destination tools, such as a CRM, data warehouse or messaging tool, the plan can sync to. Enterprise is unlimited, so a long tool list can push a scope up a tier."}, {"key": "history", "label": "History (months)", "csv": "history_months", "type": "int", "term": "months of history", "confirm": true, "help": "How far back analysts can query. Teams with year-over-year reporting need at least 12 months."}, {"key": "sso", "label": "SSO", "csv": "sso", "type": "enum", "values": ["Yes", "No"], "term": "SSO", "help": "Whether SAML single sign-on is included. It's a common security requirement, so it often decides the tier on its own."}, {"key": "onboarding", "label": "Onboarding sessions", "csv": "onboarding_sessions", "type": "int", "term": "onboarding sessions", "confirm": true, "help": "Live sessions with a Quillmetrics analyst to set up dashboards for a team. When more teams need onboarding than the plan includes, the scope adds sessions."}, {"key": "support", "label": "Support", "csv": "support", "type": "enum", "values": ["Email", "Business hours", "24/7 + named TAM"], "term": "support"}, {"key": "price", "label": "Price / 1k users / yr", "csv": "price_per_1k_users", "type": "price", "term": "price", "diff": "price per 1k users", "help": "List price per 1,000 billable monthly tracked users per year. Leave it blank to hide pricing."}], "plans": [{"name": "Starter", "integrations": 2, "history": 3, "sso": "No", "onboarding": 1, "support": "Email", "price": ""}, {"name": "Growth", "integrations": 5, "history": 12, "sso": "No", "onboarding": 3, "support": "Business hours", "price": ""}, {"name": "Scale", "integrations": 10, "history": 24, "sso": "Yes", "onboarding": 6, "support": "Business hours", "price": ""}, {"name": "Enterprise", "integrations": 999, "history": 60, "sso": "Yes", "onboarding": 12, "support": "24/7 + named TAM", "price": ""}], "priceBooks": [{"name": "Illustrative list prices", "note": "Quillmetrics is fictional, and so are its prices.", "prices": {"Starter": 30, "Growth": 42, "Scale": 55, "Enterprise": 70}, "params": {"sessionRate": 750}}], "params": [{"key": "bufferShare", "label": "Share of expected growth to pre-commit", "term": "growth buffer share", "value": 0.5, "help": "How much of the customer's expected growth is built into the first-year commitment. 0.5 means half: a team expecting to double commits to 1.5\u00d7 today's users."}, {"key": "sessionsPerTeam", "label": "Onboarding sessions per team", "term": "sessions per team", "value": 1, "help": "Live sessions each team needs to get its first dashboards running."}, {"key": "sessionRate", "label": "Extra onboarding rate ($/session)", "title": "Extra onboarding rate", "term": "extra onboarding rate", "value": "", "allowBlank": true, "help": "Price for each onboarding session beyond what the plan includes. Leave it blank to show sessions without a price."}, {"key": "reviewUsers", "label": "SE review above (thousand users)", "title": "Volume review threshold", "term": "volume review threshold", "value": 2000, "help": "Deals with more billable users than this go to a solutions engineer for custom volume pricing. 2000 means 2 million users."}, {"key": "minLaunchWeeks", "label": "Minimum weeks for 4+ integrations", "term": "minimum launch weeks", "value": 6, "help": "Launching four or more integrations faster than this flags a timeline risk, so the rep can phase them."}], "questions": [{"key": "mtu", "label": "Monthly tracked users today", "buyerLabel": "How many people use your product each month?", "controls": [{"key": "mtu", "type": "number", "min": 0, "max": 100000, "suffix": "thousand", "sellerHint": "Billed per 1k users"}], "help": {"why": "Billable usage starts here, so it sizes most of the deal.", "listen": "Seasonal peaks, a big launch coming, or free users who never log in.", "ask": "Is that monthly active users or total sign-ups? What does a peak month look like?", "buyer": "People who use your product at least once a month, in thousands. 250 means 250,000."}}, {"key": "growth", "label": "Expected user growth, next 12 months", "buyerLabel": "How fast do you expect to grow this year?", "aud": "lead", "controls": [{"key": "growth", "type": "select", "num": true, "options": [{"v": 0, "l": "Flat"}, {"v": 25, "l": "Up to 25%"}, {"v": 50, "l": "Up to 50%"}, {"v": 100, "l": "Doubling or more"}]}], "help": {"why": "Part of expected growth is built into the commitment, so the customer isn't forced into an upgrade mid-term.", "listen": "Funding rounds, new markets, or a product launch.", "ask": "What's the growth target the board is holding you to?", "buyer": "We build some headroom into your plan so you don't have to renegotiate as you grow."}}, {"key": "dest", "label": "Tools it needs to send data to", "buyerLabel": "Which tools should your analytics connect to?", "controls": [{"key": "dest", "type": "multi", "options": ["Salesforce", "HubSpot", "Snowflake", "BigQuery", "Braze", "Zendesk", "Slack", "S3"]}], "help": {"why": "Each plan includes a set number of integrations, so a long list can move the tier.", "listen": "A data warehouse, a CRM the sales team lives in, or marketing automation.", "ask": "Which of these must be live on day one, and which can wait?", "buyer": "Pick the tools your teams already use. We sync your product data into them."}}, {"key": "history", "label": "How far back analysts need to query", "buyerLabel": "How much history do you need to report on?", "aud": "lead", "controls": [{"key": "history", "type": "select", "num": true, "options": [{"v": 3, "l": "3 months"}, {"v": 12, "l": "12 months"}, {"v": 24, "l": "24 months"}, {"v": 36, "l": "36 months"}]}], "help": {"why": "History allowances differ by plan and can force a higher tier.", "listen": "Year-over-year reporting, board decks, or seasonal comparisons.", "ask": "What's the oldest data someone asked for last quarter?", "buyer": "Year-over-year reporting needs at least 12 months."}}, {"key": "teams", "label": "Teams who'll use it", "buyerLabel": "How many teams will use dashboards?", "aud": "lead", "controls": [{"key": "teams", "type": "number", "min": 0, "max": 100, "suffix": "teams"}], "help": {"why": "Each team needs onboarding, which decides whether extra sessions are needed.", "listen": "Product, marketing, customer success, growth, or an exec team that wants its own view.", "ask": "Which team gets value first, and who's the internal champion for each?", "buyer": "For example product, marketing and customer success would be three teams."}}, {"key": "sso", "label": "Single sign-on (SAML) required", "boxOnly": true, "controls": [{"key": "sso", "type": "checkbox"}], "help": {"why": "SSO is only included from Scale up, so it often decides the plan by itself.", "listen": "Okta, Azure AD, an IT security questionnaire, or a recent audit.", "ask": "Does IT require SSO for every new tool, or only some?", "buyer": "Tick this if your IT team requires logins through Okta, Azure AD or similar."}}, {"key": "compliance", "label": "Compliance requirements", "buyerLabel": "Security and compliance needs", "controls": [{"key": "compliance", "type": "multi", "options": [{"v": "SOC 2", "l": "SOC 2 report"}, {"v": "HIPAA", "l": "HIPAA (signed BAA)"}, {"v": "EU", "l": "EU data residency"}]}], "help": {"why": "HIPAA needs Enterprise; EU residency needs an SE to set up a regional workspace.", "listen": "Patient data, European customers, or a security review in progress.", "ask": "Who signs off on vendor security, and what's on their checklist?", "buyer": "Tell us now and your solutions engineer will bring the right documents to the first call."}}, {"key": "support", "label": "Support level needed", "controls": [{"key": "support", "type": "radio", "options": [{"v": "email", "l": "Email"}, {"v": "business", "l": "Business hours"}, {"v": "24x7", "l": "24/7, customer-facing"}]}], "help": {"why": "Business-hours support starts at Growth; 24/7 needs Enterprise.", "listen": "Analytics shown to their own customers, or decisions made in real time.", "ask": "If dashboards were down for a day, who would notice first?", "buyer": "Choose 24/7 if your own customers see these numbers."}}, {"key": "launch", "label": "Weeks to launch", "buyerLabel": "When do you need it running?", "aud": "lead", "controls": [{"key": "launch", "type": "number", "min": 1, "max": 52, "suffix": "weeks"}], "help": {"why": "Many integrations on a short timeline is where launches slip.", "listen": "A board meeting, a renewal, or a quarter-end deadline.", "ask": "What's driving the date, and which integration matters most for it?", "buyer": "Your target for the first dashboards in use."}}], "metrics": [{"key": "nDest", "expr": "count(dest)"}, {"key": "billable", "expr": "ceil(mtu * (1 + growth / 100 * p.bufferShare))"}, {"key": "buffer", "expr": "billable - mtu"}, {"key": "sessions", "expr": "teams * p.sessionsPerTeam"}, {"key": "hipaa", "expr": "has(compliance, 'HIPAA')"}, {"key": "eu", "expr": "has(compliance, 'EU')"}, {"key": "sessGap", "expr": "max(0, sessions - P.onboarding)", "after": true}], "rules": [{"id": "Q1", "kind": "info", "txt": "Billable users = users today + a share of expected growth", "src": "Pricing", "trace": "{fmtk(mtu)} users today + {fmtk(buffer)} growth buffer = {fmtk(billable)} billable"}, {"id": "Q2", "kind": "fit", "txt": "Integrations needed > plan allowance \u2192 lowest plan that covers them", "src": "Pricing", "fit": "cand.integrations >= nDest", "why": "{nDest} integrations ({prevPlan} includes {prev.integrations})", "ok": "{nDest} integration{s(nDest)} fits {firstPlan}"}, {"id": "Q3", "kind": "fit", "txt": "History needed > plan retention \u2192 lowest plan that keeps it", "src": "Pricing", "fit": "cand.history >= history", "why": "{history} months of history ({prevPlan} keeps {prev.history})", "ok": "{history} months of history fits {firstPlan}"}, {"id": "Q4", "kind": "plan", "txt": "SSO required \u2192 at least Scale", "src": "Pricing", "when": "sso", "plan": "Scale", "why": "Single sign-on required"}, {"id": "Q5", "kind": "plan", "txt": "Business-hours support \u2192 at least Growth", "src": "Support", "when": "support == 'business'", "plan": "Growth", "why": "Business-hours support requested"}, {"id": "Q6", "kind": "plan", "txt": "24/7 support \u2192 Enterprise", "src": "Support", "when": "support == '24x7'", "plan": "Enterprise", "why": "24/7 support for a customer-facing product"}, {"id": "Q7", "kind": "plan", "txt": "HIPAA \u2192 Enterprise (signed BAA)", "src": "Legal", "when": "hipaa", "plan": "Enterprise", "why": "HIPAA requires a signed BAA"}, {"id": "Q8", "kind": "flag", "txt": "Onboarding needed > sessions included \u2192 add sessions", "src": "Customer success", "when": "sessGap > 0", "level": "warn", "tag": "Onboarding gap", "show": "seller", "msg": "{teams} teams need about {sessions} onboarding sessions; {plan} includes {P.onboarding}. Add {sessGap} session{s(sessGap)}.", "trace": "{sessions} sessions needed > {P.onboarding} included \u2192 add {sessGap}", "okTrace": "{sessions} onboarding session{s(sessions)} within {P.onboarding} included"}, {"id": "Q9", "kind": "flag", "txt": "EU data residency \u2192 SE review (regional workspace)", "src": "Solutions", "when": "eu", "level": "warn", "tag": "SE review", "show": "seller", "msg": "EU data residency needs a dedicated EU workspace. Confirm region and pricing with a solutions engineer.", "trace": "EU residency \u2192 SE review"}, {"id": "Q10", "kind": "flag", "txt": "Billable users above threshold \u2192 SE review (volume pricing)", "src": "Solutions", "when": "billable > p.reviewUsers", "level": "warn", "tag": "SE review", "show": "seller", "msg": "{fmtk(billable)} billable users is above the {fmtk(p.reviewUsers)} threshold. Route for custom volume pricing.", "trace": "{fmtk(billable)} > {fmtk(p.reviewUsers)} \u2192 SE review"}, {"id": "Q11", "kind": "flag", "txt": "4+ integrations on a short launch \u2192 timeline risk", "src": "Customer success", "when": "nDest >= 4 && launch < p.minLaunchWeeks", "level": "warn", "tag": "Timeline", "show": "lead", "msg": "{nDest} integrations in {launch} weeks; plan on {p.minLaunchWeeks}+. Launch the most important ones first and phase the rest.", "trace": "{nDest} integrations, {launch} weeks < {p.minLaunchWeeks} \u2192 timeline risk"}, {"id": "Q12", "kind": "flag", "txt": "Usage could double \u2192 suggest an annual true-up", "src": "Deal desk", "when": "growth >= 100", "level": "info", "tag": "Contract", "show": "lead", "msg": "Usage could double this year. An annual true-up avoids a mid-term upgrade.", "trace": "Growth \u2265 100% \u2192 true-up clause"}], "checks": [{"at": "start", "when": "mtu <= 0", "level": "crit", "tag": "Missing", "show": "all", "msg": "No user count yet. Billable usage comes from monthly tracked users; confirm it with the prospect."}, {"at": "end", "when": "has(compliance, 'SOC 2')", "level": "info", "tag": "Security", "show": "all", "msg": "SOC 2 Type II report available under NDA."}], "lines": [{"name": "Tracked users", "detail": "{fmtk(billable)} billable, priced per 1k ({fmtk(buffer)} growth buffer)", "qty": "billable", "price": "unit"}, {"name": "Integrations", "detail": "{join(dest) || 'none'} ({unl(P.integrations)} included)", "qty": "nDest", "price": "included"}, {"name": "Query history", "detail": "{P.history} months", "qty": "P.history", "price": "included"}, {"name": "Single sign-on", "when": "P.sso == 'Yes'", "detail": "SAML SSO", "qty": "1", "price": "included"}, {"name": "Onboarding sessions", "detail": "{P.onboarding} included with {plan}", "qty": "P.onboarding", "price": "included"}, {"name": "Extra onboarding", "when": "sessGap > 0", "addedBy": "Q8", "detail": "Sessions needed minus included", "qty": "sessGap", "price": "isnum(p.sessionRate) ? sessGap * num(p.sessionRate) : null"}, {"name": "EU workspace", "when": "eu", "addedBy": "Q9", "detail": "Dedicated EU region, quoted by an SE", "qty": "1", "price": "none"}, {"name": "Support", "detail": "{P.support}", "qty": "1", "price": "included"}], "verdict": [{"label": "Billable users", "value": "{fmtk(billable)}"}, {"label": "Recommended plan", "value": "{plan}"}, {"label": "Integrations", "value": "{nDest}", "sub": "{unl(P.integrations)} included in {plan}", "notExec": true}], "allocation": {"caption": "Usage, one square per 10k tracked users", "groups": [{"count": "ceil(mtu / 10)", "color": "d", "label": "<b>{fmtk(mtu)}</b> users today"}, {"count": "ceil(buffer / 10)", "color": "p", "label": "<b>{fmtk(buffer)}</b> growth buffer"}], "legend": [{"color": "d", "text": "Current monthly users"}, {"color": "p", "text": "Pre-committed growth"}, {"text": "{nDest} integration{s(nDest)} \u00b7 {history} months of history"}]}, "glance": [{"label": "Fit", "text": "{plan} plan for about {fmtk(billable)} monthly users, with room to grow."}, {"label": "Connects to", "text": "{join(dest) || 'No integrations selected yet'}."}, {"label": "Security", "text": "{sso ? 'SAML single sign-on. ' : ''}{hipaa ? 'HIPAA with a signed BAA. ' : ''}{eu ? 'EU data residency. ' : ''}SOC 2 Type II report available."}, {"label": "Support", "text": "{P.support}."}, {"label": "Time to value", "text": "First dashboards in days; integrations phased over the first {launch} weeks."}, {"label": "Investment", "text": "{priceText}"}], "package": ["<strong>Recommended scope:</strong> {plan} plan, {fmtk(billable)} billable monthly users ({fmtk(buffer)} of that is growth buffer).", "<strong>Why this plan:</strong> {whyText}.", "<strong>Integrations and history:</strong> {nDest} integration{s(nDest)} ({unl(P.integrations)} included), {P.history} months of queryable history.", "<strong>Onboarding and timeline:</strong> {sessions} onboarding session{s(sessions)} for {teams} team{s(teams)}; {P.onboarding} included{sessGap > 0 ? ', with ' + sessGap + ' more recommended' : ''}. Target launch: week {launch}.", "<strong>Security and compliance:</strong> {sso ? 'SAML single sign-on' : 'Email and password login'}{hipaa ? ', HIPAA BAA' : ''}{eu ? ', EU data residency' : ''}.", "<strong>Questions leadership usually asks:</strong> what happens if users grow past the buffer, how pricing scales, and how fast teams see value. Your SE will answer these in the package."], "summary": "Proposed Quillmetrics scope for {co}\n\nPlan: {plan}, {fmtk(billable)} billable monthly users\n- Today: {fmtk(mtu)} users, plus {fmtk(buffer)} growth buffer\n- Integrations: {join(dest) || 'none'} ({unl(P.integrations)} included)\n- Query history: {P.history} months\n- Single sign-on: {P.sso == 'Yes' ? 'included' : 'not included'}\n- Support: {P.support}\n- Onboarding: {P.onboarding} sessions included{sessGap > 0 ? '; we suggest ' + sessGap + ' more for ' + teams + ' teams' : ''}\n{eu ? '- EU data residency: dedicated EU workspace\\n' : ''}\nWhy {plan}: {whyRaw}.\n\nLaunch target: {launch} weeks.", "payload": [["dealname", "co + ': Quillmetrics ' + plan"], ["scope_plan", "plan"], ["scope_billable_users_k", "billable"], ["scope_current_users_k", "mtu"], ["scope_growth_buffer_k", "buffer"], ["scope_integrations", "dest"], ["scope_history_months", "history"], ["scope_sso", "sso"], ["scope_compliance", "compliance"], ["scope_support", "P.support"], ["scope_onboarding_sessions", "sessions"], ["scope_onboarding_gap", "sessGap"]], "presets": {"Series B, growing fast": {"mtu": 250, "growth": 100, "dest": ["Salesforce", "HubSpot", "Snowflake", "Braze", "Slack", "Zendesk"], "history": 12, "teams": 4, "sso": true, "compliance": ["SOC 2"], "support": "business", "launch": 8}, "Healthcare app": {"mtu": 80, "growth": 25, "dest": ["Salesforce", "Snowflake"], "history": 24, "teams": 3, "sso": true, "compliance": ["SOC 2", "HIPAA"], "support": "24x7", "launch": 6}, "Early-stage startup": {"mtu": 15, "growth": 50, "dest": ["HubSpot", "Slack"], "history": 3, "teams": 1, "sso": false, "compliance": [], "support": "email", "launch": 3}, "Global retailer": {"mtu": 3000, "growth": 25, "dest": ["Salesforce", "Snowflake", "BigQuery", "Braze", "Zendesk"], "history": 36, "teams": 8, "sso": true, "compliance": ["SOC 2", "EU"], "support": "24x7", "launch": 4}}, "presetNotes": {"Series B, growing fast": "250k users expected to double this year, 6 tools to connect and SSO. Shows the growth buffer, Scale chosen for integrations and SSO, and a true-up clause suggestion.", "Healthcare app": "A patient-facing app with 80k users that needs HIPAA, 24/7 support and 2 years of history. Shows compliance alone pushing a small deal to Enterprise.", "Early-stage startup": "15k users, two tools and email support. Shows the smallest plan with no exceptions.", "Global retailer": "3M users, EU data residency and 5 integrations to launch in 4 weeks. Shows SE review, an EU workspace added to the bill and a timeline risk."}, "terms": [["Monthly tracked user (MTU)", "Someone who uses the customer's product at least once in a month. Quillmetrics is priced per 1,000 of them."], ["Billable users", "Users today plus a pre-committed share of expected growth."], ["Growth buffer", "Headroom built into the commitment so a growing customer isn't forced to upgrade mid-term."], ["Integration", "A destination tool the data syncs to, such as a CRM, warehouse or messaging tool."], ["Query history", "How many months back analysts can report on."], ["Onboarding session", "A live session with a Quillmetrics analyst to set up one team's dashboards."], ["BAA", "Business Associate Agreement, the contract HIPAA requires before handling health data."], ["SE review", "A flag that sends the scope to a solutions engineer before it's quoted."]], "faq": [["Why is billable usage higher than today's users?", "Part of expected growth is built in, set by the growth buffer share on the Admin tab. It keeps a growing customer from hitting a mid-term upgrade."], ["Why did the plan jump to Enterprise?", "Usually 24/7 support or HIPAA. Check <strong>Why this scope</strong>: each line names the rule and the answer that triggered it."], ["What counts as an integration?", "Each destination tool counts once, however much data goes to it."], ["Is Quillmetrics a real product?", "No. It's a fictional sample catalog that shows ScopeOut running a second product with different questions, rules and plans, all loaded from one catalog file."]], "guide": {"ruleExample": "Example: a team needs six integrations and single sign-on. Growth includes five integrations, so the integration rule requires Scale, and the SSO rule also requires Scale. The scope is Scale, and both reasons appear under <strong>Why this scope</strong>.", "ruleFlags": "Some rules don't change the plan. They raise a flag instead: an onboarding gap, a tight launch, a deal large enough for SE review.", "estimateNote": "Billable users = users today \u00d7 (1 + expected growth \u00d7 buffer share), rounded up. Onboarding sessions = teams \u00d7 sessions per team.", "packagingNote": "Plan allowances the engine scopes against. Quillmetrics is a fictional sample product, loaded from a catalog file to show ScopeOut adapting to a different business.", "footer": "Demo build. Quillmetrics is a fictional product, created to show ScopeOut running a second catalog.", "created": "Sample catalog loaded from quillmetrics-catalog.json.", "emailFooter": "A demo by David Creason. Quillmetrics is a fictional product, and its prices are illustrative."}}];
+
+/* ---------- Workspaces: one per catalog ---------- */
+const WS={}; let active="";
+const W=()=>WS[active];
+function defaultAnswers(def){
+  const s={company:""};
+  def.questions.forEach(q=>q.controls.forEach(c=>{
+    const o=(c.options||[]).map(x=>typeof x==="object"?x.v:x);
+    s[c.key]=c.type==="number"?(c.min||0):c.type==="checkbox"?false:c.type==="multi"?[]:c.type==="text"?"":o[0];
+  }));
+  const first=Object.values(def.presets||{})[0];
+  return Object.assign(s,clone(first||{}));
+}
+function makeWS(def,created){
+  const pub={plans:clone(def.plans),params:Object.fromEntries(def.params.map(p=>[p.key,p.value])),
+    rules:Object.fromEntries(def.rules.map(r=>[r.id,r.on!==false])),vis:{exec:"hidden",lead:"range",...(def.vis||{})},rangePct:def.rangePct??15,
+    customRules:[],discount:{repMax:15,approvalMax:25,...(def.discountPolicy||{})},priceBook:"None"};
+  return {def,pub,draft:clone(pub),log:[{t:"Initial",who:"System",what:created||def.guide?.created||"Catalog created."}],s:defaultAnswers(def),disc:{},approval:{status:"none"}};
+}
+const allRules=cfg=>W().def.rules.concat(cfg.customRules||[]);
+const ROLES={rep:"Sales rep",manager:"Sales manager",admin:"RevOps admin"};
+
+let mode="seller", aud="lead", role="rep";
+const COMPANY_Q={key:"company",label:"Prospect",buyerLabel:"Company",controls:[{key:"company",type:"text"}],
+  help:{why:"Ties the scope to the right CRM record.",listen:"A parent company, a subsidiary, or a partner buying on someone's behalf.",ask:"Which business unit owns the budget for this?",buyer:"So your solutions engineer can find your request before the call."}};
+const allQs=()=>[COMPANY_Q,...W().def.questions];
+const planNames=cfg=>cfg.plans.map(p=>p.name);
+
+/* ---------- Scoping ---------- */
+function compute(){
+  const {def,pub:cfg,s}=W(); const plans=cfg.plans, names=planNames(cfg);
+  const env={p:{...cfg.params},firstPlan:names[0]};
+  def.questions.forEach(q=>q.controls.forEach(c=>env[c.key]=s[c.key]));
+  env.company=s.company||"";
+  env.co=(s.company||"").trim()||(mode==="buyer"?"your company":"[Prospect]");
+  let idx=0;
+  env.__fn={nextPlanWith:(attr,v)=>{const x=plans.find((pl,j)=>j>idx&&+pl[attr]>=v);return x?x.name:"";},
+            planAttr:(n,a)=>{const x=plans.find(pl=>pl.name===n);return x?x[a]:undefined;}};
+  const trace=[],flags=[],reasons=[],errors=[];
+  const safe=(what,f,d)=>{ try{ return f(); }catch(e){ errors.push(`${what}: ${e.message}`); return d; } };
+  (def.metrics||[]).filter(m=>!m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
+  const raise=(lvl,r,why)=>{ trace.push([r.id,esc(why)+` → at least ${esc(names[lvl])}`,lvl]); reasons.push(why); if(lvl>idx) idx=lvl; };
+  allRules(cfg).forEach(r=>{
+    if(!cfg.rules[r.id]) return;
+    if(r.kind==="info") safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.trace,env,true)]));
+    else if(r.kind==="plan"){ if(safe(`Rule ${r.id}`,()=>ev(r.when,env),false)){ const lvl=names.indexOf(r.plan); if(lvl>=0) raise(lvl,r,tpl(r.why,env)); } }
+    else if(r.kind==="fit"){
+      let lvl=plans.findIndex(pl=>safe(`Rule ${r.id}`,()=>ev(r.fit,{...env,cand:pl}),false)); if(lvl<0) lvl=plans.length-1;
+      if(lvl>0) raise(lvl,r,tpl(r.why,{...env,prev:plans[lvl-1],prevPlan:names[lvl-1]}));
+      else if(r.ok) trace.push([r.id,tpl(r.ok,env,true)]);
+    }
+  });
+  /* The rules that reached the final plan are the ones that decided it. */
+  trace.forEach(t=>{ t[2]=idx>0&&t[2]===idx; });
+  const P=plans[idx]; env.P=P; env.plan=P.name;
+  (def.metrics||[]).filter(m=>m.after).forEach(m=>env[m.key]=safe(`Metric ${m.key}`,()=>ev(m.expr,env),0));
+  if(idx===0) trace.push(["—",`No rule raised the plan; ${esc(names[0])} fits`,true]);
+  const flag=(f,where)=>safe(where,()=>flags.push({id:f.id||"",level:f.level,tag:f.tag,msg:tpl(f.msg,env,true),show:f.show||"seller"}));
+  (def.checks||[]).filter(c=>c.at==="start").forEach((c,i)=>{ if(safe(`Check ${i+1}`,()=>ev(c.when,env),false)) flag(c,`Check ${i+1}`); });
+  allRules(cfg).forEach(r=>{
+    if(r.kind!=="flag"||!cfg.rules[r.id]) return;
+    if(safe(`Rule ${r.id}`,()=>ev(r.when,env),false)){ flag(r,`Rule ${r.id}`); if(r.trace) safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.trace,env,true)])); }
+    else if(r.okTrace) safe(`Rule ${r.id}`,()=>trace.push([r.id,tpl(r.okTrace,env,true)]));
+  });
+  (def.checks||[]).filter(c=>c.at!=="start").forEach((c,i)=>{ if(safe(`Check`,()=>ev(c.when,env),false)) flag(c,"Check"); });
+  errors.forEach(m=>flags.push({level:"crit",tag:"Rule error",msg:esc(m),show:"seller"}));
+  const unit=parseFloat(P.price), priced=isFinite(unit);
+  const lines=def.lines.filter(l=>!l.when||safe(`Line ${l.name}`,()=>ev(l.when,env),false)).map(l=>{
+    const q=+safe(`Line ${l.name}`,()=>ev(l.qty,env),0)||0; let pr=null;
+    if(l.price==="unit") pr=priced?q*unit:null;
+    else if(l.price==="included") pr=priced?0:null;
+    else if(l.price&&l.price!=="none"){ const v=safe(`Line ${l.name}`,()=>ev(l.price,env),null); pr=v==null||!isFinite(v)?null:+v; }
+    const ar=l.addedBy&&cfg.rules[l.addedBy]?allRules(cfg).find(x=>x.id===l.addedBy):null;
+    return {name:l.name,detail:safe(`Line ${l.name}`,()=>tpl(l.detail||"",env),""),qty:q,price:pr,addedBy:ar?ar.id:"",addedTag:ar?(ar.tag||ar.id):""};
+  });
+  const D=discounts(lines,cfg);
+  if(D.flag) flags.push({...D.flag,kind:"discount"});
+  if(!flags.length) flags.push({level:"info",tag:"Clear",msg:"No exceptions. This scope can go straight to quote.",show:"lead"});
+  env.whyRaw=reasons.join("; ")||"your requirements fit the base plan";
+  env.whyText=reasons.map(x=>x.toLowerCase()).join("; ")||"your requirements fit the base plan";
+  return {env,P,flags,trace,lines,D,reasons};
+}
+
+/* ---------- Discounts: per line, checked against the published policy ---------- */
+const pct=n=>(Math.round(n*10)/10).toLocaleString("en-US")+"%";
+function discKey(){ const d=W().disc; return JSON.stringify(Object.keys(d).sort().filter(k=>d[k]>0).map(k=>[k,d[k]])); }
+function discounts(lines,cfg){
+  const pol=cfg.discount, ws=W(); let list=0, net=0, max=0, maxLine="";
+  lines.forEach(l=>{ l.disc=0; l.net=l.price;
+    if(l.price>0){ const d=Math.max(0,Math.min(100,+ws.disc[l.name]||0)); l.disc=d; l.net=l.price*(1-d/100); if(d>max){max=d;maxLine=l.name;} }
+    if(l.price!=null){ list+=l.price; net+=l.net; } });
+  const priced=lines.some(l=>l.price!=null);
+  let status="none";
+  if(max>0){
+    if(max<=pol.repMax) status="ok";
+    else if(max>pol.approvalMax) status="blocked";
+    else { const a=ws.approval; status=a.key===discKey()&&["pending","approved","rejected"].includes(a.status)?a.status:"needs"; }
+  }
+  const blended=list>0?(list-net)/list*100:0, where=`${pct(max)} on ${maxLine}`;
+  const flag={needs:{level:"warn",tag:"Discount",msg:esc(`${where} is above the ${pol.repMax}% rep limit. ${role==="manager"?"As sales manager you can approve it.":"Request manager approval before quoting."}`),show:"seller"},
+    pending:{level:"info",tag:"Discount",msg:esc(`${where} is waiting for sales manager approval.`),show:"seller"},
+    approved:{level:"info",tag:"Discount",msg:esc(`${where} approved by ${ws.approval.by}.`),show:"seller"},
+    rejected:{level:"crit",tag:"Discount",msg:esc(`Sales manager declined ${where}. Bring it to ${pol.repMax}% or less, or change it and request again.`),show:"seller"},
+    blocked:{level:"crit",tag:"Discount",msg:esc(`${where} is over the ${pol.approvalMax}% ceiling. Route this deal to the deal desk.`),show:"seller"}}[status]||null;
+  const quotable=status==="ok"||status==="approved";
+  return {priced,list,net,max,maxLine,blended,status,flag,quotable,pol};
+}
+
+/* ---------- Rendering ---------- */
+function visiblePrice(view,total,any){
+  const cfg=W().pub;
+  if(view==="seller") return any?{kind:"list",text:money(total)+" / yr"}:{kind:"none",text:"No price book loaded"};
+  const v=cfg.vis[view];
+  if(v==="hidden") return {kind:"hidden",text:"Pricing shared by your account team"};
+  if(!any) return {kind:"none",text:"Pricing on request"};
+  if(v==="list") return {kind:"list",text:money(total)+" / yr"};
+  const b=(+cfg.rangePct||0)/100, lo=Math.floor(total*(1-b)/1000)*1000, hi=Math.ceil(total*(1+b)/1000)*1000;
+  return {kind:"range",text:`${money(lo)} – ${money(hi)} / yr`};
+}
+function safeTpl(src,env,html){ try{ return tpl(src,env,html); }catch(e){ return html?`<span class="muted">(${esc(e.message)})</span>`:`(${e.message})`; } }
+function render(){
+  const {def,pub:cfg}=W(), r=compute(), env=r.env;
+  const view=mode==="seller"?"seller":aud;
+  $("verdict").innerHTML=def.verdict.map(v=>`<div${v.notExec?' class="notExec"':""}><div class="lbl">${esc(v.label)}</div><div class="big">${safeTpl(v.value,env,true)}</div>${v.sub?`<div class="muted" style="font-size:12px">${safeTpl(v.sub,env,true)}</div>`:""}</div>`).join("");
+  const A=def.allocation; $("allocWrap").hidden=!A;
+  if(A){
+    $("allocCap").textContent=A.caption||"";
+    const groups=[]; let total=0;
+    A.groups.forEach(g=>{ let reps=1; try{ reps=g.repeat?Math.max(0,+ev(g.repeat,env)||0):1; }catch(e){}
+      for(let i=1;i<=reps;i++){ const e2={...env,i}; let n=0; try{ n=Math.max(0,Math.round(+ev(g.count,e2)||0)); }catch(e){} groups.push([n,g.color==="p"?"p":"d",safeTpl(g.label,e2,true)]); total+=n; } });
+    const sq=(n,c)=>Array.from({length:Math.min(n,64)},()=>`<span class="cell ${c}"></span>`).join("")+(n>64?`<span class="cap">+${n-64}</span>`:"");
+    $("cells").className="cells"+(total>100?" dense":total>40?" mid":"");
+    $("cells").innerHTML=groups.filter(g=>g[0]>0).map(([n,c,cap])=>`<div class="cgroup"><span class="cap">${cap}</span><div class="sq">${sq(n,c)}</div></div>`).join("");
+    $("legend").innerHTML=(A.legend||[]).map(l=>`<span>${l.color?`<i style="background:var(${l.color==="p"?"--prod":"--accent"})"></i>`:""}<span>${safeTpl(l.text,env,true)}</span></span>`).join("");
+  }
+  const shown=view==="seller"?r.flags:view==="exec"?r.flags.filter(f=>f.show==="all"):r.flags.filter(f=>f.show==="all"||f.show==="lead");
+  renderChecks(r,shown,view);
+  const D=r.D, total=D.list, any=D.priced, seller=mode==="seller", showD=seller&&any, anyD=showD&&D.max>0;
+  $("linesHead").innerHTML=`<tr><th>Item</th><th>Detail</th><th style="text-align:right">Qty</th><th style="text-align:right" class="sellerOnly">Price / yr</th>${showD?`<th style="text-align:right">Disc. %</th>`:""}${anyD?`<th style="text-align:right">Net / yr</th>`:""}</tr>`;
+  const pol=D.pol, appr=D.status==="approved";
+  $("lines").innerHTML=r.lines.map(l=>{
+    const lvl=l.disc>pol.approvalMax?"block":l.disc>pol.repMax&&!appr?"over":"";
+    const dcell=showD?`<td class="n">${l.price>0?`<input type="number" class="disc ${lvl}" min="0" max="100" step="0.5" data-disc="${esc(l.name)}" value="${l.disc||""}" placeholder="0" aria-label="Discount for ${esc(l.name)}">`:""}</td>`:"";
+    const ncell=anyD?`<td class="n">${l.price==null?"—":l.price===0?"incl.":money(l.net)}</td>`:"";
+    const cls=[l.addedBy?"added":"",lvl?`row-${lvl}`:""].filter(Boolean).join(" ");
+    const pill=l.addedBy?`<span class="addpill" title="${esc(seller?`Added by rule ${l.addedBy}`:"Recommended for your project")}">${esc(seller?`Added · ${l.addedTag}`:"Recommended for your project")}</span>`:"";
+    return `<tr${cls?` class="${cls}"`:""}><td>${esc(l.name)}${pill}</td><td class="muted">${esc(l.detail)}</td><td class="n">${fmt(l.qty)}</td><td class="n sellerOnly">${l.price==null?"—":l.price===0?"incl.":money(l.price)}</td>${dcell}${ncell}</tr>`;}).join("")
+    +(any&&seller?(anyD
+      ?`<tr class="tot"><td colspan="3">List total</td><td class="n">${money(total)}</td><td></td><td class="n"></td></tr><tr class="tot"><td colspan="3">Discount (${pct(D.blended)} blended)</td><td class="n"></td><td></td><td class="n">−${money(total-D.net)}</td></tr><tr class="tot"><td colspan="3"><strong>Net annual total</strong></td><td></td><td></td><td class="n"><strong>${money(D.net)}</strong></td></tr>`
+      :`<tr class="tot"><td colspan="3"><strong>Annual total (from your price book)</strong></td><td class="n"><strong>${money(total)}</strong></td>${showD?"<td></td>":""}</tr>`):"");
+  renderDiscBar(D,showD); renderDiscAlert(D,showD);
+  $("priceNote").textContent=mode==="buyer"?"":(any?"Prices come from the published price book on the Admin tab.":"No price book loaded. A RevOps admin can add prices on the Admin tab.");
+  $("priceNote").hidden=mode==="buyer";
+  $("trace").innerHTML=r.trace.map(([id,t,sets])=>sets?`<li class="sets"><code>${esc(id)}</code><span><strong>${t}</strong> <span class="setsTag">Sets the plan</span></span></li>`:`<li><code>${esc(id)}</code><span>${t}</span></li>`).join("");
+  const price=visiblePrice(view,total,any); env.priceText=price.text;
+  if(view==="exec") $("glance").innerHTML=(def.glance||[]).map(g=>`<li><span>${esc(g.label)}</span><span>${safeTpl(g.text,env,true)}</span></li>`).join("");
+  if(view==="lead"){
+    $("pkgPrice").textContent=price.text;
+    $("pkgPriceNote").textContent=price.kind==="range"?`Indicative range for the scope below (±${cfg.rangePct}%). Your solutions engineer confirms the final figure.`:price.kind==="list"?"List price for the scope below, before any agreed discounts.":"";
+    $("pkgList").innerHTML=(def.package||[]).map(x=>`<li>${safeTpl(x,env,true)}</li>`).join("");
+  }
+  document.querySelectorAll(".sellerOnly").forEach(e=>e.hidden=view!=="seller");
+  document.querySelectorAll(".buyerOnly").forEach(e=>e.hidden=view==="seller");
+  document.querySelectorAll(".execOnly").forEach(e=>e.hidden=view!=="exec");
+  document.querySelectorAll(".leadOnly").forEach(e=>e.hidden=view!=="lead");
+  document.querySelectorAll(".notExec").forEach(e=>e.hidden=view==="exec");
+  document.querySelectorAll('.q[data-aud="lead"]').forEach(e=>e.hidden=view==="exec");
+  applyBrand(); lastEnv=env; renderOutput(r); renderCsv(); mailCopy(); ensureTs();
+}
+let lastEnv=null;
+/* Checks, grouped by effect: what changed the scope, what needs action, and what is just a note */
+function renderChecks(r,shown,view){
+  const {def}=W(), seller=view==="seller";
+  const addedBy={}; r.lines.forEach(l=>{ if(l.addedBy) (addedBy[l.addedBy]=addedBy[l.addedBy]||[]).push(l); });
+  const scope=[], action=[], note=[];
+  if(view!=="exec"&&r.reasons.length) scope.push({level:"info",tag:"Plan",msg:esc(`${r.P.name}, because: ${r.reasons.join("; ")}.`)});
+  shown.filter(f=>f.tag!=="Clear").forEach(f=>{
+    const ls=f.id&&addedBy[f.id];
+    if(ls) scope.push({...f,effect:ls});
+    else if(f.level==="crit"||f.tag===def.reviewTag||f.kind==="discount"&&f.level!=="info") action.push(f);
+    else note.push(f);
+  });
+  const li=f=>`<li class="f-${f.level}"><span class="tag">${esc(f.tag)}</span><span>${f.msg}${f.effect?f.effect.map(l=>`<button type="button" class="effect" data-goline="${esc(l.name)}">${seller?"Added to the bill":"Added to your scope"}: ${esc(l.name)} · ${fmt(l.qty)}</button>`).join(""):""}</span></li>`;
+  const grp=(title,sub,items)=>items.length?`<li class="fgroup"><span>${esc(title)}</span>${sub?`<small>${esc(sub)}</small>`:""}</li>`+items.map(li).join(""):"";
+  const html=grp(seller?"Changed the scope":"Shaped your scope",seller?"These set the plan or added lines to the bill.":"",scope)
+    +grp("Needs action before quoting",seller?"Resolve these before the scope goes to the prospect.":"",action)
+    +grp("Warnings and notes",seller?"Worth discussing. These don't change the bill.":"",note);
+  $("flags").innerHTML=html||`<li class="f-info"><span class="tag">Clear</span><span>${seller?"No exceptions. This scope can go straight to quote.":"Your setup fits a standard plan."}</span></li>`;
+}
+$("flags").addEventListener("click",e=>{ const b=e.target.closest("[data-goline]"); if(!b) return;
+  const row=[...document.querySelectorAll("#lines tr")].find(t=>t.cells[0]&&t.cells[0].firstChild&&t.cells[0].firstChild.textContent===b.dataset.goline);
+  if(!row) return; row.scrollIntoView({block:"center"}); row.classList.add("flash"); setTimeout(()=>row.classList.remove("flash"),1600); });
+// Buyer-facing screens wear the catalog's brand (white-label); seller and admin screens stay ScopeOut.
+const HEX=/^#[0-9a-f]{6}$/i;
+function applyBrand(){ const b=W().def.brand, on=mode==="buyer"&&b&&b.name, st=document.documentElement.style;
+  $("vendorBrand").hidden=!on; $("brandName").hidden=!!on; $("tagline").hidden=!!on;
+  if(on){ $("vendorName").textContent=b.name; if(HEX.test(b.accent||"")) st.setProperty("--accent",b.accent); if(HEX.test(b.soft||"")) st.setProperty("--accent-soft",b.soft); }
+  else { st.removeProperty("--accent"); st.removeProperty("--accent-soft"); } }
+const UNAPPROVED=["needs","pending","rejected","blocked"];
+function renderDiscAlert(D,show){
+  const box=$("discAlert"), warn=$("msDiscWarn"), pol=D.pol, where=`${pct(D.max)} on ${D.maxLine}`, on=show&&UNAPPROVED.includes(D.status);
+  box.hidden=!on; warn.hidden=!(on&&mode==="seller");
+  if(!on){ box.innerHTML=""; warn.innerHTML=""; return; }
+  const reduce=`<button class="btn ghost" type="button" data-appr="cap">Reduce to ${pol.repMax}%</button>`;
+  const v={
+    needs:role==="manager"
+      ?["warn","Approve this discount?",`${where} is above the ${pol.repMax}% rep limit. As sales manager you can approve up to ${pol.approvalMax}%.`,`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>${reduce}`]
+      :["warn","This discount needs approval",`${where} is above your ${pol.repMax}% limit. You can't quote or send it until a sales manager approves.`,`<button class="btn" type="button" data-appr="request">Request approval</button>${reduce}`],
+    pending:["info","Waiting for sales manager approval",`${where} is pending. Until it's approved, the prospect only sees list price.`,role==="manager"?`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>`:`<button class="btn ghost" type="button" data-appr="asmanager">Switch to sales manager (demo)</button>`],
+    rejected:["crit","Discount declined",`A sales manager declined ${where}. Reduce it to ${pol.repMax}% or less, or change it and request approval again.`,`${reduce}<button class="btn ghost" type="button" data-appr="request">Request approval again</button>`],
+    blocked:["crit","Discount over the ceiling",`${where} is above the ${pol.approvalMax}% that a sales manager can approve. Route this deal to the deal desk, or reduce it.`,`<button class="btn" type="button" data-appr="capmax">Reduce to ${pol.approvalMax}%</button>${reduce}`]
+  }[D.status];
+  box.className="dalert st-"+v[0];
+  box.innerHTML=`<strong>${esc(v[1])}</strong><span>${esc(v[2])}</span><div class="row">${v[3]}</div>`;
+  warn.className="dalert st-"+v[0];
+  warn.innerHTML=`<strong>Unapproved discount: the prospect will see list price</strong><span>${esc(where)} isn't approved, so this email shows the list price of ${money(D.list)} / yr. Get it approved first, or send at list price.</span><div class="row"><button class="btn ghost" type="button" data-goscope>Go to the discount</button></div>`;
+}
+function renderDiscBar(D,show){
+  const bar=$("discBar"); bar.hidden=!show; if(!show) return;
+  const pol=D.pol, a=W().approval;
+  const pill={none:["","No discount"],ok:["ok",`Within the ${pol.repMax}% rep limit`],needs:["warn",`Needs approval: over ${pol.repMax}%`],pending:["info","Waiting for approval"],approved:["ok",`Approved by ${a.by||"sales manager"}`],rejected:["crit","Declined"],blocked:["crit",`Blocked: over ${pol.approvalMax}%`]}[D.status];
+  let act="";
+  if(D.status==="needs"||D.status==="rejected") act=role==="manager"&&D.status==="needs"?`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>`:`<button class="btn" type="button" data-appr="request">Request approval</button>`;
+  if(D.status==="pending") act=role==="manager"?`<button class="btn" type="button" data-appr="approve">Approve</button><button class="btn ghost" type="button" data-appr="decline">Decline</button>`:`<button class="btn ghost" type="button" data-appr="asmanager">Switch to sales manager (demo)</button>`;
+  bar.innerHTML=`<div class="row"><label class="opt" for="discAll">Apply</label><input type="number" id="discAll" min="0" max="100" step="0.5" placeholder="0" aria-label="Discount for all lines"><span class="h">% to all priced lines</span><button class="btn ghost" type="button" data-appr="applyall">Apply</button>${D.max>0?`<button class="btn ghost" type="button" data-appr="clear">Clear discounts</button>`:""}</div>
+    <div class="row apprrow"><span class="pill ${pill[0]?"st-"+pill[0]:""}">${esc(pill[1])}</span>${act}<span class="h">Reps can give up to ${pol.repMax}%. A sales manager approves up to ${pol.approvalMax}%. Buyers never see an unapproved discount.</span></div>`;
+}
+function renderOutput(r){
+  const {def}=W(), env=r.env;
+  const D=r.D; let inv="";
+  if(D.priced&&mode==="seller"){
+    inv=D.max>0&&D.quotable?`Annual investment: ${money(D.net)} / yr (list ${money(D.list)}, ${pct(D.blended)} discount)`:`Annual investment: ${money(D.list)} / yr list price`;
+  }
+  $("summary").textContent=safeTpl(def.summary||"",env,false)+(inv?"\n\n"+inv:"");
+  const payload={};
+  (def.payload||[]).forEach(([k,x])=>{ try{ payload[k]=ev(x,env); }catch(e){ payload[k]=null; } });
+  payload.scope_se_review_required=r.flags.some(f=>f.tag===def.reviewTag);
+  payload.scope_rules_fired=r.trace.map(t=>t[0]).filter(x=>x!=="—");
+  if(D.priced){ payload.scope_list_total=Math.round(D.list); payload.scope_discount_pct=Math.round(D.blended*10)/10; payload.scope_net_total=Math.round(D.quotable?D.net:D.list); payload.scope_discount_status=D.status; }
+  payload.line_items=r.lines.map(({name,detail,qty,price,disc,net,addedBy})=>{ const o=D.priced?{name,quantity:qty,detail,list_price:price,discount_pct:disc||0,net_price:price==null?null:Math.round(D.quotable?net:price)}:{name,quantity:qty,detail}; if(addedBy) o.added_by=addedBy; return o; });
+  setJson("payload",JSON.stringify(payload,null,2));
+}
+
+/* ---------- Scope form, built from the catalog's questions ---------- */
+const fid=key=>`q-${active}-${key}`;
+const opts=c=>(c.options||[]).map(o=>typeof o==="object"?o:{v:o,l:String(o)});
+function ctrlHtml(c,q){
+  const id=fid(c.key), seller=mode==="seller";
+  const hint=(c.suffix?`<span class="h">${esc(c.suffix)}</span>`:"")+(c.sellerHint&&seller?`<span class="h">${esc(c.sellerHint)}</span>`:"");
+  if(c.type==="text") return c.key==="company"?`<input type="text" id="${id}" placeholder="${esc(seller?(W().def.companyExample||"e.g. Ridgeline Freight Co."):"Your company name")}" autocomplete="organization">`
+    :`<input type="text" id="${id}" class="wide" maxlength="${+c.maxlength||200}" placeholder="${esc(c.placeholder||"")}"${c.aria?` aria-label="${esc(c.aria)}"`:""} autocomplete="off">`;
+  if(c.type==="number") return `<input type="number" id="${id}"${c.min!=null?` min="${c.min}"`:""}${c.max!=null?` max="${c.max}"`:""}>`+hint;
+  if(c.type==="select") return `<select id="${id}"${c.aria?` aria-label="${esc(c.aria)}"`:""}>${opts(c).map(o=>`<option value="${esc(o.v)}">${esc(o.l)}</option>`).join("")}</select>`+hint;
+  if(c.type==="checkbox") return `<label class="opt"><input type="checkbox" id="${id}"> ${esc(c.label||"")}</label>`;
+  if(c.type==="multi") return `<div class="row">${opts(c).map((o,i)=>`<label class="opt"><input type="checkbox" id="${id}-${i}" data-multi="${esc(c.key)}" value="${esc(o.v)}"> ${esc(o.l)}</label>`).join("")}</div>`;
+  if(c.type==="radio") return `<div class="row">${opts(c).map((o,i)=>`<label class="opt"><input type="radio" id="${id}-${i}" name="${id}" value="${esc(o.v)}"> ${esc(o.l)}</label>`).join("")}</div>`;
+  return "";
+}
+function qHtml(q){
+  const lab=mode==="buyer"&&q.buyerLabel?q.buyerLabel:q.label, c0=q.controls[0];
+  const aud=q.aud==="lead"?' data-aud="lead"':"";
+  if(q.boxOnly) return `<div class="q" data-key="${esc(q.key)}"${aud}><div class="qh"><label class="opt"><input type="checkbox" id="${fid(c0.key)}"> ${esc(lab)}</label></div></div>`;
+  const labelled=["text","number","select"].includes(c0.type);
+  const title=labelled?`<label class="t" for="${fid(c0.key)}">${esc(lab)}</label>`:`<span class="t" style="font-weight:600;font-size:14px">${esc(lab)}</span>`;
+  const body=q.controls.map(c=>ctrlHtml(c,q)).join("");
+  const simple=q.controls.length===1&&labelled&&!c0.suffix&&!(c0.sellerHint&&mode==="seller");
+  const wrap=simple||["multi","radio"].includes(c0.type)&&q.controls.length===1?body:`<div class="row">${body}</div>`;
+  return `<div class="q" data-key="${esc(q.key)}"${aud}><div class="qh">${title}</div>${wrap}</div>`;
+}
+function buildForm(){ $("qList").innerHTML=allQs().filter(q=>!(q.sellerOnly&&mode==="buyer")).map(qHtml).join(""); loadState(); buildHelp(); }
+function eachCtrl(f){ allQs().forEach(q=>q.controls.forEach(c=>f(c,q))); }
+function loadState(){
+  const s=W().s;
+  eachCtrl(c=>{
+    const v=s[c.key];
+    if(c.type==="multi") [...document.querySelectorAll("[data-multi]")].filter(i=>i.dataset.multi===c.key).forEach(i=>i.checked=Array.isArray(v)&&v.map(String).includes(i.value));
+    else if(c.type==="radio") document.querySelectorAll(`input[name="${fid(c.key)}"]`).forEach(i=>i.checked=String(v)===i.value);
+    else { const el=$(fid(c.key)); if(!el) return; if(c.type==="checkbox") el.checked=!!v; else el.value=v==null?"":String(v); }
+  });
+}
+function readState(){
+  const s=W().s;
+  eachCtrl(c=>{
+    if(c.type==="multi"){ const o=opts(c); s[c.key]=[...document.querySelectorAll("[data-multi]")].filter(i=>i.dataset.multi===c.key&&i.checked).map(i=>{const m=o.find(x=>String(x.v)===i.value);return m?m.v:i.value;}); }
+    else if(c.type==="radio"){ const el=document.querySelector(`input[name="${fid(c.key)}"]:checked`); s[c.key]=el?el.value:""; }
+    else { const el=$(fid(c.key)); if(!el) return;
+      if(c.type==="checkbox") s[c.key]=el.checked;
+      else if(c.type==="number"){ let v=+el.value||0; if(c.min!=null&&v<c.min){ v=c.min; el.value=String(v); } s[c.key]=v; }
+      else if(c.type==="select"&&c.num) s[c.key]=+el.value;
+      else s[c.key]=el.value; }
+  });
+}
+function buildPresets(){
+  const p=W().def.presets||{};
+  const n=W().def.presetNotes||{};
+  $("presets").innerHTML=Object.keys(p).map(k=>`<button class="chip" type="button" data-preset="${esc(k)}"${n[k]?` data-tip="${esc(n[k])}"`:""}>${esc(k)}</button>`).join("");
+}
+
+/* ---------- Hover tips ---------- */
+const tipEl=document.createElement("div"); tipEl.id="hoverTip"; tipEl.className="hover-tip"; tipEl.setAttribute("role","tooltip"); tipEl.hidden=true; document.body.appendChild(tipEl);
+let tipFor=null;
+function showTip(el){ const t=el.getAttribute("data-tip"); if(!t) return; tipFor=el; tipEl.textContent=t; tipEl.hidden=false; el.setAttribute("aria-describedby","hoverTip");
+  const r=el.getBoundingClientRect(), w=tipEl.offsetWidth, h=tipEl.offsetHeight, vw=document.documentElement.clientWidth, m=8;
+  let left=Math.min(Math.max(m, r.left), vw-w-m), top=r.bottom+8;
+  if(top+h>window.innerHeight-m && r.top-h-8>m) top=r.top-h-8;
+  tipEl.style.left=(left+window.scrollX)+"px"; tipEl.style.top=(top+window.scrollY)+"px"; }
+function hideTip(){ if(tipFor) tipFor.removeAttribute("aria-describedby"); tipFor=null; tipEl.hidden=true; }
+document.addEventListener("pointerover",e=>{ const el=e.target.closest&&e.target.closest("[data-tip]"); if(el&&el!==tipFor&&e.pointerType!=="touch") showTip(el); else if(!el&&tipFor) hideTip(); });
+document.addEventListener("focusin",e=>{ const el=e.target.closest&&e.target.closest("[data-tip]"); if(el) showTip(el); else if(tipFor) hideTip(); });
+document.addEventListener("focusout",()=>hideTip());
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&tipFor) hideTip(); });
+window.addEventListener("scroll",()=>{ if(tipFor) hideTip(); },{passive:true});
+
+/* ---------- Help icons ---------- */
+function helpHtml(key){
+  const q=allQs().find(x=>x.key===key), h=q&&q.help; if(!h) return "";
+  return (mode==="seller"?`<div><b>Why it matters</b>${esc(h.why)}</div><div><b>Listen for</b>${esc(h.listen)}</div><div><b>Follow-up</b>${esc(h.ask)}</div>`:`<div>${esc(h.buyer)}</div>`)+(mode==="seller"?`<div><a data-goto="gf-${esc(key)}">More in the guide</a></div>`:"");
+}
+function buildHelp(){
+  document.querySelectorAll(".q[data-key]").forEach(q=>{
+    const k=q.dataset.key, qq=allQs().find(x=>x.key===k); if(!qq||!qq.help) return;
+    const head=q.querySelector(".qh"), hid="help-"+active+"-"+k;
+    let btn=head.querySelector(".info");
+    if(!btn){ btn=document.createElement("button"); btn.type="button"; btn.className="info"; btn.textContent="i";
+      btn.setAttribute("aria-controls",hid); btn.setAttribute("aria-expanded","false"); head.appendChild(btn);
+      const box=document.createElement("div"); box.className="help"; box.id=hid; box.hidden=true; head.after(box);
+      btn.addEventListener("click",()=>{const open=btn.getAttribute("aria-expanded")!=="true"; btn.setAttribute("aria-expanded",open); box.hidden=!open;}); }
+    btn.setAttribute("aria-label",(mode==="seller"?"Discovery tips: ":"More about: ")+head.textContent.replace(/i$/,"").trim());
+    $(hid).innerHTML=helpHtml(k);
+  });
+}
+const ENGINE_SETTINGS={
+  "vis-exec":["Executive overview pricing","What a visitor who picks \"I need a quick overview\" sees for price. Hidden is usual: executives at this stage want fit, not numbers."],
+  "vis-lead":["Project lead pricing","What a visitor scoping a project sees in the leadership package. An indicative range helps them win budget without publishing your list price."],
+  "vis-band":["Range width","How wide the indicative range is around the calculated total. 15 means 15% below to 15% above, rounded to the nearest $1,000."],
+  "disc-rep":["Rep discount limit","The biggest discount a rep can put on any line without approval. Anything above it needs a sales manager."],
+  "disc-max":["Approval ceiling","The biggest discount a sales manager can approve on any line. Anything above it is blocked and goes to the deal desk."]
+};
+const CSV_HELP="The published packaging as a plain CSV file, the same format RevOps keeps in a spreadsheet. Admins can import a revised file instead of editing the table; it is checked row by row before it reaches the draft.";
+function settingInfo(k){ const p=W().def.params.find(x=>x.key===k); return p?[p.title||p.label,p.help||""]:ENGINE_SETTINGS[k]||["",""]; }
+function colHelp(k){ if(k==="csv") return CSV_HELP; const c=W().def.planColumns.find(x=>x.key===k); return c?c.help||"":""; }
+
+/* ---------- Admin: packaging, parameters, rules ---------- */
+function cellHtml(pl,pi,c){
+  const v=pl[c.key], id=`pc-${active}-${pi}-${c.key}`, lab=`${pl.name} ${c.term||c.label}`;
+  if(c.type==="enum") return `<td>${esc(v)}</td>`;
+  if(c.type==="intU"&&+v>=999) return `<td>Unlimited</td>`;
+  if(c.type==="price") return `<td><input type="number" id="${id}" data-pi="${pi}" data-k="${esc(c.key)}" value="${esc(v)}" placeholder="—" aria-label="${esc(lab)}"></td>`;
+  return `<td><input type="number" id="${id}" data-pi="${pi}" data-k="${esc(c.key)}" value="${esc(v)}" aria-label="${esc(lab)}">${c.confirm?'<span class="assume">confirm</span>':""}</td>`;
+}
+function buildRules(){
+  const {def,draft:d}=W(), cols=def.planColumns;
+  $("planHead").innerHTML=`<tr><th>Plan</th>${cols.map(c=>`<th>${esc(c.label)}${c.help?`<button type="button" class="info" data-pk="${esc(c.key)}" aria-controls="pkHelp" aria-expanded="false" aria-label="About ${esc(c.label)}">i</button>`:""}</th>`).join("")}</tr>`;
+  $("planRows").innerHTML=d.plans.map((pl,pi)=>`<tr><td><strong>${esc(pl.name)}</strong></td>${cols.map(c=>cellHtml(pl,pi,c)).join("")}</tr>`).join("");
+  $("pkHelp").hidden=true;
+  $("paramRows").innerHTML=def.params.filter(p=>!p.hidden).map(p=>{ const v=d.params[p.key];
+    return `<tr><td><span class="lblh">${esc(p.label)}${p.help?`<button type="button" class="info" data-set="${esc(p.key)}" aria-controls="sh-${esc(p.key)}" aria-expanded="false" aria-label="About ${esc(p.label)}">i</button>`:""}</span></td><td class="n"><input type="number" step="any" id="pm-${active}-${esc(p.key)}" data-param="${esc(p.key)}" value="${esc(v)}" placeholder="—" aria-label="${esc(p.label)}"></td></tr><tr hidden id="sh-${esc(p.key)}"><td colspan="2"><div class="help"></div></td></tr>`; }).join("");
+  $("ruleRows").innerHTML=allRules(d).map(r=>`<div class="rule"><input type="checkbox" id="rule-${active}-${esc(r.id)}" data-rule="${esc(r.id)}" ${d.rules[r.id]?"checked":""} aria-label="Rule ${esc(r.id)} on"><code>${esc(r.id)}</code><label for="rule-${active}-${esc(r.id)}">${esc(r.txt)}<br><span class="src">Source: ${esc(r.src||"Catalog")}</span>${r.custom?' <span class="planned">custom</span>':""}</label>${r.custom?`<button type="button" class="linkbtn adminOnly" data-delrule="${esc(r.id)}">Remove</button>`:""}</div>`).join("");
+  const pbs=def.priceBooks||[];
+  $("pbName").textContent=d.priceBook;
+  $("pbSel").innerHTML=`<option value="">None (hide pricing)</option>`+pbs.map((b,i)=>`<option value="${i}">${esc(b.name)}</option>`).join("");
+  const cur=pbs.findIndex(b=>b.name===d.priceBook); $("pbSel").value=cur<0?"":String(cur);
+  $("pbNote").textContent=cur<0?"No price book: sellers and buyers see no prices.":(pbs[cur].note||"");
+  $("discRep").value=d.discount.repMax; $("discMax").value=d.discount.approvalMax;
+  $("pkgNote").innerHTML=rich(def.guide?.packagingNote||"");
+  $("estNote").textContent=def.guide?.estimateNote||"";
+  $("estNote").hidden=!def.guide?.estimateNote;
+  syncVis();
+}
+function syncVis(){ const d=W().draft; $("vis-exec").value=d.vis.exec; $("vis-lead").value=d.vis.lead; $("vis-band").value=d.rangePct; }
+const csvCell=(c,v)=>c.type==="intU"&&+v>=999?"unlimited":v==null?"":v;
+function renderCsv(){
+  const {def,draft}=W();
+  $("csv").textContent="plan,"+def.planColumns.map(c=>c.csv).join(",")+"\n"+draft.plans.map(p=>[p.name,...def.planColumns.map(c=>csvCell(c,p[c.key]))].join(",")).join("\n");
+}
+const shownV=v=>v===""||v==null?"blank":v;
+function diffs(){
+  const {def,pub,draft}=W(), out=[];
+  const isBlank=v=>v===""||v==null;
+  /* Prices: a blank price counts as $0. */
+  const cv=(c,v)=>c.type==="price"?money(isBlank(v)?0:+v):isBlank(v)?"blank":c.type==="intU"&&+v>=999?"unlimited":v;
+  const pv=(p,v)=>p.allowBlank?money(isBlank(v)?0:+v):shownV(v);
+  /* A price book change is listed first, then each price it changed. */
+  const bookChanged=pub.priceBook!==draft.priceBook, book=(def.priceBooks||[]).find(b=>b.name===draft.priceBook);
+  if(bookChanged) out.push(book?`Loading price book: ${book.name}`:`Removing price book: ${pub.priceBook} (prices cleared)`);
+  draft.plans.forEach((pl,i)=>def.planColumns.forEach(c=>{ const a=pub.plans[i]?.[c.key], b=pl[c.key]; if(String(a)!==String(b)) out.push(`${pl.name} ${c.diff||c.term||c.label}: ${cv(c,a)} → ${cv(c,b)}`); }));
+  def.params.forEach(p=>{ const a=pub.params[p.key], b=draft.params[p.key]; if(String(a)!==String(b)){ const t=p.term||p.label; out.push(`${t[0].toUpperCase()+t.slice(1)}: ${pv(p,a)} → ${pv(p,b)}`); } });
+  if(String(pub.rangePct)!==String(draft.rangePct)) out.push(`Range width: ${shownV(pub.rangePct)} → ${shownV(draft.rangePct)}`);
+  if(String(pub.discount.repMax)!==String(draft.discount.repMax)) out.push(`Rep discount limit: ${pub.discount.repMax}% → ${draft.discount.repMax}%`);
+  if(String(pub.discount.approvalMax)!==String(draft.discount.approvalMax)) out.push(`Approval ceiling: ${pub.discount.approvalMax}% → ${draft.discount.approvalMax}%`);
+  const pIds=new Set((pub.customRules||[]).map(r=>r.id)), dIds=new Set((draft.customRules||[]).map(r=>r.id));
+  (draft.customRules||[]).forEach(r=>{ if(!pIds.has(r.id)) out.push(`Rule ${r.id} added: ${r.txt}`); });
+  (pub.customRules||[]).forEach(r=>{ if(!dIds.has(r.id)) out.push(`Rule ${r.id} removed: ${r.txt}`); });
+  allRules(draft).forEach(r=>{ if(pIds.has(r.id)||!r.custom) if(pub.rules[r.id]!==undefined&&pub.rules[r.id]!==draft.rules[r.id]) out.push(`Rule ${r.id} turned ${draft.rules[r.id]?"on":"off"}`); });
+  [["exec","Executive overview pricing"],["lead","Project lead pricing"]].forEach(([k,l])=>{ if(pub.vis[k]!==draft.vis[k]) out.push(`${l}: ${pub.vis[k]} → ${draft.vis[k]}`); });
+  return out;
+}
+function updateAdmin(){
+  const admin=role==="admin";
+  $("roleName").firstChild.textContent=`Signed in as ${ROLES[role]}`;
+  $("lockPill").textContent=admin?"Can edit":"View only"; $("lockPill").classList.toggle("on",admin);
+  $("roleNote").textContent=admin?"Changes go into a draft. Reps keep scoping on the published packaging until you publish.":role==="manager"?"Sales managers approve discounts on the Scope tab. Packaging and rules are managed by RevOps.":"Packaging and rules are managed by RevOps. Ask an admin to request a change.";
+  $("roleSel").value=role;
+  document.querySelectorAll("#p-rules input:not([type=file]), #p-rules select:not(#roleSel)").forEach(el=>el.disabled=!admin);
+  document.querySelectorAll(".adminOnly").forEach(el=>el.hidden=!admin);
+  if(!admin) $("rb").hidden=true;
+  $("rbOpen").hidden=!admin||!$("rb").hidden;
+  const d=diffs();
+  $("draftBar").hidden=!d.length;
+  $("draftText").textContent=`${d.length} unpublished change${d.length===1?"":"s"}${admin?"":" (draft, waiting for an admin)"}`;
+  $("publishBtn").hidden=!admin; $("discardBtn").hidden=!admin;
+  $("draftList").innerHTML=d.map(x=>`<li>${esc(x)}</li>`).join("");
+}
+function stamp(){ const n=new Date(); return n.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+n.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}); }
+function renderLog(){ $("changeLog").innerHTML=W().log.slice().reverse().map(e=>`<li><time>${esc(e.t)}</time><span><b>${esc(e.who)}</b> ${esc(e.what)}</span></li>`).join(""); }
+
+/* CSV import of the plan table, checked row by row */
+function importCsv(text){
+  const {def,draft}=W(), msgs=$("csvMsgs"), errs=[], cols=def.planColumns, names=draft.plans.map(p=>p.name);
+  const rows=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  const want=["plan",...cols.map(c=>c.csv)].join(",");
+  const head=(rows.shift()||"").split(",").map(x=>x.trim().toLowerCase()).join(",");
+  if(head!==want) errs.push(`Line 1: expected the columns ${want.replace(/,/g,", ")}.`);
+  const next=clone(draft.plans), seen=new Set();
+  const list=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" or "+a[a.length-1];
+  rows.forEach((line,i)=>{ const n=i+2, c=line.split(",").map(x=>x.trim());
+    if(c.length!==cols.length+1){ errs.push(`Line ${n}: has ${c.length} values; expected ${cols.length+1}.`); return; }
+    const pi=names.indexOf(c[0]);
+    if(pi<0){ errs.push(`Line ${n}: "${c[0]}" isn't a plan. Use ${list(names)}.`); return; }
+    if(seen.has(c[0])) errs.push(`Line ${n}: ${c[0]} appears twice.`); seen.add(c[0]);
+    cols.forEach((col,j)=>{ const v=c[j+1], t=col.term||col.label; const int=/^\d+$/.test(v);
+      if(col.type==="int"){ if(!int) errs.push(`Line ${n}: ${t} must be a whole number.`); else next[pi][col.key]=+v; }
+      else if(col.type==="intU"){ if(!(int||v.toLowerCase()==="unlimited")) errs.push(`Line ${n}: ${t} must be a whole number or "unlimited".`); else next[pi][col.key]=v.toLowerCase()==="unlimited"?999:+v; }
+      else if(col.type==="enum"){ if(!col.values.includes(v)) errs.push(`Line ${n}: ${t} must be ${list(col.values.map(x=>`"${x}"`))}.`); else next[pi][col.key]=v; }
+      else if(col.type==="price"){ if(v!==""&&!/^\d+(\.\d+)?$/.test(v)) errs.push(`Line ${n}: ${t} must be a number or left blank.`); else next[pi][col.key]=v; }
+    });
+  });
+  if(head===want) names.forEach(p=>{ if(!seen.has(p)) errs.push(`Missing a row for ${p}.`); });
+  msgs.hidden=false;
+  if(errs.length){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported. Fix ${errs.length} problem${errs.length===1?"":"s"} and try again:</strong></li>`+errs.map(x=>`<li>${esc(x)}</li>`).join(""); return; }
+  draft.plans=next; buildRules(); renderCsv(); updateAdmin();
+  msgs.className="msgs ok"; msgs.innerHTML=`<li>Imported ${seen.size} plans into the draft. Review the changes above, then publish.</li>`;
+}
+
+/* ---------- Catalog files: validation and import ---------- */
+const ENGINE_NAMES=["p","P","plan","cand","prev","prevPlan","firstPlan","co","company","i","priceText","whyText","whyRaw"];
+function validateCatalog(o){
+  const E=[], add=m=>E.push(m);
+  if(!o||typeof o!=="object"||Array.isArray(o)) return ["The file isn't a catalog: expected a JSON object."];
+  if(typeof o.id!=="string"||!/^[a-z0-9-]+$/.test(o.id)) add('id: use lowercase letters, numbers and dashes, for example "my-product".');
+  if(typeof o.name!=="string"||!o.name.trim()) add("name: give the product a name.");
+  const arr=(k,min)=>{ if(!Array.isArray(o[k])||o[k].length<min){ add(`${k}: expected a list${min?` with at least ${min} item${min>1?"s":""}`:""}.`); return []; } return o[k]; };
+  const cols=arr("planColumns",1), plans=arr("plans",1), params=Array.isArray(o.params)?o.params:(o.params==null?[]:(add("params: expected a list."),[]));
+  const qs=arr("questions",1), rules=arr("rules",1), lines=arr("lines",1), verdict=arr("verdict",1);
+  const colKeys=new Set();
+  cols.forEach((c,i)=>{ const w=`planColumns[${i}]`;
+    if(!c||!c.key) return add(`${w}: needs a key.`);
+    if(colKeys.has(c.key)) add(`${w}: the key "${c.key}" is used twice.`); colKeys.add(c.key);
+    if(!c.csv) add(`${w} (${c.key}): needs a csv column name.`);
+    if(!["int","intU","enum","price"].includes(c.type)) add(`${w} (${c.key}): type must be int, intU, enum or price.`);
+    if(c.type==="enum"&&!(Array.isArray(c.values)&&c.values.length)) add(`${w} (${c.key}): an enum column needs a list of values.`); });
+  const pnames=new Set();
+  plans.forEach((p,i)=>{ const w=`plans[${i}]`;
+    if(!p||!p.name) return add(`${w}: needs a name.`);
+    if(pnames.has(p.name)) add(`${w}: the plan "${p.name}" appears twice.`); pnames.add(p.name);
+    cols.forEach(c=>{ if(!c||!c.key) return; const v=p[c.key];
+      if(v===undefined) add(`${w} (${p.name}): missing a value for "${c.key}".`);
+      else if((c.type==="int"||c.type==="intU")&&!(Number.isInteger(v)&&v>=0)) add(`${w} (${p.name}): "${c.key}" must be a whole number${c.type==="intU"?" (999 means unlimited)":""}.`);
+      else if(c.type==="enum"&&Array.isArray(c.values)&&!c.values.includes(v)) add(`${w} (${p.name}): "${c.key}" must be one of ${c.values.join(", ")}.`); }); });
+  const paramKeys=new Set();
+  params.forEach((p,i)=>{ if(!p||!p.key) return add(`params[${i}]: needs a key.`); if(paramKeys.has(p.key)) add(`params[${i}]: the key "${p.key}" is used twice.`); paramKeys.add(p.key); if(!p.label) add(`params[${i}] (${p.key}): needs a label.`); });
+  const known=new Set(ENGINE_NAMES), ctrlKeys=new Set(["company"]);
+  qs.forEach((q,i)=>{ const w=`questions[${i}]`;
+    if(!q||!q.key) return add(`${w}: needs a key.`);
+    if(!q.label) add(`${w} (${q.key}): needs a label.`);
+    if(!Array.isArray(q.controls)||!q.controls.length) return add(`${w} (${q.key}): needs at least one control.`);
+    q.controls.forEach((c,j)=>{ const cw=`${w}.controls[${j}]`;
+      if(!c||!c.key) return add(`${cw}: needs a key.`);
+      if(ctrlKeys.has(c.key)) add(`${cw}: the key "${c.key}" is already used by another question.`); ctrlKeys.add(c.key); known.add(c.key);
+      if(!["text","number","select","checkbox","multi","radio"].includes(c.type)) add(`${cw} (${c.key}): type must be number, select, checkbox, multi, radio or text.`);
+      if(["select","multi","radio"].includes(c.type)&&!(Array.isArray(c.options)&&c.options.length)) add(`${cw} (${c.key}): a ${c.type} needs options.`); }); });
+  const check=(where,src,isTpl,extra=[])=>{
+    if(src==null||src==="") return add(`${where}: is missing.`);
+    try{
+      const parts=isTpl?ctpl(src).filter(x=>typeof x!=="string"):[cexpr(src)];
+      parts.forEach(c=>{ c.names.forEach(n=>{ if(!known.has(n)&&!extra.includes(n)) add(`${where}: unknown name "${n}". Use a question key, a metric, or p.<setting>.`); });
+        c.params.forEach(n=>{ if(!paramKeys.has(n)) add(`${where}: unknown setting "p.${n}".`); }); });
+    }catch(e){ add(`${where}: ${e.message}.`); }
+  };
+  (Array.isArray(o.metrics)?o.metrics:[]).forEach((m,i)=>{ const w=`metrics[${i}]${m&&m.key?` (${m.key})`:""}`;
+    if(!m||!m.key) return add(`metrics[${i}]: needs a key.`); check(`${w}.expr`,m.expr,false); known.add(m.key); });
+  const ids=new Set();
+  rules.forEach((r,i)=>{ const w=`rules[${i}]${r&&r.id?` (${r.id})`:""}`;
+    if(!r||!r.id) return add(`rules[${i}]: needs an id.`);
+    if(ids.has(r.id)) add(`${w}: the id is used twice.`); ids.add(r.id);
+    if(!r.txt) add(`${w}: needs a description (txt).`);
+    if(r.kind==="info") check(`${w}.trace`,r.trace,true);
+    else if(r.kind==="plan"){ check(`${w}.when`,r.when,false); check(`${w}.why`,r.why,true); if(!pnames.has(r.plan)) add(`${w}: plan "${r.plan}" isn't one of the plans (${[...pnames].join(", ")}).`); }
+    else if(r.kind==="fit"){ check(`${w}.fit`,r.fit,false); check(`${w}.why`,r.why,true); if(r.ok) check(`${w}.ok`,r.ok,true); }
+    else if(r.kind==="flag"){ check(`${w}.when`,r.when,false); check(`${w}.msg`,r.msg,true); if(r.trace) check(`${w}.trace`,r.trace,true); if(r.okTrace) check(`${w}.okTrace`,r.okTrace,true);
+      if(!["crit","warn","info"].includes(r.level)) add(`${w}: level must be crit, warn or info.`); if(!r.tag) add(`${w}: needs a tag.`); }
+    else add(`${w}: kind must be info, plan, fit or flag.`); });
+  (Array.isArray(o.checks)?o.checks:[]).forEach((c,i)=>{ check(`checks[${i}].when`,c.when,false); check(`checks[${i}].msg`,c.msg,true); });
+  lines.forEach((l,i)=>{ const w=`lines[${i}]${l&&l.name?` (${l.name})`:""}`;
+    if(!l||!l.name) return add(`lines[${i}]: needs a name.`);
+    if(l.addedBy&&!ids.has(l.addedBy)) add(`${w}: addedBy "${l.addedBy}" isn't a rule id.`);
+    check(`${w}.qty`,l.qty,false); if(l.when) check(`${w}.when`,l.when,false); if(l.detail) check(`${w}.detail`,l.detail,true);
+    if(l.price&&!["unit","included","none"].includes(l.price)) check(`${w}.price`,l.price,false); });
+  verdict.forEach((v,i)=>{ check(`verdict[${i}].value`,v&&v.value,true); if(v&&v.sub) check(`verdict[${i}].sub`,v.sub,true); });
+  if(o.allocation){ (o.allocation.groups||[]).forEach((g,i)=>{ check(`allocation.groups[${i}].count`,g.count,false,["i"]); check(`allocation.groups[${i}].label`,g.label,true,["i"]); if(g.repeat) check(`allocation.groups[${i}].repeat`,g.repeat,false); });
+    (o.allocation.legend||[]).forEach((l,i)=>check(`allocation.legend[${i}]`,l.text,true)); }
+  (o.glance||[]).forEach((g,i)=>check(`glance[${i}]`,g.text,true));
+  (o.package||[]).forEach((x,i)=>check(`package[${i}]`,x,true));
+  if(o.summary) check("summary",o.summary,true);
+  (o.payload||[]).forEach((x,i)=>{ if(!Array.isArray(x)||x.length!==2) add(`payload[${i}]: expected ["field_name", "expression"].`); else check(`payload[${i}] (${x[0]})`,x[1],false); });
+  (Array.isArray(o.priceBooks)?o.priceBooks:[]).forEach((b,i)=>{ const w=`priceBooks[${i}]`; if(!b||!b.name) return add(`${w}: needs a name.`);
+    Object.entries(b.prices||{}).forEach(([k,v])=>{ if(!pnames.has(k)) add(`${w} (${b.name}): "${k}" isn't a plan.`); if(typeof v!=="number"||v<0) add(`${w} (${b.name}): the price for ${k} must be a number.`); });
+    Object.keys(b.params||{}).forEach(k=>{ if(!paramKeys.has(k)) add(`${w} (${b.name}): "${k}" isn't a setting.`); }); });
+  if(o.brand!=null){ if(typeof o.brand!=="object"||!o.brand.name) add("brand: needs a name."); ["accent","soft"].forEach(k=>{ if(o.brand&&o.brand[k]!=null&&!/^#[0-9a-f]{6}$/i.test(o.brand[k])) add(`brand.${k}: use a color like "#5B3FD6".`); }); }
+  Object.entries(o.presetNotes||{}).forEach(([k,v])=>{ if(!(o.presets||{})[k]) add(`presetNotes["${k}"]: no example with that name.`); else if(typeof v!=="string") add(`presetNotes["${k}"]: use text.`); });
+  Object.entries(o.presets||{}).forEach(([k,p])=>Object.keys(p||{}).forEach(f=>{ if(!ctrlKeys.has(f)) add(`presets["${k}"]: "${f}" isn't a question key.`); }));
+  return E;
+}
+function importCatalog(text,fileName){
+  const msgs=$("catMsgs"); msgs.hidden=false;
+  let o; try{ o=JSON.parse(text); }catch(e){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported.</strong> ${esc(fileName)} isn't valid JSON: ${esc(e.message)}</li>`; return; }
+  const errs=validateCatalog(o);
+  if(errs.length){ msgs.className="msgs err"; msgs.innerHTML=`<li><strong>Nothing imported. Fix ${errs.length} problem${errs.length===1?"":"s"} in ${esc(fileName)} and try again:</strong></li>`+errs.slice(0,12).map(x=>`<li>${esc(x)}</li>`).join("")+(errs.length>12?`<li>…and ${errs.length-12} more.</li>`:""); return; }
+  o.params=o.params||[]; o.metrics=o.metrics||[]; o.checks=o.checks||[]; o.presets=o.presets||{}; o.guide=o.guide||{};
+  const replaced=!!WS[o.id];
+  WS[o.id]=makeWS(o,`Catalog ${replaced?"replaced":"created"} by import from ${fileName}.`);
+  WS[o.id].log[0].t=stamp(); WS[o.id].log[0].who="RevOps admin";
+  buildCatSel(); switchCatalog(o.id);
+  const m=$("catMsgs"); m.hidden=false; m.className="msgs ok";
+  m.innerHTML=`<li>Loaded ${esc(o.name)}: ${o.questions.length} questions, ${o.plans.length} plans, ${o.rules.length} rules. ScopeOut now runs on this catalog; open the Scope tab to try it.</li>`;
+}
+function exportCatalog(){ const {def,pub}=W(); const o=clone(def); o.plans=clone(pub.plans); o.params=def.params.map(p=>({...p,value:pub.params[p.key]}));
+  o.rules=def.rules.concat((pub.customRules||[]).map(({custom,...r})=>r)); o.discountPolicy=clone(pub.discount); return JSON.stringify(o,null,2); }
+
+/* ---------- Guide, built from the active catalog ---------- */
+const NUMW=["No","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve"];
+function buildGuide(){
+  const {def,pub}=W();
+  $("gTerms").innerHTML=(def.terms||[]).map(([t,d])=>`<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("");
+  $("gFields").innerHTML=allQs().filter(q=>q.help).map(q=>`<div id="gf-${esc(q.key)}"><dt>${esc(q.label)}</dt><dd><span>${esc(q.help.buyer||q.help.why)}</span><div><em>Why</em>${esc(q.help.why)}</div><div><em>Ask</em>${esc(q.help.ask)}</div></dd></div>`).join("");
+  $("gSettings").innerHTML=def.params.filter(p=>!p.hidden).map(p=>`<div id="gs-${esc(p.key)}"><dt>${esc(p.title||p.label)}</dt><dd>${esc(p.help||"")}</dd></div>`).join("")
+    +Object.entries(ENGINE_SETTINGS).map(([k,[t,d]])=>`<div id="gs-${k}"><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")
+    +def.planColumns.filter(c=>c.help).map(c=>`<div id="gs-pk-${esc(c.key)}"><dt>Plan: ${esc(c.diff||c.term||c.label)}</dt><dd>${esc(c.help)}</dd></div>`).join("")
+    +`<div id="gs-pk-csv"><dt>Packaging data file</dt><dd>${esc(CSV_HELP)}</dd></div>`;
+  $("gRuleIntro").textContent=`Every answer is checked against the rules on the Admin tab. A rule can only raise the requirement, never lower it, so the strictest rule decides the plan. If no rule raises it, the scope stays on ${planNames(pub)[0]}.`;
+  $("gRuleExample").innerHTML=rich(def.guide?.ruleExample||""); $("gRuleExample").hidden=!def.guide?.ruleExample;
+  $("gRuleFlags").innerHTML=rich(def.guide?.ruleFlags||""); $("gRuleFlags").hidden=!def.guide?.ruleFlags;
+  const n=def.questions.filter(q=>q.aud!=="lead").length+1; $("execCount").textContent=NUMW[n]||String(n);
+  const pol=pub.discount;
+  $("faqList").innerHTML=`<details><summary>Why is the price column blank?</summary><p>No price book is published. A RevOps admin loads one on the Admin tab, or enters a price per ${esc(def.unit||"unit")} for each plan, and publishes it. Totals then appear everywhere, including the buyer ranges.</p></details>`
+    +`<details><summary>How do discounts work?</summary><p>Sellers can discount each priced line. Up to ${pol.repMax}% applies straight away. From ${pol.repMax}% to ${pol.approvalMax}% needs a sales manager to approve it, and anything above ${pol.approvalMax}% is blocked. Buyers never see a discount that hasn't been approved, and website visitors never get one.</p></details>`
+    +`<details><summary>Can I add my own rules?</summary><p>Yes. RevOps admins use <strong>Add a rule</strong> on the Admin tab to raise the plan or add a flag from simple conditions. New rules go into the draft and reach reps when published. Calculated rules live in the catalog file.</p></details>`
+    +(def.faq||[]).map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${rich(a)}</p></details>`).join("");
+  $("gCatalogs").textContent=`ScopeOut is running the ${def.name} catalog. Every question, rule, plan and output on these tabs comes from that one file.`;
+  expandAcronyms($("p-guide"));
+}
+
+/* ---------- Guide: every acronym is written out the first time it appears in each entry ---------- */
+const ACRONYMS={PS:"Professional Services",SE:"solutions engineer",HA:"high availability",CRM:"customer relationship management system",
+  RevOps:"Revenue Operations",SSO:"single sign-on",SAML:"Security Assertion Markup Language",HIPAA:"Health Insurance Portability and Accountability Act",
+  BAA:"Business Associate Agreement",GDPR:"General Data Protection Regulation",PCI:"Payment Card Industry security standard","SOC 2":"System and Organization Controls 2",
+  EU:"European Union",MTU:"monthly tracked user",TAM:"technical account manager",QA:"quality assurance",AWS:"Amazon Web Services",S3:"Amazon Simple Storage Service",
+  CSV:"comma-separated values",SSIS:"SQL Server Integration Services",AD:"Active Directory",IT:"information technology",CPU:"central processing unit"};
+const ACR_RE=Object.keys(ACRONYMS).map(a=>[a,new RegExp(`(^|[^A-Za-z0-9])(${a.replace(" ","\\s")})(?![A-Za-z0-9])`)]);
+function expandAcronyms(root){
+  const SEL="p, li, dt, dd, dd > span, dd > div, td, summary, h2";
+  root.querySelectorAll(SEL).forEach(block=>{
+    if(block.closest(".gnav")) return;
+    const seen=new Set(), full=block.textContent.toLowerCase();
+    const walker=document.createTreeWalker(block,NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{ if(n.parentElement.closest("code, .assume")||n.parentElement.closest(SEL)!==block) return; let t=n.nodeValue;
+      ACR_RE.forEach(([a,re])=>{ if(seen.has(a)) return; const exp=ACRONYMS[a];
+        const al=a.toLowerCase(); if(full.includes(exp.toLowerCase())||full.includes(`${al} (`)||full.includes(`(${al})`)){ seen.add(a); return; }
+        const m=t.match(re); if(m){ const i=m.index+m[1].length; t=t.slice(0,i+m[2].length)+` (${exp})`+t.slice(i+m[2].length); seen.add(a); } });
+      if(t!==n.nodeValue) n.nodeValue=t; });
+  });
+}
+
+/* ---------- Catalog switching ---------- */
+function buildCatSel(){ $("catSel").innerHTML=Object.values(WS).map(w=>`<option value="${esc(w.def.id)}">${esc(w.def.label||w.def.name)}</option>`).join(""); $("catSel").value=active; }
+function catStats(){ const d=W().def; $("catTitle").textContent=d.label||d.name; $("catStats").textContent=`${d.questions.length} questions · ${d.plans.length} plans · ${d.rules.length} rules · priced per ${d.unit||"unit"}`; setJson("catJson",exportCatalog()); }
+function switchCatalog(id){
+  active=id; $("catSel").value=id;
+  $("footNote").textContent=W().def.guide?.footer||"";
+  $("rb").hidden=true;
+  buildPresets(); buildForm(); buildRules(); buildGuide(); catStats(); render(); renderLog(); updateAdmin();
+  $("csvMsgs").hidden=true; $("catMsgs").hidden=true;
+}
+
+/* ---------- Events ---------- */
+$("presets").addEventListener("click",e=>{ const b=e.target.closest("[data-preset]"); if(!b) return; const p=W().def.presets[b.dataset.preset];
+  W().s={...defaultAnswers(W().def),...clone(p),company:W().s.company}; loadState(); render(); });
+$("qList").addEventListener("input",()=>{ readState(); render(); });
+$("qList").addEventListener("change",()=>{ readState(); render(); });
+$("p-rules").addEventListener("input",e=>{ const t=e.target; if(role!=="admin") return; const {def,draft}=W();
+  if(t.dataset.pi!=null){ const c=def.planColumns.find(x=>x.key===t.dataset.k); draft.plans[+t.dataset.pi][t.dataset.k]=c&&c.type==="price"?t.value:(+t.value||0); }
+  else if(t.dataset.param==="rangePct"){ draft.rangePct=+t.value||0; }
+  else if(t.dataset.dpol){ draft.discount[t.dataset.dpol]=Math.max(0,Math.min(100,+t.value||0)); }
+  else if(t.dataset.param){ const p=def.params.find(x=>x.key===t.dataset.param); draft.params[t.dataset.param]=p&&p.allowBlank?t.value:(+t.value||0); }
+  else if(t.dataset.rule){ draft.rules[t.dataset.rule]=t.checked; }
+  else if(t.dataset.vis){ draft.vis[t.dataset.vis]=t.value; }
+  else return;
+  renderCsv(); updateAdmin(); });
+$("p-rules").addEventListener("change",e=>{ const t=e.target; if(role!=="admin") return; const {draft}=W();
+  if(t.dataset.rule) draft.rules[t.dataset.rule]=t.checked; else if(t.dataset.vis) draft.vis[t.dataset.vis]=t.value; else return; updateAdmin(); });
+$("roleSel").addEventListener("change",e=>setRole(e.target.value));
+function setRole(r){ role=r; updateAdmin(); render(); if(!$("rb").hidden) rbPreview(); }
+$("publishBtn").addEventListener("click",()=>{ const d=diffs(); if(!d.length) return;
+  W().log.push({t:stamp(),who:"RevOps admin",what:"published "+d.length+" change"+(d.length===1?"":"s")+": "+d.join("; ")+"."});
+  W().pub=clone(W().draft); render(); renderLog(); updateAdmin(); catStats();
+  const toast=$("pubToast"); toast.textContent="Published. Every new scope now uses this packaging."; toast.hidden=false; setTimeout(()=>toast.hidden=true,3500); });
+$("discardBtn").addEventListener("click",()=>{ W().draft=clone(W().pub); buildRules(); renderCsv(); updateAdmin(); });
+
+/* ---------- Price books ---------- */
+$("pbLoad").addEventListener("click",()=>{ if(role!=="admin") return; const {def,draft}=W(), v=$("pbSel").value;
+  if(v===""){ draft.plans.forEach(p=>p.price=""); def.params.filter(p=>p.allowBlank).forEach(p=>draft.params[p.key]=""); draft.priceBook="None"; }
+  else { const b=def.priceBooks[+v]; draft.plans.forEach(p=>{ if(b.prices[p.name]!=null) p.price=String(b.prices[p.name]); });
+    Object.entries(b.params||{}).forEach(([k,x])=>{ if(k in draft.params) draft.params[k]=String(x); }); draft.priceBook=b.name; }
+  buildRules(); renderCsv(); updateAdmin(); });
+
+/* ---------- Discount entry and approvals (Scope tab) ---------- */
+function logEvent(who,what){ W().log.push({t:stamp(),who,what}); renderLog(); }
+function managerAutoApprove(){ if(role!=="manager") return; const D=compute().D;
+  if(["needs","pending","rejected"].includes(D.status)){ W().approval={status:"approved",key:discKey(),by:"Sales manager"};
+    const co=(W().s.company||"").trim()||"this prospect"; logEvent("Sales manager",`applied ${pct(D.max)} on ${D.maxLine} for ${co} (within sales manager authority).`); } }
+$("lines").addEventListener("change",e=>{ const t=e.target; if(!t.dataset.disc) return; W().disc[t.dataset.disc]=Math.max(0,Math.min(100,+t.value||0)); managerAutoApprove(); render(); });
+function apprClick(e){ const b=e.target.closest("[data-appr]"); if(!b) return; const ws=W(), a=b.dataset.appr;
+  const r=compute(), D=r.D, co=(ws.s.company||"").trim()||"this prospect", desc=`${pct(D.max)} on ${D.maxLine} for ${co}`;
+  if(a==="applyall"){ const v=Math.max(0,Math.min(100,+$("discAll").value||0)); r.lines.forEach(l=>{ if(l.price>0) ws.disc[l.name]=v; }); managerAutoApprove(); }
+  else if(a==="clear"){ ws.disc={}; }
+  else if(a==="cap"||a==="capmax"){ const lim=a==="cap"?D.pol.repMax:D.pol.approvalMax; Object.keys(ws.disc).forEach(k=>{ if(ws.disc[k]>lim) ws.disc[k]=lim; }); managerAutoApprove(); }
+  else if(a==="request"){ ws.approval={status:"pending",key:discKey(),by:""}; logEvent(ROLES[role],`requested approval: ${desc}.`); }
+  else if(a==="asmanager"){ setRole("manager"); return; }
+  else if(a==="approve"&&role==="manager"&&["needs","pending"].includes(D.status)){ ws.approval={status:"approved",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`approved ${desc}.`); }
+  else if(a==="decline"&&role==="manager"&&["needs","pending"].includes(D.status)){ ws.approval={status:"rejected",key:discKey(),by:"Sales manager"}; logEvent("Sales manager",`declined ${desc}.`); }
+  render(); }
+$("discBar").addEventListener("click",apprClick); $("discAlert").addEventListener("click",apprClick);
+$("msDiscWarn").addEventListener("click",e=>{ if(e.target.closest("[data-goscope]")){ $("tab-scope").click(); $("discAlert").scrollIntoView({block:"center"}); } });
+
+/* ---------- Rule builder (dropdowns only) ---------- */
+const OPS={num:[["==","is"],["!=","is not"],[">","is more than"],[">=","is at least"],["<","is less than"],["<=","is at most"]],
+  str:[["==","is"],["!=","is not"]], box:[["on","is ticked"],["off","is not ticked"]],
+  multi:[["has","includes"],["nothas","does not include"],["cnt>","has more than"],["cnt<","has fewer than"]]};
+function rbCtrls(){ const out=[]; W().def.questions.forEach(q=>q.controls.forEach(c=>{ if(c.type==="text") return;
+  out.push({c,label:c.type==="checkbox"&&!q.boxOnly?(c.label||q.label):(q.controls.length>1&&c!==q.controls[0]?(c.aria||c.label||c.key):q.label),
+    kind:c.type==="checkbox"?"box":c.type==="multi"?"multi":(c.type==="number"||c.num)?"num":"str"}); })); return out; }
+const lit=v=>typeof v==="number"?String(v):`'${String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}'`;
+function rbCondHtml(i){ const cs=rbCtrls();
+  return `<div class="rbcond" data-i="${i}">${i?'<span class="h">and</span>':'<span class="h">When</span>'}<select class="rbq" aria-label="Question">${cs.map((x,j)=>`<option value="${j}">${esc(x.label)}</option>`).join("")}</select><select class="rbop" aria-label="Comparison"></select><span class="rbval"></span>${i?'<button type="button" class="linkbtn" data-rbdel>Remove</button>':""}</div>`; }
+function rbSync(row){ const x=rbCtrls()[+row.querySelector(".rbq").value], ops=OPS[x.kind], opSel=row.querySelector(".rbop"), keep=opSel.value;
+  opSel.innerHTML=ops.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join(""); if(ops.some(o=>o[0]===keep)) opSel.value=keep;
+  const op=opSel.value, vs=row.querySelector(".rbval"), o=opts(x.c);
+  if(x.kind==="box") vs.innerHTML="";
+  else if(x.kind==="multi"&&(op==="cnt>"||op==="cnt<")||x.kind==="num"&&!o.length) vs.innerHTML=`<input type="number" class="rbv" value="0" aria-label="Value">`;
+  else vs.innerHTML=`<select class="rbv" aria-label="Value">${o.map((y,j)=>`<option value="${j}">${esc(y.l)}</option>`).join("")}</select>`; }
+function rbRead(){ const rows=[...document.querySelectorAll("#rbConds .rbcond")], cs=rbCtrls(), parts=[], words=[];
+  for(const row of rows){ const x=cs[+row.querySelector(".rbq").value], op=row.querySelector(".rbop").value, vEl=row.querySelector(".rbv"), o=opts(x.c), k=x.c.key;
+    let v, vl=""; if(vEl){ if(vEl.tagName==="SELECT"){ const y=o[+vEl.value]; v=y.v; vl=y.l; } else { if(vEl.value==="") return {err:"Enter a value for every condition."}; v=+vEl.value; vl=String(v); } }
+    if(x.kind==="box"){ parts.push(op==="on"?k:`!${k}`); words.push(`${x.label} ${op==="on"?"is ticked":"is not ticked"}`); }
+    else if(x.kind==="multi"){ if(op==="has"||op==="nothas"){ parts.push(`${op==="nothas"?"!":""}has(${k}, ${lit(v)})`); } else parts.push(`count(${k}) ${op.slice(3)} ${lit(+v)}`);
+      words.push(`${x.label} ${OPS.multi.find(z=>z[0]===op)[1]} ${vl}`); }
+    else { parts.push(`${k} ${op} ${lit(x.kind==="num"?+v:v)}`); words.push(`${x.label} ${OPS[x.kind].find(z=>z[0]===op)[1]} ${vl}`); } }
+  return {when:parts.join(" && "),words:words.join(" and ")}; }
+const noBraces=s=>String(s||"").replace(/[{}]/g,"").trim();
+function rbRule(){ const c=rbRead(); if(c.err) return c; const kind=document.querySelector('input[name="rbKind"]:checked').value;
+  if(kind==="plan"){ const plan=$("rbPlan").value; return {kind,when:c.when,plan,why:noBraces(`Custom rule: ${c.words}`),txt:noBraces(`${c.words} → at least ${plan}`)}; }
+  const tag=noBraces($("rbTag").value).slice(0,24), msg=noBraces($("rbMsg").value).slice(0,200);
+  if(!tag||!msg) return {err:"Give the flag a short label and a message."};
+  return {kind,when:c.when,level:$("rbLevel").value,tag,msg,show:$("rbShow").value,trace:noBraces(`Custom flag: ${tag}`),txt:noBraces(`${c.words} → flag "${tag}"`)}; }
+function rbPreview(){ const r=rbRule();
+  if(r.err){ $("rbPrev").innerHTML=`<span class="muted">${esc(r.err)}</span>`; return; }
+  let fires; try{ fires=!!ev(r.when,lastEnv); }catch(e){ $("rbPrev").textContent="This rule can't be read: "+e.message; return; }
+  $("rbPrev").innerHTML=`<strong>Reads as:</strong> ${esc(r.txt)}.<br><strong>On the current scope:</strong> ${fires?"it fires.":"it doesn't fire."} <span class="muted">(${esc(r.when)})</span>`; }
+function rbOpen(){ const {def}=W(); $("rb").hidden=false; $("rbOpen").hidden=true;
+  $("rbConds").innerHTML=rbCondHtml(0); rbSync($("rbConds").firstElementChild);
+  $("rbPlan").innerHTML=def.plans.map(p=>`<option>${esc(p.name)}</option>`).join(""); $("rbPlan").selectedIndex=Math.min(1,def.plans.length-1);
+  $("rbTag").value=""; $("rbMsg").value=""; rbKind(); rbPreview(); }
+function rbKind(){ const k=document.querySelector('input[name="rbKind"]:checked').value; $("rbPlanBox").hidden=k!=="plan"; $("rbFlagBox").hidden=k!=="flag"; }
+$("rbOpen").addEventListener("click",()=>{ if(role==="admin") rbOpen(); });
+$("rbCancel").addEventListener("click",()=>{ $("rb").hidden=true; updateAdmin(); });
+$("rb").addEventListener("change",e=>{ const row=e.target.closest(".rbcond"); if(row&&(e.target.classList.contains("rbq")||e.target.classList.contains("rbop"))) rbSync(row); if(e.target.name==="rbKind") rbKind(); rbPreview(); });
+$("rb").addEventListener("input",()=>rbPreview());
+$("rb").addEventListener("click",e=>{ if(e.target.dataset.rbdel!==undefined){ e.target.closest(".rbcond").remove(); rbPreview(); }
+  if(e.target.id==="rbAnd"){ const n=document.querySelectorAll("#rbConds .rbcond").length; if(n>=3) return; $("rbConds").insertAdjacentHTML("beforeend",rbCondHtml(n)); rbSync($("rbConds").lastElementChild); rbPreview(); } });
+$("rbSave").addEventListener("click",()=>{ if(role!=="admin") return; const r=rbRule(); if(r.err){ rbPreview(); return; }
+  const {draft,pub}=W(), used=[...(draft.customRules||[]),...(pub.customRules||[])].map(x=>+String(x.id).slice(1)||0);
+  const id="C"+(Math.max(0,...used)+1); draft.customRules=(draft.customRules||[]).concat([{id,src:"Rule builder",custom:true,...r}]); draft.rules[id]=true;
+  $("rb").hidden=true; buildRules(); updateAdmin(); });
+$("ruleRows").addEventListener("click",e=>{ const id=e.target.dataset.delrule; if(!id||role!=="admin") return; const {draft}=W();
+  draft.customRules=draft.customRules.filter(r=>r.id!==id); delete draft.rules[id]; buildRules(); updateAdmin(); });
+$("csvFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ importCsv(String(rd.result)); e.target.value=""; }; rd.readAsText(f); });
+$("catFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ importCatalog(String(rd.result),f.name); e.target.value=""; }; rd.readAsText(f); });
+$("catSel").addEventListener("change",e=>switchCatalog(e.target.value));
+$("catShow").addEventListener("click",()=>{ const p=$("catJson"), open=p.hidden; p.hidden=!open; $("catShow").textContent=open?"Hide catalog file":"Show catalog file"; $("catShow").setAttribute("aria-expanded",open); });
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["scope","rules","output","guide"].forEach(t=>$("p-"+t).hidden=t!==b.dataset.tab);
+  try{ localStorage.setItem("sw-tab",b.dataset.tab); }catch(e){}
+  ensureTs();
+}));
+function setMode(m){ mode=m; $("modeSeller").setAttribute("aria-pressed",m==="seller"); $("modeBuyer").setAttribute("aria-pressed",m==="buyer");
+  $("qTitle").textContent=m==="buyer"?"Tell us about your project":"Discovery questions";
+  $("qSub").textContent=m==="buyer"?"About two minutes. Tap i on any question for more detail.":"Answer what you learned on the call. Tap i for what to dig into.";
+  $("presets").hidden=m==="buyer";
+  // Buyers only ever see their scope: no Admin, Output (CRM data) or internal Guide.
+  document.querySelector("nav.tabs").hidden=m==="buyer";
+  if(m==="buyer"&&$("p-scope").hidden) $("tab-scope").click();
+  buildForm(); render(); }
+$("modeSeller").onclick=()=>setMode("seller"); $("modeBuyer").onclick=()=>setMode("buyer");
+document.querySelectorAll("#audPick input").forEach(i=>{ i.checked=i.value===aud; i.addEventListener("change",()=>{ aud=i.value; render(); }); });
+document.querySelectorAll("[data-send]").forEach(b=>b.addEventListener("click",()=>{ $("toast-"+b.dataset.send).hidden=false; }));
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const id=b.dataset.copy, txt=$(id).dataset.raw??$(id).textContent, done=()=>{ const t=$("t-"+id); t.hidden=false; setTimeout(()=>t.hidden=true,1600); };
+  const sel=()=>{ const el=$(id); if(el.hidden) return; const r=document.createRange(); r.selectNodeContents(el); const g=getSelection(); g.removeAllRanges(); g.addRange(r); };
+  try{ navigator.clipboard.writeText(txt).then(done,sel); }catch(e){ sel(); }
+}));
+function goto(id){ $("tab-guide").click(); const el=$(id); if(el){ el.scrollIntoView({block:"start"}); if(el.tagName==="DIV"){ el.style.outline="2px solid var(--accent)"; el.style.outlineOffset="4px"; setTimeout(()=>{ el.style.outline=""; },1600); } } }
+function setHelpText(k){ return `${esc(settingInfo(k)[1])} <a data-goto="gs-${esc(k)}">More in the guide</a>`; }
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-goto]"); if(g){ e.preventDefault(); goto(g.dataset.goto); return; }
+  const sb=e.target.closest(".info[data-set]");
+  if(sb){ const box=$(sb.getAttribute("aria-controls")); const open=sb.getAttribute("aria-expanded")!=="true"; sb.setAttribute("aria-expanded",open); box.hidden=!open; (box.querySelector(".help")||box).innerHTML=setHelpText(sb.dataset.set); return; }
+  const pk=e.target.closest(".info[data-pk]");
+  if(pk){ const box=$("pkHelp"), same=!box.hidden&&box.dataset.k===pk.dataset.pk;
+    document.querySelectorAll(".info[data-pk]").forEach(b=>b.setAttribute("aria-expanded","false"));
+    if(same){ box.hidden=true; return; }
+    box.dataset.k=pk.dataset.pk; box.innerHTML=`${esc(colHelp(pk.dataset.pk))} <a data-goto="gs-pk-${esc(pk.dataset.pk)}">More in the guide</a>`; box.hidden=false; pk.setAttribute("aria-expanded","true"); }
+});
+
+/* ---------- Email: preview always, real sending when the site is connected to the mailer ---------- */
+const CFG=Object.assign({mailerUrl:"",turnstileSiteKey:"",logoUrl:"",pageUrl:"https://www.davidcreason.com/scopeout/"},window.SCOPEOUT_CONFIG||{});
+const LOGO_DATA="data:image/png;base64,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";
+const live=()=>!!(CFG.mailerUrl&&CFG.turnstileSiteKey);
+const plain=html=>{ const d=document.createElement("div"); d.innerHTML=html; return d.textContent.replace(/\s+/g," ").trim(); };
+const EMAIL_OK=/^[^\s@<>()\[\],;:"]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/;
+function emailData(kind){
+  const r=compute(), {def,s}=W(), env=r.env, D=r.D, view=kind==="seller"?"seller":aud;
+  let investment="", investmentNote="";
+  if(kind==="seller"){ if(D.priced){ if(D.max>0&&D.quotable){ investment=money(D.net)+" / yr"; investmentNote=`List ${money(D.list)}, with a ${pct(D.blended)} discount.`; } else { investment=money(D.list)+" / yr"; investmentNote="List price for this scope."; } } }
+  else { const pr=visiblePrice(view,D.list,D.priced); env.priceText=pr.text;
+    if(pr.kind==="range"){ investment=pr.text; investmentNote=`Indicative range (±${W().pub.rangePct}%). Your solutions engineer confirms the final figure.`; }
+    else if(pr.kind==="list"){ investment=pr.text; investmentNote="List price, before any agreed discounts."; } }
+  env.priceText=env.priceText||"";
+  const stats=def.verdict.filter(v=>!(view==="exec"&&v.notExec)).slice(0,3).map(v=>({label:v.label,value:safeTpl(v.value,env,false),sub:v.sub?safeTpl(v.sub,env,false):""}));
+  const highlights=view==="exec"?(def.glance||[]).filter(g=>!/\{priceText\}/.test(g.text)).map(g=>({label:g.label,text:safeTpl(g.text,env,false)})):[];
+  const lines=view==="exec"?[]:r.lines.map(l=>({name:l.name,detail:l.detail,qty:fmt(l.qty),added:!!l.addedBy}));
+  const notes=r.flags.filter(f=>(view==="exec"?f.show==="all":f.show==="all"||f.show==="lead")&&!["Clear","Rule error","Discount","Missing"].includes(f.tag)).map(f=>({tag:f.tag,msg:plain(f.msg)}));
+  return {brand:def.brand||null,company:(s.company||"").trim(),product:def.name,plan:r.P.name,stats,highlights,lines,reasons:r.reasons,investment,investmentNote,notes,demoFooter:def.guide?.emailFooter||""};
+}
+const MF={buyer:{name:"mbName",email:"mbEmail",status:"mbStatus",web:"mbWeb",btn:"mbSend",ts:"tsBuyer"},seller:{name:"msName",email:"msEmail",status:"msStatus",web:"msWeb",btn:"msSend",ts:"tsSeller"}};
+function mailInput(kind){ const f=MF[kind];
+  return {kind,name:$(f.name).value.trim(),to:$(f.email).value.trim(),consent:kind==="buyer"?$("mbConsent").checked:true,wantsCall:kind==="buyer"&&$("mbCall").checked,note:kind==="seller"?$("msNote").value.trim():"",web:$(f.web).value}; }
+function openPreview(kind,note){
+  const m=mailInput(kind), data={...emailData(kind),mode:kind,recipientName:m.name,wantsCall:m.wantsCall,note:m.note,pageUrl:CFG.pageUrl};
+  const mail=ScopeOutEmail.render(data,{logoUrl:CFG.logoUrl||LOGO_DATA});
+  $("mmMeta").textContent=`To: ${m.name?m.name+" ":""}${m.to?`<${m.to}>`:"(no address yet)"} · Subject: ${mail.subject}`;
+  $("mmNote").textContent=note||""; $("mmNote").hidden=!note;
+  const body=mail.html.slice(mail.html.indexOf("<body"),mail.html.lastIndexOf("</body>")); $("mmBody").innerHTML=body.slice(body.indexOf(">")+1);
+  $("mailModal").hidden=false; $("mmClose").focus();
+}
+function closePreview(){ $("mailModal").hidden=true; }
+const tsIds={}; let tsLoading=false;
+function ensureTs(){
+  if(!live()) return;
+  if(!window.turnstile){ if(!tsLoading){ tsLoading=true; window.__soTs=ensureTs; const sc=document.createElement("script"); sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__soTs"; sc.async=true; document.head.appendChild(sc); } return; }
+  ["buyer","seller"].forEach(k=>{ const el=$(MF[k].ts); if(tsIds[k]!==undefined||!el||el.offsetParent===null) return;
+    tsIds[k]=turnstile.render(el,{sitekey:CFG.turnstileSiteKey,appearance:"interaction-only",theme:"auto"}); });
+}
+let sendAtList=false;
+async function sendEmail(kind){
+  const f=MF[kind], m=mailInput(kind), st=$(f.status), say=(t,bad)=>{ st.textContent=t; st.classList.toggle("bad",!!bad); };
+  if(!EMAIL_OK.test(m.to)) return say("Enter a valid email address.",true);
+  if(kind==="buyer"&&!m.consent) return say("Tick the box so we can email you this scope.",true);
+  if(kind==="seller"&&UNAPPROVED.includes(compute().D.status)&&!sendAtList){
+    say("Stopped: this scope has a discount that isn't approved. The prospect would only see list price.",true);
+    st.insertAdjacentHTML("beforeend",` <button class="linkbtn" type="button" id="sendList">Send at list price</button>`);
+    $("sendList").addEventListener("click",()=>{ sendAtList=true; sendEmail("seller").finally(()=>{ sendAtList=false; }); });
+    $("msDiscWarn").scrollIntoView({block:"center"}); return;
+  }
+  if(!live()){ say("Demo mode: this copy isn't connected to an email service, so here's exactly what would be sent."); openPreview(kind,"Demo mode: nothing was sent. This is exactly what the email looks like."); return; }
+  const token=window.turnstile&&tsIds[kind]!==undefined?turnstile.getResponse(tsIds[kind]):"";
+  if(!token){ ensureTs(); return say("One moment: confirming you're a person. Try again in a few seconds.",true); }
+  const btn=$(f.btn); btn.disabled=true; say("Sending…");
+  try{
+    const res=await fetch(CFG.mailerUrl,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({mode:kind,to:m.to,name:m.name,consent:m.consent,website:m.web,token,scope:{...emailData(kind),wantsCall:m.wantsCall,note:m.note}})});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j.ok){ say(`Sent to ${m.to}. It should arrive within a minute; the first one may land in spam.`); if(kind==="seller") logEvent(ROLES[role],`emailed the scope to ${m.to}.`); }
+    else say((j.error||"That didn't send.")+" You can still preview it.",true);
+  }catch(e){ say("Couldn't reach the email service. Check your connection, or preview the email instead.",true); }
+  finally{ btn.disabled=false; if(window.turnstile&&tsIds[kind]!==undefined) turnstile.reset(tsIds[kind]); }
+}
+$("mbForm").addEventListener("submit",e=>{ e.preventDefault(); sendEmail("buyer"); });
+$("msForm").addEventListener("submit",e=>{ e.preventDefault(); sendEmail("seller"); });
+document.querySelectorAll("[data-preview]").forEach(b=>b.addEventListener("click",()=>openPreview(b.dataset.preview,live()?"Preview only. Nothing has been sent.":"Demo mode: this copy isn't connected to an email service. This is exactly what the email looks like.")));
+$("mmClose").addEventListener("click",closePreview);
+$("mailModal").addEventListener("click",e=>{ if(e.target===$("mailModal")) closePreview(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("mailModal").hidden) closePreview(); });
+function mailCopy(){ const exec=aud==="exec";
+  $("mbSub").textContent=exec?"Get this summary in your inbox. A solutions architect can walk your team through fit, security and time to value.":"Get the leadership package in your inbox, ready to forward to your approvers.";
+  $("mbCallLbl").textContent=exec?"I'd like a 30-minute overview call":"I'd like a solutions engineer to review this with me";
+  $("msHint").textContent=live()?"Sends the buyer-safe version: no internal flags, and a discount only once it's approved. In this demo, rep emails go to approved inboxes only.":"Sends the buyer-safe version: no internal flags, and a discount only once it's approved. This copy isn't connected to email, so Send shows the preview.";
+  $("liveTag").textContent=live()?"Live email":"Preview mode"; }
+
+/* ---------- Start ---------- */
+BUILTIN.forEach(d=>WS[d.id]=makeWS(d));
+active=BUILTIN[0].id; buildCatSel(); switchCatalog(active);
+try{ const t=localStorage.getItem("sw-tab"); if(t) document.querySelector(`[data-tab="${t}"]`)?.click(); }catch(e){}
+
+</script>
+</body>
+</html>
