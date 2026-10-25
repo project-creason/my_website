@@ -2,6 +2,8 @@
 
 Personal site for David Creason. Plain static HTML/CSS/JS, hosted free on GitHub Pages.
 
+AI coding agents (Antigravity, Claude, Gemini and others): read `AGENTS.md` first.
+
 ## Adding or updating a project
 
 All content lives in `build.py`: the `PROJECTS` list (title, status `active`/`past`, summary, tags, image, links),
@@ -20,11 +22,11 @@ headline, the homepage summary line, your current role, education, and the entir
 The homepage's key-numbers band and certifications row also come from the resume. Each number is found by a pattern in
 `STAT_RULES` in `build.py`; if a new resume drops a phrase, that number disappears instead of going stale.
 
-**The site is hidden from search engines.** Every page has a `noindex` tag; it's meant to be shared by link.
-Don't add a robots.txt that blocks crawling, since search engines need to read the page to see `noindex`.
+**The site is open to search engines.** The build generates `sitemap.xml` and `robots.txt`. Only the 404 page and the
+old-address redirects carry `noindex`; pass `noindex=True` to `page()` for any other page that should stay out of search.
 
-**Phone numbers are never published.** The build removes any phone number from the page text, whites it out of the PDF
-itself, and refuses to finish if one appears in any page.
+**Phone numbers and email addresses are never published.** The build removes them from the page text, strips them from
+the PDF itself, and refuses to finish if one appears in any page.
 
 To update your resume:
 
@@ -35,7 +37,7 @@ git add -A && git commit -m "Update resume" && git push
 ```
 
 Always run the build before committing a new PDF. Uploading a PDF straight through GitHub's website skips the build,
-so its phone number would not be removed.
+so its phone number and email would not be removed.
 
 Project images go in `assets/projects/` (800x500 works well). Each project gets a detail page at `/projects/<slug>/`;
 write its body in the `detail_page(...)` calls near the bottom of `build.py`.
@@ -87,7 +89,7 @@ If the bare `davidcreason.com` ever serves the page directly, confirm that origi
 ## Contact form spam protection
 
 The form already has a hidden honeypot field, a 3-second minimum fill time, and a 5-per-hour limit per visitor.
-Cloudflare Turnstile is wired in but **off** until you add keys. To turn it on, in this order:
+Cloudflare Turnstile is **on** (site key in `build.py`, secret in Vercel). For reference, it was turned on in this order:
 
 1. In the Cloudflare dashboard, open **Turnstile → Add widget**. Hostnames: `davidcreason.com` and
    `www.davidcreason.com`. Mode: **Managed**. Copy the **site key** and **secret key**.
@@ -101,5 +103,7 @@ To turn it off, remove the Vercel variable first, then clear the site key.
 
 ## Editing
 
-Edit the HTML directly and push; Pages redeploys in about a minute. Shared header/footer are repeated in each page,
-so a nav change touches every `index.html`.
+Don't edit generated HTML directly: the next build overwrites it. Change `build.py`, run `python3 build.py`, run it a
+second time to confirm nothing else changes, then commit `build.py` with the regenerated files and push. Pages redeploys
+in a few minutes. The shared header and footer come from `page()` in `build.py`, so a nav change is a one-line edit
+there. `AGENTS.md` lists which files are generated and which are hand-maintained.
