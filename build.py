@@ -1977,6 +1977,15 @@ def _page_text(path):
     return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
 
 
+# Hand-curated notes for projects whose pages are mostly interactive widgets, where the text pulled from
+# the page would be noisy. These replace the page text below for the assistant; keep them in step with
+# the project page when its facts change.
+NOTES_OVERRIDE = {
+    'buffalo-trace-tracker': "Buffalo Trace Distillery rotates allocated bourbons (Blanton's, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard on davidcreason.com/projects/buffalo-trace-tracker/.",
+    'crestwood-home-hearth': 'How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.\n\nKey Growth & Percentage Highlights:\n- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.\n- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.\n- Customer & Ticket Velocity: +419% customer base expansion (1,215+ active accounts across 2,160+ digital invoices) and +171% expansion in trailing 12-month average ticket value.\n- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.\n- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.\n- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.\n\nOpen full screen on Tableau Public →',
+}
+
+
 _notes = ["DAVID CREASON'S PROJECTS (generated from davidcreason.com/projects; the project pages are the source of truth)\n"]
 for _p in PROJECTS:
     _url = f"https://www.davidcreason.com/projects/{_p['slug']}/"
@@ -1989,7 +1998,7 @@ for _p in PROJECTS:
         f"Links: {_links}\n"
         f"Tags: {', '.join(_p['tags'])}\n"
         f"Summary: {_p['summary']}\n\n"
-        f"{_page_text('/projects/' + _p['slug'] + '/')}\n"
+        f"{NOTES_OVERRIDE.get(_p['slug']) or _page_text('/projects/' + _p['slug'] + '/')}\n"
     )
 write("assets/projects.txt", "\n".join(_notes))
 

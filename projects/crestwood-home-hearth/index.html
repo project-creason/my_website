@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study &middot; David Creason</title>
+  <title>Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study · David Creason</title>
   <meta name="description" content="Applied enterprise systems engineering, a 4,533-SKU vendor ETL pipeline, custom JavaScript/AJAX automation, 3D CAD modeling, and parametric quoting calculators to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey exit to a major local HVAC company.">
   <link rel="canonical" href="https://www.davidcreason.com/projects/crestwood-home-hearth/">
-  <meta property="og:title" content="Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study &middot; David Creason">
+  <meta property="og:title" content="Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study · David Creason">
   <meta property="og:description" content="Applied enterprise systems engineering, a 4,533-SKU vendor ETL pipeline, custom JavaScript/AJAX automation, 3D CAD modeling, and parametric quoting calculators to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey exit to a major local HVAC company.">
   <meta property="og:url" content="https://www.davidcreason.com/projects/crestwood-home-hearth/">
   <meta property="og:type" content="website">
@@ -33,7 +33,7 @@
   <main id="main">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/projects/">&larr; All projects</a></nav>
-      <p class="meta"><span class="badge past">Founded &middot; acquired</span><span>2018&ndash;2022</span></p>
+      <p class="meta"><span class="badge past">Founded · acquired</span><span>2018–2022</span></p>
       <h1 class="page-title">Crestwood Home &amp; Hearth: Systems, Growth &amp; Exit Case Study</h1>
       <p class="lede">How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.</p>
       <ul class="tags"><li>Systems architecture</li><li>Quote-to-cash</li><li>ETL &amp; automation</li><li>Unit economics</li><li>3D CAD &amp; IoT</li><li>Tableau</li><li>M&amp;A exit</li></ul>
@@ -425,9 +425,9 @@ for (var i = 0; i &lt; icc.length; i++) {
       <h2 style="margin-top:48px">6. Geographic customer reach (Tableau analysis)</h2>
       <p>Zip codes and counties across the Greater Louisville and Oldham County region where Crestwood Home &amp; Hearth sold, serviced, and installed.</p>
       <div style="margin-top:20px"></div>
-      <div class="tableau-wrap">
+      <div class="viz-frame">
         <div class="tableauPlaceholder" id="viz-chh" style="position: relative">
-          <noscript><a href="#"><img alt="Crestwood Home &amp; Hearth Customers" src="https://public.tableau.com/static/images/Cr/CrestwoodHomeHearth/CHHStory/1_rss.png" style="border: none"></a></noscript>
+          <noscript><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory"><img alt="Crestwood Home &amp; Hearth Customers" src="https://public.tableau.com/static/images/Cr/CrestwoodHomeHearth/CHHStory/1.png" style="border:none"></a></noscript>
           <object class="tableauViz" style="display:none;">
             <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F">
             <param name="embed_code_version" value="3">
@@ -444,19 +444,17 @@ for (var i = 0; i &lt; icc.length; i++) {
             <param name="language" value="en-US">
           </object>
         </div>
-        <p class="viz-caption"><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory?:showVizHome=no" target="_blank" rel="noopener">Open full screen on Tableau Public &rarr;</a></p>
       </div>
+      <p class="small"><a href="https://public.tableau.com/views/CrestwoodHomeHearth/CHHStory" rel="noopener" target="_blank">Open full screen on Tableau Public &rarr;</a></p>
     </div>
   </main>
   <footer class="site-footer">
     <div class="wrap">
-      <div><strong>David Creason</strong> &middot; Louisville, KY</div>
-      <div class="links"><a href="https://www.linkedin.com/in/davidcreason" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/project-creason" target="_blank" rel="noopener">GitHub</a><a href="/resume/">Resume</a><a href="/contact/">Contact</a></div>
-      <div>&copy; 2026 David Creason</div>
+      <span>&copy; <span id="yr"></span> David Creason</span>
+      <span><a href="https://www.linkedin.com/in/dcreason/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/project-creason" rel="noopener">GitHub</a> &middot; <a href="/contact/">Contact</a> &middot; <a href="/resume/">Resume</a></span>
     </div>
   </footer>
-  <script src="/assets/chat-widget.js" defer></script>
-  <script>
+  <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>  <script>
     (function () {
       var yearData = [
         {
@@ -986,19 +984,19 @@ for (var i = 0; i &lt; icc.length; i++) {
   </script>
   <script>
     (function () {
-      var divElement = document.getElementById("viz-chh");
-      var vizElement = divElement.getElementsByTagName("object")[0];
-      function sizeViz() {
-        var w = divElement.offsetWidth;
-        vizElement.style.width = "100%";
-        vizElement.style.height = Math.max(560, Math.min(920, Math.round(w * 0.72))) + "px";
+      var div = document.getElementById("viz-chh");
+      var viz = div.getElementsByTagName("object")[0];
+      function size() {
+        var w = div.offsetWidth;
+        viz.style.width = "100%";
+        viz.style.height = (w > 800 ? Math.round(w * 0.75) : w > 500 ? Math.round(w * 0.9) : 900) + "px";
       }
-      sizeViz();
-      window.addEventListener("resize", sizeViz);
-      var scriptElement = document.createElement("script");
-      scriptElement.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
-      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+      size(); window.addEventListener("resize", size);
+      var s = document.createElement("script");
+      s.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
+      viz.parentNode.insertBefore(s, viz);
     })();
   </script>
+  <script data-goatcounter="https://davidcreason.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
