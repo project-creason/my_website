@@ -3,7 +3,7 @@ DAVID CREASON'S PROJECTS (generated from davidcreason.com/projects; the project 
 === Hearth Venting Planner ===
 Status: Active / current (Live · in development), 2026
 Project page: https://www.davidcreason.com/projects/chimney-planner/
-Links: Launch the planner: https://project-creason.github.io/chimney_planner/
+Links: Launch the planner: https://chimneyplanner.vercel.app/
 Tags: NFPA 211 checked, Multi-manufacturer, Part numbers & quantities, Flags problems early, CSV export
 Summary: Enter your home's measurements, pick a manufacturer and venting system (DuraVent DuraTech, ICC EXCEL), and get a complete parts list that follows the manufacturer's installation rules and NFPA 211.
 
