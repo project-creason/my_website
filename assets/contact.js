@@ -3,6 +3,13 @@
   const ENDPOINT = "https://resume-bot-ae99.vercel.app/api/contact";
   const form = document.getElementById("form");
   if (!form) return;
+
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const subj = params.get("subject");
+    if (subj && form.subject) form.subject.value = subj;
+  } catch {}
+
   const status = form.querySelector(".form-status");
   const button = form.querySelector('button[type="submit"]');
   const started = Date.now();
