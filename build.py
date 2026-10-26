@@ -60,7 +60,7 @@ PROJECTS = [
         "image": "/assets/projects/chimney-planner.jpg",
         "image_alt": "Screenshot of the Hearth Venting Planner form and generated parts list",
         "links": [
-            ("Launch the planner", "https://project-creason.github.io/chimney_planner/", True),
+            ("Launch the planner", "https://chimneyplanner.vercel.app/", True),
         ],
     },
     {
