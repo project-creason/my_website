@@ -194,14 +194,19 @@ _resume_text = " ".join(
 )
 STAT_RULES = [
     (r"over (\d+)\+? years", "{0}+", "years leading teams, platforms & M&A integrations"),
-    (r"([\d,]+)\+ active property entities", "{0}+", "property entities governed in Yardi ERP"),
-    (r"cycle times by over (\d+)%", "{0}%+", "less property setup time in M&A onboarding"),
+    (r"([\d,]+)\+ properties", "{0}+", "properties supported in Yardi ERP"),
+    None,  # placeholder: count of active projects, filled in below
     (r"(\d+)% audit compliance", "{0}%", "audit compliance after new SOX release controls"),
     (r"revenue past \$(\d+M)", "${0}+", "division revenue in year one post-merger"),
     (r"~(\d+)% growth", "~{0}%", "revenue growth at the business I founded"),
 ]
 STATS = []
-for _rx, _fmt, _label in STAT_RULES:
+for _rule in STAT_RULES:
+    if _rule is None:
+        # Not from the resume: counts the active projects, so it stays right as projects are added.
+        STATS.append((str(sum(p["status"] == "active" for p in PROJECTS)), "tools built & shipped, live or in use today"))
+        continue
+    _rx, _fmt, _label = _rule
     _m = re.search(_rx, _resume_text, re.I)
     if _m:
         STATS.append((_fmt.format(*_m.groups()), _label))
