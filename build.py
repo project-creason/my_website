@@ -192,26 +192,67 @@ _resume_text = " ".join(
     + [b for j in RESUME["experience"] for b in j["bullets"]]
     + [b for o in RESUME["other"] for en in o["entries"] for b in en["bullets"]]
 )
+# Customer-facing roles counted for the "years working with customers" stat. Months are summed from each
+# role's dates on the resume (back-to-back roles share a boundary month, so nothing is double counted).
+CUSTOMER_FACING_ORGS = {"Neustar, Inc.", "Tealium", "Crestwood Home & Hearth", "The Fire Place"}
+_MONTHS = {m: i for i, m in enumerate(
+    ["january", "february", "march", "april", "may", "june", "july",
+     "august", "september", "october", "november", "december"])}
+
+
+def _month_index(text):
+    # "August 2018" -> 2018*12 + 7; "Present" -> None
+    m = re.match(r"([A-Za-z]+)\.?\s+(\d{4})", text.strip())
+    if not m:
+        return None
+    mon = next((i for name, i in _MONTHS.items() if name.startswith(m.group(1).lower()[:3])), 0)
+    return int(m.group(2)) * 12 + mon
+
+
+def _customer_facing_years():
+    months = 0
+    for job in RESUME["experience"]:
+        if job["org"] not in CUSTOMER_FACING_ORGS:
+            continue
+        start, _, end = re.split(r"\s*([-–—])\s*", job["dates"], maxsplit=1)
+        s_i, e_i = _month_index(start), _month_index(end)
+        if s_i is None or e_i is None:
+            continue
+        months += e_i - s_i
+    return months // 12 if months else None
+
+
+def _active_projects():
+    return sum(p["status"] == "active" for p in PROJECTS)
+
+
+# Each stat is (value or regex, format, label, css class). A regex runs against the resume text; a function is
+# computed. If a source drops out, the stat disappears (and the build says so) instead of showing a stale number.
 STAT_RULES = [
-    (r"over (\d+)\+? years", "{0}+", "years leading teams, platforms & M&A integrations"),
-    (r"([\d,]+)\+ properties", "{0}+", "properties supported in Yardi ERP"),
-    None,  # placeholder: count of active projects, filled in below
-    (r"(\d+)% audit compliance", "{0}%", "audit compliance after new SOX release controls"),
-    (r"revenue past \$(\d+M)", "${0}+", "division revenue in year one post-merger"),
-    (r"~(\d+)% growth", "~{0}%", "revenue growth at the business I founded"),
+    (_customer_facing_years, "{0}+", "years working directly with customers in SaaS, field service & sales", ""),
+    (_active_projects, "{0}", "tools built & shipped, live or in use today", ""),
+    (r"cycle times by over (\d+)%", "{0}%+", "less property setup time in M&A onboarding", ""),
+    (r"([\d,]+)\+ properties", "{0}+", "properties supported in Yardi ERP", ""),
+    (r"revenue past \$(\d+M)", "${0}+", "division revenue in year one post-merger", ""),
+    (r"Neustar (CEO Award)", "{0}", "at Neustar for enterprise client delivery & retention", "word"),
 ]
 STATS = []
-for _rule in STAT_RULES:
-    if _rule is None:
-        # Not from the resume: counts the active projects, so it stays right as projects are added.
-        STATS.append((str(sum(p["status"] == "active" for p in PROJECTS)), "tools built & shipped, live or in use today"))
-        continue
-    _rx, _fmt, _label = _rule
-    _m = re.search(_rx, _resume_text, re.I)
-    if _m:
-        STATS.append((_fmt.format(*_m.groups()), _label))
+for _src, _fmt, _label, _cls in STAT_RULES:
+    if callable(_src):
+        _val = _src()
+        _groups = (_val,) if _val else None
     else:
-        print(f"Note: stat not found in resume, skipped: {_label}")
+        _m = re.search(_src, _resume_text, re.I)
+        _groups = _m.groups() if _m else None
+    if _groups:
+        STATS.append((_fmt.format(*_groups), _label, _cls))
+    else:
+        print(f"Note: stat not found, skipped: {_label}")
+
+def _stat_li(value, label, cls=""):
+    attr = f' class="{cls}"' if cls else ""
+    return f"          <li{attr}><strong>{e(value)}</strong><span>{e(label)}</span></li>\n"
+
 
 _DEGREE = re.compile(r"\b(master|bachelor|associate|doctor|mba|m\.?s\.?|b\.?s\.?|ph\.?d)\b", re.I)
 CERTS = [(deg, school) for deg, school in RESUME["education"] if not _DEGREE.search(deg)]
@@ -454,7 +495,7 @@ page("/", "Home", f"{PROFILE['name']}, {PROFILE['role']}. Projects, data visuali
     <section class="band stats-band" aria-label="Career highlights">
       <div class="wrap">
         <ul class="stats">
-{"".join(f'          <li><strong>{e(v)}</strong><span>{e(l)}</span></li>\n' for v, l in STATS)}        </ul>
+{"".join(_stat_li(*st) for st in STATS)}        </ul>
         {f'<div class="certs"><p class="certs-label">Credentials</p><ul class="cert-list">' + "".join(f'<li class="cert" tabindex="0">{e(d)}<span class="cert-tip">{e(sc)}</span></li>' for d, sc in CREDENTIALS) + '</ul></div>' if CREDENTIALS else ''}
       </div>
     </section>

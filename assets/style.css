@@ -304,6 +304,8 @@ button.btn { cursor: pointer; font-family: var(--head); }
 .stats li { display: grid; gap: 6px; }
 .stats strong { font: 700 clamp(1.9rem, 3.6vw, 2.5rem)/1 var(--head); color: var(--accent); letter-spacing: -0.02em; }
 .stats span { font-size: .95rem; line-height: 1.4; color: var(--ink-soft); }
+/* Word-valued stats (e.g. an award): one line, slightly smaller, bottom-aligned with the numbers */
+.stats li.word strong { height: clamp(1.9rem, 3.6vw, 2.5rem); display: flex; align-items: flex-end; font-size: clamp(1.35rem, 2.1vw, 1.75rem); white-space: nowrap; }
 .certs { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--line); position: relative; z-index: 1; }
 .certs-label { margin: 0; font: 700 .75rem var(--head); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-soft); }
 .cert-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
