@@ -51,6 +51,15 @@ Coming next
 
 A planning aid, not an installation approval. Follow local code and have the finished system inspected by a certified professional.
 
+=== SHARP: Senior Housing Acquisition & Regional Platform ===
+Status: Active / current (Live · password protected), 2026
+Project page: https://www.davidcreason.com/projects/sharp-reit/
+Links: Read the case study: https://www.davidcreason.com/projects/sharp-reit/; Launch terminal 🔒: https://share.streamlit.io/app/sharp-reit/; Contact for access: https://www.davidcreason.com/contact/#form
+Tags: Healthcare REIT, Python, DuckDB, Streamlit, Financial modeling, CMS & Census ETL, Spatial clustering, Password protected
+Summary: An institutional healthcare REIT underwriting and market intelligence terminal evaluating 14,686 CMS facilities across 3,144 U.S. counties with 5-year NNN vs. RIDEA DCF modeling, spatial clustering, and automated Investment Committee memos. Protected by an access gate; please contact me to view.
+
+SHARP (Senior Housing Acquisition & Regional Platform) is an institutional-grade underwriting, market intelligence, and acquisition screening terminal engineered for Healthcare Real Estate Investment Trusts (REITs) and healthcare private equity sponsors. It evaluates all 3,144 U.S. counties (1,026 institutional-scale submarkets) and 14,686 CMS-certified nursing facilities across Certificate of Need (CON) regulatory moats, Census SAIPE wealth, and CMS Special Focus Facility (SFF) programs. Features side-by-side 5-year DCF underwriting comparing Triple-Net (NNN) Master Leases against RIDEA Joint Ventures, factoring in clinical wage shocks, state Medicaid shortfalls, and generating instant 4-page Investment Committee (IC) PDF memos. NOTE: The live app is password-protected. Visitors must contact David Creason directly via the contact form on this site to request an access passcode or demo clearance.
+
 === ScopeOut: Guided Deal Scoping ===
 Status: Active / current (Live demo), 2026
 Project page: https://www.davidcreason.com/projects/scopeout/

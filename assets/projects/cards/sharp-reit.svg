@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="SHARP Senior Housing Acquisition and Regional Platform card">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#070e1a"/>
+      <stop offset="50%" stop-color="#0a192f"/>
+      <stop offset="100%" stop-color="#0f2747"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(56, 189, 248, 0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Outer background -->
+  <rect width="800" height="450" fill="url(#bgGrad)"/>
+  <rect width="800" height="450" fill="url(#gridPattern)"/>
+
+  <!-- Inner Terminal Container -->
+  <rect x="36" y="30" width="728" height="390" rx="14" fill="#091424" stroke="#1e3a64" stroke-width="2"/>
+
+  <!-- Top Terminal Header Bar -->
+  <path d="M 36 44 A 14 14 0 0 1 50 30 L 750 30 A 14 14 0 0 1 764 44 L 764 74 L 36 74 Z" fill="#060c18"/>
+  <circle cx="62" cy="52" r="5" fill="#ef4444"/>
+  <circle cx="78" cy="52" r="5" fill="#f59e0b"/>
+  <circle cx="94" cy="52" r="5" fill="#10b981"/>
+
+  <text x="120" y="56" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="12" letter-spacing="0.5">SHARP &middot; Healthcare REIT Acquisition Terminal</text>
+
+  <!-- Access Clearance Badge -->
+  <rect x="550" y="42" width="194" height="22" rx="11" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" stroke-width="1"/>
+  <circle cx="562" cy="53" r="3.5" fill="#f59e0b"/>
+  <text x="572" y="57" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="10" letter-spacing="0.6">🔒 PROTECTED ACCESS</text>
+
+  <!-- Brand Title Section -->
+  <g transform="translate(64, 102)">
+    <!-- Logo Emblem Shape -->
+    <path d="M 0 32 L 20 4 L 32 18 L 46 2 L 64 32 L 44 32 L 32 18 L 20 32 Z" fill="url(#cyanGrad)"/>
+    <path d="M 12 42 L 32 20 L 52 42 Z" fill="url(#goldGrad)" opacity="0.9"/>
+
+    <text x="80" y="24" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="28" letter-spacing="1.5">SHARP</text>
+    <text x="194" y="24" fill="#f59e0b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="13" letter-spacing="1">REIT PLATFORM</text>
+    <text x="80" y="44" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="13">Senior Housing Acquisition &amp; Regional Underwriting Platform</text>
+  </g>
+
+  <!-- Metric / Capability Cards Grid -->
+  <g transform="translate(64, 172)">
+    <!-- Card 1: Geographic Scope -->
+    <rect x="0" y="0" width="206" height="84" rx="8" fill="#0d1f36" stroke="#1e3a64" stroke-width="1.2"/>
+    <text x="16" y="24" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">NATIONAL SCALE</text>
+    <text x="16" y="52" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="22">3,144</text>
+    <text x="84" y="50" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Counties</text>
+    <text x="16" y="70" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">14,686 CMS certified facilities</text>
+
+    <!-- Card 2: Financial DCF Engine -->
+    <rect x="226" y="0" width="220" height="84" rx="8" fill="#0d1f36" stroke="#1e3a64" stroke-width="1.2"/>
+    <text x="16" y="24" fill="#f59e0b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">PRO FORMA ENGINE</text>
+    <text x="16" y="52" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="20">NNN vs. RIDEA</text>
+    <text x="16" y="70" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">5-Yr DCF &middot; Wage index &middot; CON moats</text>
+
+    <!-- Card 3: IC Governance -->
+    <rect x="466" y="0" width="206" height="84" rx="8" fill="#0d1f36" stroke="#1e3a64" stroke-width="1.2"/>
+    <text x="16" y="24" fill="#10b981" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">GOVERNANCE &amp; MEMOS</text>
+    <text x="16" y="52" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="22">1-Click PDF</text>
+    <text x="16" y="70" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">4-page Investment Committee brief</text>
+  </g>
+
+  <!-- Feature Highlights Strip -->
+  <g transform="translate(64, 276)">
+    <rect width="672" height="52" rx="8" fill="#071322" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/>
+    
+    <text x="18" y="24" fill="#facc15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">CORE PILLARS:</text>
+    <text x="110" y="24" fill="#e2e8f0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Spatial Market Scoring &middot; Deal Sourcing Screener &middot; 5-Year DCF Underwriting</text>
+    <text x="18" y="42" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">Automated IC Deal Memos &middot; PBJ Nurse Staffing Audits &middot; 50-Mile Operator Benchmarking</text>
+  </g>
+
+  <!-- Access Clearance Banner Footer -->
+  <g transform="translate(64, 344)">
+    <rect width="672" height="54" rx="8" fill="rgba(245, 158, 11, 0.1)" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1"/>
+    <text x="20" y="24" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="12">🔒 PRIVATE INSTITUTIONAL TERMINAL</text>
+    <text x="20" y="42" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Protected by password gate. Contact David Creason for an institutional access code.</text>
+  </g>
+</svg>

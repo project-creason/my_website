@@ -64,6 +64,22 @@ PROJECTS = [
         ],
     },
     {
+        "slug": "sharp-reit",
+        "title": "SHARP: Senior Housing Acquisition & Regional Platform",
+        "status": "active",
+        "badge": "Live · password protected",
+        "year": "2026",
+        "summary": "An institutional healthcare REIT underwriting and market intelligence terminal evaluating 14,686 CMS facilities across 3,144 U.S. counties with 5-year NNN vs. RIDEA DCF modeling, spatial clustering, and automated Investment Committee memos. Protected by an access gate; please contact me to view.",
+        "tags": ["Healthcare REIT", "Python", "DuckDB", "Streamlit", "Financial modeling", "CMS & Census ETL", "Spatial clustering", "Password protected"],
+        "image": "/assets/projects/cards/sharp-reit.svg",
+        "image_alt": "SHARP Senior Housing Acquisition and Regional Platform terminal preview",
+        "links": [
+            ("Read the case study", "/projects/sharp-reit/", True),
+            ("Launch terminal 🔒", "https://share.streamlit.io/app/sharp-reit/", False),
+            ("Contact for access", "/contact/#form", False),
+        ],
+    },
+    {
         "slug": "scopeout",
         "title": "ScopeOut: Guided Deal Scoping",
         "status": "active",
@@ -286,7 +302,7 @@ NAV = [("Home", "/"), ("Projects", "/projects/"), ("Resume", "/resume/"), ("Cont
 def write(path, text):
     full = os.path.join(ROOT, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
-    with open(full, "w") as f:
+    with open(full, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
 
 
@@ -2689,6 +2705,77 @@ detail_page(by["property-etl-bench"],
 
       <p class="small" style="margin-top:44px">This tool was built for an employer, so the source code and real data aren't published here. The diagram and descriptions are simplified and contain no proprietary mappings or business rules.</p>""")
 
+detail_page(by["sharp-reit"],
+  "Senior housing and skilled nursing acquisitions represent one of the most complex, regulated asset classes in commercial real estate: Certificate of Need (CON) state moats, Medicaid statutory shortfalls, CMS staffing mandates, volatile clinical wage indices, and looming debt refinancing walls. Traditional REIT underwriting addresses these challenges through fragmented spreadsheets, static broker packages, and weeks of manual due diligence. SHARP unifies the entire acquisition pipeline into an automated quantitative operating terminal evaluating 14,686 CMS-certified nursing facilities across all 3,144 U.S. counties with dynamic 5-year NNN vs. RIDEA DCF pro formas and 1-click Investment Committee memos.",
+  """      <div class="note" style="border-left-color: #d97706; margin-top: 16px; margin-bottom: 32px;">
+        <strong style="color: var(--ink); display: block; margin-bottom: 6px; font-size: 1.05rem;">🔒 Password-Protected Institutional Access</strong>
+        <p style="margin: 0; line-height: 1.6;">
+          The live SHARP terminal and institutional underwriting documentation are protected by an access gate.
+          <strong>Please <a href="/contact/#form" style="text-decoration: underline; font-weight: 600;">contact me</a> to request a demo passcode or clearance.</strong>
+        </p>
+        <div class="actions" style="margin-top: 14px; gap: 10px;">
+          <a class="btn sm" href="/contact/#form">Contact me for access</a>
+          <a class="btn sm ghost" href="https://share.streamlit.io/app/sharp-reit/" target="_blank" rel="noopener">Launch terminal (passcode required) &rarr;</a>
+          <a class="btn sm ghost" href="https://sharp-reit-docs.vercel.app/executive-summary.html" target="_blank" rel="noopener">Executive summary &amp; docs &rarr;</a>
+        </div>
+      </div>
+
+      <figure class="shot-fig">
+        <img class="hero-shot" src="/assets/projects/cards/sharp-reit.svg" alt="SHARP Healthcare REIT Underwriting &amp; Market Intelligence Terminal" style="width: 100%; border-radius: var(--radius); border: 1px solid var(--line);">
+        <figcaption>Overview of the SHARP Healthcare REIT Terminal, showing the 5-pillar acquisition pipeline, spatial intelligence, and 1-click IC deal memo generator.</figcaption>
+      </figure>
+
+      <div class="cols">
+        <section>
+          <h2>The institutional problem</h2>
+          <ul>
+            <li><strong>Fragmented operating bench:</strong> Over 60% of facilities nationally are held by non-chain \"mom-and-pop\" operators, creating massive off-market consolidation upside alongside operational opacity.</li>
+            <li><strong>Regulatory barriers to entry:</strong> State Certificate of Need (CON) laws and construction moratoria govern the supply of licensed beds, dictating whether new competitors can enter a market.</li>
+            <li><strong>Statutory reimbursement drags:</strong> High Medicaid utilization exposes operators to statutory reimbursement shortfalls (often -$20 to -$100/resident/day below actual care costs), requiring precise private-pay qualification modeling.</li>
+            <li><strong>Labor &amp; clinical inflation:</strong> Volatile agency staffing rates and CMS clinical wage discrepancies create substantial operating margin shocks.</li>
+            <li><strong>Commercial debt maturity walls:</strong> High-leverage floating-rate debt originated in low-rate environments faces refinancing shocks and DSCR compression, creating motivated off-market sellers.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The 5 core capability pillars</h2>
+          <ul>
+            <li><strong>1. National spatial intelligence:</strong> Evaluates all 3,144 U.S. counties, filtering for institutional scale (total beds &ge; 300, 75+ pop &ge; 2,000, &ge; 2 facilities &rarr; 1,026 rankable submarkets) across 5 strategy presets (Value-Add Turnaround, Core-Plus Stable Yield, Mom-and-Pop Roll-Up, High-Barrier Infill, Distressed Workout).</li>
+            <li><strong>2. Target asset screener:</strong> Verified CMS regulatory sourcing tracking Medicare payment denials, Special Focus Facility (SFF) active enforcement (87) vs. candidate watchlists (440), and commercial debt maturity clocks.</li>
+            <li><strong>3. 5-year DCF underwriting engine:</strong> Side-by-side DCF modeling comparing Triple-Net (NNN) Master Leases against RIDEA Joint Ventures (TRS structures), incorporating state CON exit cap compression, BLS clinical wage index multipliers, and Medicaid daily rate drags.</li>
+            <li><strong>4. Investment Committee (IC) automation:</strong> Dynamically generates 4-page institutional PDF underwriting memos formatted for executive review, complete with CMS PBJ nurse staffing compliance audits and 50-mile replacement operator benches.</li>
+            <li><strong>5. Acquisition Deal Room &amp; Cart:</strong> 6-stage Kanban transaction board (Sourced &rarr; Active Underwriting &rarr; IC Review &rarr; LOI Executed &rarr; Due Diligence &rarr; Closed Portfolio) with a multi-asset portfolio cart calculating blended entry basis, Year-1 NOI, and HHI geographic diversification.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 style="margin-top:44px">Scale &amp; Verification</h2>
+      <ul class="stats">
+        <li><strong>3,144</strong><span>U.S. counties evaluated (1,026 institutional submarkets)</span></li>
+        <li><strong>14,686</strong><span>CMS-certified facilities screened nationwide</span></li>
+        <li><strong>5-Year</strong><span>Dual NNN vs. RIDEA DCF financial model</span></li>
+        <li><strong>21 / 21</strong><span>Automated regression tests passed (pytest)</span></li>
+      </ul>
+
+      <div class="cols" style="margin-top:44px">
+        <section>
+          <h2>Technical architecture</h2>
+          <ul>
+            <li><strong>Local-first high performance:</strong> Engineered in Python 3.11+, DuckDB, and Parquet columnar storage for instant querying of 14,000+ facilities without heavy database overhead.</li>
+            <li><strong>Full data transparency:</strong> 100% of demographic, housing, and rating imputations are tracked via explicit boolean flags (is_income_imputed, is_home_value_imputed, is_rating_imputed, has_imputed_data) and displayed in the UI.</li>
+            <li><strong>Automated monthly pipeline:</strong> GitHub Actions workflow that automatically refreshes Census, CMS, and FEMA datasets, executes the transformation pipeline, runs test verification, and updates versioned Parquet data snapshots.</li>
+            <li><strong>Streamlit frontend:</strong> Responsive dark/light theme terminal with interactive Plotly geographic choropleths, dual pro forma DCF calculators, and PDF memo generation.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Access clearance</h2>
+          <ul>
+            <li><strong>Password protected:</strong> The live terminal and executive brief are protected by an institutional clearance gate to protect proprietary underwriting parameters.</li>
+            <li><strong>How to view:</strong> If you are an investor, operator, or reviewer interested in exploring the terminal, please <a href="/contact/#form">contact me</a> to request an access passcode or schedule a private demo walkthrough.</li>
+            <li><strong>1-click magic links:</strong> Authorized reviewers receive a direct URL parameter that automatically bypasses the gate, remembers their device, and scrubs credentials from the browser address bar.</li>
+          </ul>
+        </section>
+      </div>""")
+
 page("/404/", "Page not found", "Page not found.", "", """  <main id="main">
     <div class="wrap">
       <h1 class="page-title">Page not found</h1>
@@ -2726,6 +2813,7 @@ def _page_text(path):
 # the page would be noisy. These replace the page text below for the assistant; keep them in step with
 # the project page when its facts change.
 NOTES_OVERRIDE = {
+    'sharp-reit': "SHARP (Senior Housing Acquisition & Regional Platform) is an institutional-grade underwriting, market intelligence, and acquisition screening terminal engineered for Healthcare Real Estate Investment Trusts (REITs) and healthcare private equity sponsors. It evaluates all 3,144 U.S. counties (1,026 institutional-scale submarkets) and 14,686 CMS-certified nursing facilities across Certificate of Need (CON) regulatory moats, Census SAIPE wealth, and CMS Special Focus Facility (SFF) programs. Features side-by-side 5-year DCF underwriting comparing Triple-Net (NNN) Master Leases against RIDEA Joint Ventures, factoring in clinical wage shocks, state Medicaid shortfalls, and generating instant 4-page Investment Committee (IC) PDF memos. NOTE: The live app is password-protected. Visitors must contact David Creason directly via the contact form on this site to request an access passcode or demo clearance.",
     'buffalo-trace-tracker': "Buffalo Trace Distillery rotates allocated bourbons (Blanton's, E.H. Taylor, Eagle Rare, Weller) at its Frankfort, KY Gift Shop each morning. I built a zero-dependency Python pipeline on GitHub Actions that polls the distillery during morning release windows, deduplicates state changes, dispatches instant mobile push and BCC email alerts, and streams the live JSON feed directly into the dashboard on davidcreason.com/projects/buffalo-trace-tracker/.",
     'louisville-crime': "Two-year comparison of 140,212 Louisville Metro Police Department (LMPD) incident reports (69,876 offenses across 57,246 unique incidents in 2024 vs. 70,336 offenses across 56,453 unique incidents in 2025, +0.7% YoY) paired with daily NOAA weather observations (station USC00154958) and lunar phases.\n\nKey 2024 vs. 2025 Findings:\n- Temperature Correlation (Consistent): r = 0.514 in 2024 (+0.73 offenses per +1°F) and r = 0.511 in 2025 (+0.76 offenses per +1°F). In 2025, daily offenses rose from 151.6/day below 32°F (154.2 in 2024) to 174.9/day at 32–49°F, 190.8/day at 50–69°F, 196.5/day at 70–84°F, and 211.2/day at 85°F+ (+39.3% over freezing).\n- Lunar & Rain Effect (Consistent — Myth Debunked): The 12 full-moon days averaged 193.7/day vs. 190.8/day in 2024 (+1.5%) and 181.8/day vs. 193.1/day in 2025 (-5.9%). Rainy days (>=0.1 in.) averaged 185.8/day vs. 195.0/day on dry days in 2025 (-4.7%).\n- Offense & Venue Mix (Major Shift): Auto theft fell -20.1% (5,769 → 4,608, -1,161), homicide fell -26.1% (153 → 113, -40), robbery fell -18.4% (971 → 792), burglary fell -11.5% (3,517 → 3,113), and parking lot/garage offenses fell -11.9% (7,900 → 6,963). Meanwhile, retail shoplifting surged +28.5% (3,200 → 4,112, +912), grocery/supermarket incidents rose +73.6% (818 → 1,420), narcotics rose +21.5% (3,658 → 4,444), and trespassing rose +39.9% (584 → 817).\n- Seasonality & Day of Week: Q3 led both years (18,953 in 2024; 19,245 in 2025), with July #1 (6,534 and 6,631) and February lowest (5,094 and 4,814). Busiest day of the week shifted from Monday in 2024 (10,519) to Saturday (10,446) and Friday (10,398) in 2025.\n- Geography: Top 4 ZIPs held steady in both years: 40203 (4,933 → 4,929), 40211 (4,772 → 4,889), 40214 (4,623 → 4,866), and 40219 (4,618 → 4,796). Downtown 40202 dropped -20.2% (4,078 → 3,256, #5 to #7), while outer-ring 40272 (+11.5%, 2,900 → 3,234) and LMPD 8th Division (+12.1%, 4,632 → 5,191) grew.\n- Daily Extremes & 1st-of-Month Lag: Jan 6, 2025 (7+ inch snow and ice storm) set a two-year low of 88 offenses (-54%), beating Thanksgiving (112 in 2024; 150 in 2025) and Christmas (133 in 2025). Raw peak dates in 2025 fell on July 1 (276), Aug 1 (274), and June 1 (273), followed by May 30 (272) — reflecting delayed reports that default to the 1st of the month (241.1/day avg on the 1st vs. 191.1/day on days 2–31; 13.0% reported >7 days later vs. 3.9%).",
     'crestwood-home-hearth': 'How I applied enterprise systems integration, multi-vendor ETL pipelines (4,533 SKUs), custom JavaScript/AJAX automation, 3D SketchUp CAD modeling, and parametric unit-economics engines to drive +740% annualized revenue expansion (63.6% peak gross margin) and a turnkey acquisition exit to a major local HVAC company.\n\nKey Growth & Percentage Highlights:\n- Revenue Expansion: +310% YoY growth in Year 2 (4.1x baseline), +68% YoY in Year 3 (+590% cumulative 3-year growth / 6.9x), reaching +740% (8.4x Year 1 baseline) annualized run-rate at acquisition exit in 2022.\n- Margin Performance: 61.3% Gross Margin in Year 1, 63.6% Peak Gross Margin and 24.7% Net Operating Margin in Year 2, and 53.6%-54.0% Gross Margin during multi-crew scaling in 2021-2022.\n- Customer & Ticket Velocity: +419% customer base expansion and +171% expansion in trailing 12-month average ticket value.\n- Interactive 3D CAD & Spatial Engineering Viewer: Includes a live 360-degree rotatable 3D parametric rig simulating Somfy RTS motorized louver pitch (0-135 deg) and Hammerhead motorized ZIP screen deployment (0-100%), paired with 6 production SketchUp (.skp) engineering blueprint exports.\n- 4,533-SKU Multi-Vendor ETL & Custom JS/AJAX Automation: Normalized 15+ manufacturer catalogs into Jobber CRM, QuickBooks Online, and Wix, and authored browser-console AJAX scripts (DELETE /work_items/{id}) to purge obsolete catalog items in seconds.\n- Parametric Margin Calculators: Enforced ~29.2% net operating margin after sales commission on custom screens and 1.0x-3.5x hourly yield indexes across 26 standardized service lines.\n\nOpen full screen on Tableau Public →',
