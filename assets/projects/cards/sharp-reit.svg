@@ -31,7 +31,7 @@
   <circle cx="78" cy="52" r="5" fill="#f59e0b"/>
   <circle cx="94" cy="52" r="5" fill="#10b981"/>
 
-  <text x="120" y="56" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="12" letter-spacing="0.5">SHARP &middot; Healthcare REIT Acquisition Terminal</text>
+  <text x="120" y="56" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="12" letter-spacing="0.5">SHARP &#183; Healthcare REIT Acquisition Terminal</text>
 
   <!-- Access Clearance Badge -->
   <rect x="550" y="42" width="194" height="22" rx="11" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" stroke-width="1"/>
@@ -62,7 +62,7 @@
     <rect x="226" y="0" width="220" height="84" rx="8" fill="#0d1f36" stroke="#1e3a64" stroke-width="1.2"/>
     <text x="16" y="24" fill="#f59e0b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">PRO FORMA ENGINE</text>
     <text x="16" y="52" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="20">NNN vs. RIDEA</text>
-    <text x="16" y="70" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">5-Yr DCF &middot; Wage index &middot; CON moats</text>
+    <text x="16" y="70" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">5-Yr DCF &#183; Wage index &#183; CON moats</text>
 
     <!-- Card 3: IC Governance -->
     <rect x="466" y="0" width="206" height="84" rx="8" fill="#0d1f36" stroke="#1e3a64" stroke-width="1.2"/>
@@ -76,8 +76,8 @@
     <rect width="672" height="52" rx="8" fill="#071322" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/>
     
     <text x="18" y="24" fill="#facc15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" letter-spacing="0.5">CORE PILLARS:</text>
-    <text x="110" y="24" fill="#e2e8f0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Spatial Market Scoring &middot; Deal Sourcing Screener &middot; 5-Year DCF Underwriting</text>
-    <text x="18" y="42" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">Automated IC Deal Memos &middot; PBJ Nurse Staffing Audits &middot; 50-Mile Operator Benchmarking</text>
+    <text x="110" y="24" fill="#e2e8f0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Spatial Market Scoring &#183; Deal Sourcing Screener &#183; 5-Year DCF Underwriting</text>
+    <text x="18" y="42" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">Automated IC Deal Memos &#183; PBJ Nurse Staffing Audits &#183; 50-Mile Operator Benchmarking</text>
   </g>
 
   <!-- Access Clearance Banner Footer -->

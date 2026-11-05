@@ -71,7 +71,7 @@ PROJECTS = [
         "year": "2026",
         "summary": "An institutional healthcare REIT underwriting and market intelligence terminal evaluating 14,686 CMS facilities across 3,144 U.S. counties with 5-year NNN vs. RIDEA DCF modeling, spatial clustering, and automated Investment Committee memos. Protected by an access gate; please contact me to view.",
         "tags": ["Healthcare REIT", "Python", "DuckDB", "Streamlit", "Financial modeling", "CMS & Census ETL", "Spatial clustering", "Password protected"],
-        "image": "/assets/projects/cards/sharp-reit.svg",
+        "image": "/assets/projects/cards/sharp-reit.jpg",
         "image_alt": "SHARP Senior Housing Acquisition and Regional Platform terminal preview",
         "links": [
             ("Read the case study", "/projects/sharp-reit/", True),
@@ -2721,7 +2721,7 @@ detail_page(by["sharp-reit"],
       </div>
 
       <figure class="shot-fig">
-        <img class="hero-shot" src="/assets/projects/cards/sharp-reit.svg" alt="SHARP Healthcare REIT Underwriting &amp; Market Intelligence Terminal" style="width: 100%; border-radius: var(--radius); border: 1px solid var(--line);">
+        <img class="hero-shot" src="/assets/projects/cards/sharp-reit.jpg" alt="SHARP Healthcare REIT Underwriting &amp; Market Intelligence Terminal" style="width: 100%; border-radius: var(--radius); border: 1px solid var(--line);">
         <figcaption>Overview of the SHARP Healthcare REIT Terminal, showing the 5-pillar acquisition pipeline, spatial intelligence, and 1-click IC deal memo generator.</figcaption>
       </figure>
 
